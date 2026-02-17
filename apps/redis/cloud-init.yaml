@@ -9,7 +9,6 @@
 # Firewall: allow inbound TCP on port 30379 (Redis).
 
 package_update: true
-package_upgrade: true
 
 packages:
   - curl

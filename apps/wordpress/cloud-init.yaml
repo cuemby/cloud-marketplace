@@ -9,7 +9,6 @@
 # Firewall: allow inbound TCP on ports 30080 (HTTP) and 30443 (HTTPS).
 
 package_update: true
-package_upgrade: true
 
 packages:
   - curl

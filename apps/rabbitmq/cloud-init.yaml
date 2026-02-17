@@ -9,7 +9,6 @@
 # Firewall: allow inbound TCP on ports 30672 (AMQP) and 31672 (Management UI).
 
 package_update: true
-package_upgrade: true
 
 packages:
   - curl
