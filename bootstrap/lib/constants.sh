@@ -3,6 +3,10 @@
 # Source this file; do not execute directly.
 # shellcheck disable=SC2034  # Variables are used by scripts that source this file.
 
+# Source guard: skip if already loaded (readonly vars can't be re-declared)
+[[ -n "${_CONSTANTS_LOADED:-}" ]] && return 0
+readonly _CONSTANTS_LOADED=1
+
 # Paths
 readonly MARKETPLACE_DIR="/opt/cuemby/marketplace"
 readonly APPS_DIR="${MARKETPLACE_DIR}/apps"
