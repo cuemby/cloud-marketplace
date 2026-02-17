@@ -70,7 +70,10 @@ _create_cluster_issuer() {
         log_warn "Using Let's Encrypt STAGING server (certs will not be trusted)."
     fi
 
-    local acme_email="${ACME_EMAIL:-${PARAM_WORDPRESS_EMAIL:-admin@example.com}}"
+    local acme_email="${ACME_EMAIL:-${PARAM_WORDPRESS_EMAIL:-}}"
+    if [[ -z "$acme_email" ]] || [[ "$acme_email" == *"@example.com" ]]; then
+        log_fatal "ACME_EMAIL is required for Let's Encrypt (example.com is not accepted). Set ACME_EMAIL or use a real PARAM_WORDPRESS_EMAIL."
+    fi
 
     log_info "Creating ClusterIssuer 'letsencrypt' (server: ${acme_server})..."
 

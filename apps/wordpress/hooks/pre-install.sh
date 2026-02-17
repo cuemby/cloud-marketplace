@@ -88,14 +88,14 @@ spec:
   listeners:
     - name: web
       protocol: HTTP
-      port: 80
+      port: 8000
       hostname: "${PARAM_WORDPRESS_HOSTNAME}"
       allowedRoutes:
         namespaces:
           from: Same
     - name: websecure
       protocol: HTTPS
-      port: 443
+      port: 8443
       hostname: "${PARAM_WORDPRESS_HOSTNAME}"
       tls:
         mode: Terminate
