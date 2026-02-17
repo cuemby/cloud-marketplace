@@ -86,11 +86,12 @@ spec:
     privateKeySecretRef:
       name: letsencrypt-account-key
     solvers:
-      - gatewayHTTPRoute:
-          parentRefs:
-            - name: app-gateway
-              namespace: ${HELM_NAMESPACE_PREFIX}wordpress
-              kind: Gateway
+      - http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: app-gateway
+                namespace: ${HELM_NAMESPACE_PREFIX}wordpress
+                kind: Gateway
 EOF
 
     log_info "ClusterIssuer 'letsencrypt' created."
