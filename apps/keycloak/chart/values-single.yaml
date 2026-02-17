@@ -1,0 +1,22 @@
+# Minimal profile for small VMs (2 CPU / 4 GB RAM).
+# Layered on top of values.yaml with lower resource limits.
+
+keycloak:
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  postgresql:
+    primary:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+      persistence:
+        size: 4Gi

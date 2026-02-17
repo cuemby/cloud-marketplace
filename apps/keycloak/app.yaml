@@ -1,0 +1,41 @@
+name: keycloak
+displayName: Keycloak
+description: Open source identity and access management for modern applications and services.
+category: identity
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/keycloak/img/keycloak-stack-220x234.png
+
+chart:
+  name: keycloak
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "25.2.0"
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "25.2.0"
+
+parameters:
+  - name: KEYCLOAK_ADMIN_USER
+    displayName: Admin Username
+    description: Keycloak administrator username
+    type: string
+    required: true
+    default: user
+    helmMapping: keycloak.auth.adminUser
+
+  - name: KEYCLOAK_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: Keycloak administrator password
+    type: password
+    required: true
+    helmMapping: keycloak.auth.adminPassword
+
+  - name: KEYCLOAK_POSTGRES_PASSWORD
+    displayName: PostgreSQL Password
+    description: Password for the bundled PostgreSQL database
+    type: password
+    required: true
+    helmMapping: keycloak.postgresql.auth.password
