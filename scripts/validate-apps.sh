@@ -74,9 +74,13 @@ validate_app() {
         errors=$((errors + 1))
     fi
 
-    # Check that cloud-init.yaml exists
+    # Check that cloud-init files exist (both YAML and bash formats)
     if [[ ! -f "${app_dir}/cloud-init.yaml" ]]; then
         echo "  ERROR: cloud-init.yaml missing"
+        errors=$((errors + 1))
+    fi
+    if [[ ! -f "${app_dir}/cloud-init.sh" ]]; then
+        echo "  ERROR: cloud-init.sh missing"
         errors=$((errors + 1))
     fi
 

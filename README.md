@@ -35,14 +35,24 @@ Deploy any application from the catalog onto a VM using cloud-init. The examples
 
 ### Step 1: Create the Cloud-Init User-Data File
 
-Each app includes a ready-to-use `cloud-init.yaml`. Copy it and replace the `CHANGE_ME` values with your own:
+Each app includes two user-data formats — use whichever your cloud provider supports:
+
+| Format | File | When to use |
+|--------|------|-------------|
+| YAML (cloud-config) | `cloud-init.yaml` | AWS, GCP, Azure, and most providers that support cloud-init |
+| Bash script | `cloud-init.sh` | Providers that only accept a raw bash script as user-data |
+
+Copy the appropriate file and replace the `CHANGE_ME` values with your own:
 
 ```bash
+# YAML format (most providers)
 cp apps/wordpress/cloud-init.yaml user-data.yaml
-# Edit user-data.yaml — set your passwords
+
+# OR bash format (providers without cloud-init YAML support)
+cp apps/wordpress/cloud-init.sh user-data.sh
 ```
 
-See [`apps/wordpress/cloud-init.yaml`](apps/wordpress/cloud-init.yaml) for the full file. Every app in `apps/` follows the same pattern.
+See [`apps/wordpress/cloud-init.yaml`](apps/wordpress/cloud-init.yaml) and [`apps/wordpress/cloud-init.sh`](apps/wordpress/cloud-init.sh) for the full files. Every app in `apps/` follows the same pattern.
 
 > **Security note**: Cloud-init user-data is typically stored in the instance metadata. For production use, consider rotating passwords after deployment or using your provider's secrets manager.
 
@@ -121,7 +131,7 @@ A successful deployment ends with:
 {
   "phase": "ready",
   "app": "wordpress",
-  "version": "24.1.7"
+  "version": "28.1.9"
 }
 ```
 
@@ -189,7 +199,8 @@ This copies `apps/_template/` to `apps/myapp/` and opens the scaffolded files fo
 ```
 apps/myapp/
 ├── app.yaml           # Metadata, parameters, helm mappings
-├── cloud-init.yaml    # Ready-to-use cloud-init user-data
+├── cloud-init.yaml    # Cloud-init user-data (YAML format)
+├── cloud-init.sh      # Cloud-init user-data (bash script format)
 ├── chart/             # Wrapper Helm chart (depends on upstream)
 │   ├── Chart.yaml
 │   ├── values.yaml

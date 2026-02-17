@@ -27,12 +27,21 @@ After deployment:
 
 ## Cloud-Init
 
-A ready-to-use cloud-init file is provided at [`cloud-init.yaml`](cloud-init.yaml). Copy it, replace the `CHANGE_ME` passwords, and pass it as user-data when creating a VM:
+Two user-data formats are provided — use whichever your cloud provider supports:
+
+| Format | File | When to use |
+|--------|------|-------------|
+| YAML (cloud-config) | [`cloud-init.yaml`](cloud-init.yaml) | AWS, GCP, Azure, and most providers that support cloud-init |
+| Bash script | [`cloud-init.sh`](cloud-init.sh) | Providers that only accept a raw bash script as user-data |
+
+Copy the appropriate file, replace the `CHANGE_ME` passwords, and pass it as user-data when creating a VM:
 
 ```bash
+# YAML format (most providers)
 cp apps/wordpress/cloud-init.yaml user-data.yaml
-# Edit user-data.yaml — set your passwords
-# Then launch a VM (see main README for provider-specific commands)
+
+# OR bash format (providers without cloud-init YAML support)
+cp apps/wordpress/cloud-init.sh user-data.sh
 ```
 
 See the [main README](../../README.md#usage) for AWS, GCP, and Azure examples.

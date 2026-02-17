@@ -51,9 +51,10 @@ main() {
     echo "  2. Edit ${app_dir}/chart/Chart.yaml (set dependency)"
     echo "  3. Edit ${app_dir}/chart/values.yaml (set defaults)"
     echo "  4. Edit ${app_dir}/cloud-init.yaml (set parameters for end users)"
-    echo "  5. Update hooks as needed"
-    echo "  6. Run: make validate"
-    echo "  7. Run: make catalog"
+    echo "  5. Edit ${app_dir}/cloud-init.sh (bash equivalent for providers without YAML cloud-init)"
+    echo "  6. Update hooks as needed"
+    echo "  7. Run: make validate"
+    echo "  8. Run: make catalog"
 }
 
 main "$@"
