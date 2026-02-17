@@ -34,7 +34,7 @@ Two user-data formats are provided — use whichever your cloud provider support
 | YAML (cloud-config) | [`cloud-init.yaml`](cloud-init.yaml) | AWS, GCP, Azure, and most providers that support cloud-init |
 | Bash script | [`cloud-init.sh`](cloud-init.sh) | Providers that only accept a raw bash script as user-data |
 
-Copy the appropriate file, replace the `CHANGE_ME` passwords, and pass it as user-data when creating a VM:
+Copy the appropriate file, set the required passwords, and pass it as user-data when creating a VM. Optional parameters use sensible defaults; required passwords (marked with `:?`) will fail with a clear error if not set.
 
 ```bash
 # YAML format (most providers)

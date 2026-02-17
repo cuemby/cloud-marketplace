@@ -42,7 +42,7 @@ Each app includes two user-data formats — use whichever your cloud provider su
 | YAML (cloud-config) | `cloud-init.yaml` | AWS, GCP, Azure, and most providers that support cloud-init |
 | Bash script | `cloud-init.sh` | Providers that only accept a raw bash script as user-data |
 
-Copy the appropriate file and replace the `CHANGE_ME` values with your own:
+Copy the appropriate file and set the required passwords. Optional parameters use sensible defaults; required passwords (marked with `:?`) will fail with a clear error if not set:
 
 ```bash
 # YAML format (most providers)

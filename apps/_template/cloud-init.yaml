@@ -1,6 +1,8 @@
 #cloud-config
 # Cloud-init user-data for deploying APPNAME via Cuemby Cloud Marketplace.
-# Replace CHANGE_ME values with your own, then pass this file as user-data when creating a VM.
+#
+# Parameters can be set as environment variables in the write_files section below,
+# or they will use the default values shown.
 
 package_update: true
 package_upgrade: true
@@ -16,8 +18,8 @@ write_files:
     content: |
       #!/usr/bin/env bash
       export APP_NAME="APPNAME"
-      export APP_VERSION="CHANGE_ME"
-      export PARAM_EXAMPLE_PARAM="CHANGE_ME"
+      export APP_VERSION="${APP_VERSION:-CHANGE_ME}"
+      export PARAM_EXAMPLE_PARAM="${PARAM_EXAMPLE_PARAM:-CHANGE_ME}"
 
 runcmd:
   - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
