@@ -34,7 +34,9 @@ deploy_app() {
 
     # Build --set flags from PARAM_* env vars
     local set_args=()
-    set_args+=("$(build_set_args "$app_yaml")")
+    while IFS= read -r line; do
+        [[ -n "$line" ]] && set_args+=("--set" "$line")
+    done < <(build_set_args "$app_yaml")
 
     # Run pre-install hook
     run_hook "$app_dir" "pre-install"
@@ -53,16 +55,14 @@ deploy_app() {
         helm upgrade --install "$release_name" "$chart_dir"
         --namespace "$namespace"
         "${values_args[@]}"
-        "$HELM_ATOMIC"
-        "$HELM_WAIT"
+        --atomic
+        --wait
         --timeout "${TIMEOUT_HELM_DEPLOY}s"
     )
 
     # Append --set flags if any
-    if [[ -n "${set_args[*]:-}" ]]; then
-        # Word splitting is intentional here for --set arguments
-        # shellcheck disable=SC2206
-        helm_cmd+=(${set_args[@]})
+    if [[ ${#set_args[@]} -gt 0 ]]; then
+        helm_cmd+=("${set_args[@]}")
     fi
 
     log_debug "Helm command: ${helm_cmd[*]}"
@@ -75,10 +75,10 @@ deploy_app() {
 }
 
 # Build --set flags from PARAM_* environment variables using helmMapping.
+# Outputs one helmMapping=value per line (caller adds --set).
 # Usage: build_set_args <app_yaml_path>
 build_set_args() {
     local app_yaml="$1"
-    local set_flags=""
 
     local param_count
     param_count="$(yq -r '.parameters | length' "$app_yaml" 2>/dev/null)"
@@ -96,14 +96,12 @@ build_set_args() {
         local env_val="${!env_var:-}"
 
         if [[ -n "$env_val" ]] && [[ "$helm_mapping" != "null" ]]; then
-            set_flags+=" --set ${helm_mapping}=${env_val}"
             log_info "Parameter: ${env_var} → ${helm_mapping}"
+            echo "${helm_mapping}=${env_val}"
         fi
 
         i=$((i + 1))
     done
-
-    echo "$set_flags"
 }
 
 # Run a lifecycle hook if it exists.
