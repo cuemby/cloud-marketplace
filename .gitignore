@@ -1,0 +1,36 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+.claude/settings.local.json
+*.swp
+*.swo
+*~
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Helm
+charts/*/charts/
+charts/*/tmpcharts/
+apps/*/chart/charts/
+apps/*/chart/Chart.lock
+
+# Build artifacts
+*.tar.gz
+*.tgz
+
+# Test artifacts
+tests/integration/tmp/
+tests/.bats/
+
+# Node (if any tooling)
+node_modules/
+
+# Generated catalog is tracked but regenerated
+# catalog/catalog.json

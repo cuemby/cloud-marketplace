@@ -1,0 +1,5 @@
+version: 2.2.5
+installed:
+    workflows:
+        - all
+registry: https://github.com/ar4mirez/samuel

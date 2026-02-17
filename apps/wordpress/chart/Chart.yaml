@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-wordpress
+description: Cuemby wrapper chart for WordPress (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "6.7"
+
+dependencies:
+  - name: wordpress
+    version: "24.1.7"
+    repository: oci://registry-1.docker.io/bitnamicharts

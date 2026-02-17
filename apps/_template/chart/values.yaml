@@ -1,0 +1,21 @@
+# Cuemby defaults for APPNAME on single-node K3s.
+# Override upstream chart defaults here.
+
+APPNAME:
+  service:
+    type: NodePort
+    nodePorts:
+      http: 30080
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi

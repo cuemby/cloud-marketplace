@@ -1,0 +1,26 @@
+# Minimal profile for small VMs (2 CPU / 4 GB RAM).
+# Layered on top of values.yaml with lower resource limits.
+
+wordpress:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  persistence:
+    size: 5Gi
+
+  mariadb:
+    primary:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+      persistence:
+        size: 5Gi

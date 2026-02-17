@@ -1,0 +1,15 @@
+Cuemby Cloud Marketplace — WordPress deployed!
+
+Access your WordPress site:
+
+  {{- if eq .Values.wordpress.service.type "NodePort" }}
+  HTTP:  http://<VM_IP>:{{ .Values.wordpress.service.nodePorts.http }}
+  HTTPS: https://<VM_IP>:{{ .Values.wordpress.service.nodePorts.https }}
+  {{- else }}
+  kubectl get svc -n {{ .Release.Namespace }}
+  {{- end }}
+
+Admin panel: http://<VM_IP>:{{ .Values.wordpress.service.nodePorts.http }}/wp-admin
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

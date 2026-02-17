@@ -1,0 +1,4 @@
+Cuemby Cloud Marketplace — APPNAME deployed!
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

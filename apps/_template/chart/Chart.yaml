@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-APPNAME
+description: Cuemby wrapper chart for APPNAME
+type: application
+version: 1.0.0
+appVersion: "0.1.0"
+
+dependencies:
+  - name: APPNAME
+    version: "0.1.0"
+    repository: ""

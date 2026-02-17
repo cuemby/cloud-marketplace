@@ -1,0 +1,27 @@
+name: APPNAME
+displayName: APPNAME
+description: Short description of the application.
+category: general
+icon: ""
+
+chart:
+  name: APPNAME
+  repository: ""
+  version: "0.1.0"
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "0.1.0"
+
+parameters:
+  - name: EXAMPLE_PARAM
+    displayName: Example Parameter
+    description: An example parameter — replace with real ones
+    type: string
+    required: false
+    default: "example"
+    helmMapping: APPNAME.exampleParam
