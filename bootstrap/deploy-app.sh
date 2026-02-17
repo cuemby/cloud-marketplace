@@ -45,6 +45,9 @@ deploy_app() {
     log_info "Creating namespace: ${namespace}"
     kubectl create namespace "$namespace" --dry-run=client -o yaml | kubectl apply -f -
 
+    # Clean up stuck/failed releases before deploying
+    cleanup_stuck_release "$release_name" "$namespace"
+
     # Update chart dependencies
     log_info "Updating Helm dependencies..."
     helm dependency update "$chart_dir"
@@ -72,6 +75,50 @@ deploy_app() {
 
     # Run post-install hook
     run_hook "$app_dir" "post-install"
+}
+
+# Clean up a Helm release stuck in a failed or pending state.
+# This handles scenarios where a previous deploy crashed or was interrupted,
+# leaving the release in a state that blocks subsequent deployments.
+# Usage: cleanup_stuck_release <release_name> <namespace>
+cleanup_stuck_release() {
+    local release_name="$1"
+    local namespace="$2"
+
+    local status
+    status="$(helm status "$release_name" --namespace "$namespace" -o json 2>/dev/null | jq -r '.info.status // empty')" || true
+
+    if [[ -z "$status" ]]; then
+        log_debug "No existing release '${release_name}' found — clean install."
+        return 0
+    fi
+
+    log_info "Existing release '${release_name}' status: ${status}"
+
+    case "$status" in
+        deployed)
+            log_info "Release is deployed — upgrade will proceed normally."
+            ;;
+        failed|pending-install|pending-upgrade|pending-rollback)
+            log_warn "Release is stuck in '${status}' state — removing before redeploy."
+            if helm uninstall "$release_name" --namespace "$namespace" --wait 2>/dev/null; then
+                log_info "Stuck release removed successfully."
+            else
+                log_warn "helm uninstall returned non-zero — forcing cleanup via secret deletion."
+                kubectl delete secrets -n "$namespace" -l "owner=helm,name=${release_name}" --ignore-not-found
+                log_info "Helm release secrets cleaned up."
+            fi
+            ;;
+        uninstalling)
+            log_warn "Release is stuck uninstalling — cleaning up secrets directly."
+            kubectl delete secrets -n "$namespace" -l "owner=helm,name=${release_name}" --ignore-not-found
+            log_info "Helm release secrets cleaned up."
+            ;;
+        *)
+            log_warn "Unexpected release status '${status}' — attempting uninstall."
+            helm uninstall "$release_name" --namespace "$namespace" --wait 2>/dev/null || true
+            ;;
+    esac
 }
 
 # Build --set flags from PARAM_* environment variables using helmMapping.
