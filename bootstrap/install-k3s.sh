@@ -16,12 +16,27 @@ install_k3s() {
 
     log_section "Installing K3s (channel: ${channel})"
 
-    # shellcheck disable=SC2086
-    curl -sfL https://get.k3s.io | \
-        INSTALL_K3S_CHANNEL="$channel" \
-        sh -s - $K3S_INSTALL_FLAGS
+    # Download installer to a temp file so we can detect download failures
+    local installer
+    installer="$(mktemp /tmp/k3s-install-XXXXXX.sh)"
+    log_info "Downloading K3s installer..."
+    if ! curl -fL --retry 3 --retry-delay 5 -o "$installer" https://get.k3s.io; then
+        rm -f "$installer"
+        log_fatal "Failed to download K3s installer from https://get.k3s.io"
+    fi
 
-    log_info "K3s binary installed, waiting for cluster readiness..."
+    log_info "Running K3s installer..."
+    # shellcheck disable=SC2086
+    INSTALL_K3S_CHANNEL="$channel" \
+        bash "$installer" $K3S_INSTALL_FLAGS
+    rm -f "$installer"
+
+    # Verify the service was actually created
+    if ! systemctl list-unit-files k3s.service &>/dev/null; then
+        log_fatal "K3s installation completed but k3s.service not found"
+    fi
+
+    log_info "K3s installed, waiting for cluster readiness..."
 
     export KUBECONFIG="$KUBECONFIG_PATH"
 
