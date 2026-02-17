@@ -9,7 +9,7 @@
       "chart": {
         "name": "wordpress",
         "repository": "oci://registry-1.docker.io/bitnamicharts",
-        "version": "24.1.7"
+        "version": "28.1.9"
       },
       "requirements": {
         "cpu": 2,
@@ -17,8 +17,7 @@
         "disk": "20Gi"
       },
       "versions": [
-        "24.1.7",
-        "24.0.0"
+        "28.1.9"
       ],
       "parameters": [
         {
@@ -93,5 +92,5 @@
       ]
     }
   ],
-  "generated": "2026-02-17T16:54:55Z"
+  "generated": "2026-02-17T18:05:07Z"
 }

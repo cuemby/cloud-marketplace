@@ -19,7 +19,7 @@ write_files:
     content: |
       #!/usr/bin/env bash
       export APP_NAME="wordpress"
-      export APP_VERSION="24.1.7"
+      export APP_VERSION="28.1.9"
       # Required parameters
       export PARAM_WORDPRESS_USERNAME="admin"
       export PARAM_WORDPRESS_PASSWORD="CHANGE_ME"
