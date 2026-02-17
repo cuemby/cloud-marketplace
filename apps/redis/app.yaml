@@ -1,0 +1,26 @@
+name: redis
+displayName: Redis
+description: In-memory data store used as a database, cache, message broker, and streaming engine.
+category: database
+icon: https://redis.io/wp-content/uploads/2024/04/Logotype.svg
+
+chart:
+  name: redis
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "25.2.0"
+
+requirements:
+  cpu: 1
+  memory: 2Gi
+  disk: 10Gi
+
+versions:
+  - "25.2.0"
+
+parameters:
+  - name: REDIS_PASSWORD
+    displayName: Redis Password
+    description: Password for Redis authentication
+    type: password
+    required: true
+    helmMapping: redis.auth.password

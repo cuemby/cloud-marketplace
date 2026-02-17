@@ -1,6 +1,131 @@
 {
   "apps": [
     {
+      "name": "postgresql",
+      "displayName": "PostgreSQL",
+      "description": "Open source object-relational database known for reliability and data integrity.",
+      "category": "database",
+      "icon": "https://dyltqmyl993wv.cloudfront.net/assets/stacks/postgresql/img/postgresql-stack-220x234.png",
+      "chart": {
+        "name": "postgresql",
+        "repository": "oci://registry-1.docker.io/bitnamicharts",
+        "version": "18.3.0"
+      },
+      "requirements": {
+        "cpu": 1,
+        "memory": "2Gi",
+        "disk": "20Gi"
+      },
+      "versions": [
+        "18.3.0"
+      ],
+      "parameters": [
+        {
+          "name": "POSTGRES_PASSWORD",
+          "displayName": "Admin Password",
+          "description": "Password for the postgres admin user",
+          "type": "password",
+          "required": true,
+          "helmMapping": "postgresql.auth.postgresPassword"
+        },
+        {
+          "name": "POSTGRES_USERNAME",
+          "displayName": "Custom Username",
+          "description": "Name for an optional custom user to create",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "helmMapping": "postgresql.auth.username"
+        },
+        {
+          "name": "POSTGRES_USER_PASSWORD",
+          "displayName": "Custom User Password",
+          "description": "Password for the optional custom user",
+          "type": "password",
+          "required": false,
+          "helmMapping": "postgresql.auth.password"
+        },
+        {
+          "name": "POSTGRES_DATABASE",
+          "displayName": "Database Name",
+          "description": "Name for an optional custom database to create",
+          "type": "string",
+          "required": false,
+          "default": "",
+          "helmMapping": "postgresql.auth.database"
+        }
+      ]
+    },
+    {
+      "name": "rabbitmq",
+      "displayName": "RabbitMQ",
+      "description": "Open source message broker for reliable, highly-available messaging scenarios.",
+      "category": "messaging",
+      "icon": "https://dyltqmyl993wv.cloudfront.net/assets/stacks/rabbitmq/img/rabbitmq-stack-220x234.png",
+      "chart": {
+        "name": "rabbitmq",
+        "repository": "oci://registry-1.docker.io/bitnamicharts",
+        "version": "16.0.14"
+      },
+      "requirements": {
+        "cpu": 1,
+        "memory": "2Gi",
+        "disk": "10Gi"
+      },
+      "versions": [
+        "16.0.14"
+      ],
+      "parameters": [
+        {
+          "name": "RABBITMQ_USERNAME",
+          "displayName": "Username",
+          "description": "RabbitMQ application username",
+          "type": "string",
+          "required": true,
+          "default": "user",
+          "helmMapping": "rabbitmq.auth.username"
+        },
+        {
+          "name": "RABBITMQ_PASSWORD",
+          "displayName": "Password",
+          "description": "RabbitMQ application password",
+          "type": "password",
+          "required": true,
+          "helmMapping": "rabbitmq.auth.password"
+        }
+      ]
+    },
+    {
+      "name": "redis",
+      "displayName": "Redis",
+      "description": "In-memory data store used as a database, cache, message broker, and streaming engine.",
+      "category": "database",
+      "icon": "https://redis.io/wp-content/uploads/2024/04/Logotype.svg",
+      "chart": {
+        "name": "redis",
+        "repository": "oci://registry-1.docker.io/bitnamicharts",
+        "version": "25.2.0"
+      },
+      "requirements": {
+        "cpu": 1,
+        "memory": "2Gi",
+        "disk": "10Gi"
+      },
+      "versions": [
+        "25.2.0"
+      ],
+      "parameters": [
+        {
+          "name": "REDIS_PASSWORD",
+          "displayName": "Redis Password",
+          "description": "Password for Redis authentication",
+          "type": "password",
+          "required": true,
+          "helmMapping": "redis.auth.password"
+        }
+      ]
+    },
+    {
       "name": "wordpress",
       "displayName": "WordPress",
       "description": "Open-source content management system for building websites, blogs, and applications.",
@@ -92,5 +217,5 @@
       ]
     }
   ],
-  "generated": "2026-02-17T18:05:07Z"
+  "generated": "2026-02-17T20:11:36Z"
 }
