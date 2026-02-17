@@ -29,12 +29,13 @@ run_healthcheck() {
     _check_service_endpoints "$namespace"
     log_info "Service endpoints verified."
 
-    # App-specific healthcheck hook
+    # App-specific healthcheck hook (sourced to inherit PARAM_* env vars)
     local app_dir="${APPS_DIR}/${app_name}"
     local hook="${app_dir}/hooks/healthcheck.sh"
     if [[ -f "$hook" ]]; then
         log_info "Running app-specific healthcheck..."
-        bash "$hook"
+        # shellcheck disable=SC1090
+        source "$hook"
         log_info "App-specific healthcheck passed."
     fi
 

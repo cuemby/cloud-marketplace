@@ -25,6 +25,12 @@ install_k3s() {
         log_fatal "Failed to download K3s installer from https://get.k3s.io"
     fi
 
+    # Copy Traefik Gateway API config (must exist before K3s starts)
+    local manifests_dir="/var/lib/rancher/k3s/server/manifests"
+    mkdir -p "$manifests_dir"
+    cp "${SCRIPT_DIR}/manifests/traefik-config.yaml" "$manifests_dir/"
+    log_info "Traefik Gateway API config installed."
+
     log_info "Running K3s installer..."
     # shellcheck disable=SC2086
     INSTALL_K3S_CHANNEL="$channel" \
@@ -42,6 +48,7 @@ install_k3s() {
 
     wait_for_k3s_node
     wait_for_coredns
+    wait_for_traefik
 
     log_info "K3s cluster is ready."
 }
@@ -67,6 +74,19 @@ _coredns_is_running() {
     running="$(kubectl get pods -n kube-system -l k8s-app=kube-dns \
         -o jsonpath='{.items[0].status.phase}' 2>/dev/null)"
     [[ "$running" == "Running" ]]
+}
+
+wait_for_traefik() {
+    log_info "Waiting for Traefik to be Running..."
+    retry_with_timeout "$TIMEOUT_K3S" "$RETRY_INTERVAL" _traefik_is_running
+}
+
+_traefik_is_running() {
+    local phase
+    phase="$(kubectl get pods -n kube-system \
+        -l app.kubernetes.io/name=traefik \
+        -o jsonpath='{.items[0].status.phase}' 2>/dev/null)"
+    [[ "$phase" == "Running" ]]
 }
 
 # Only run if executed directly (not sourced)

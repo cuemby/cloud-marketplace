@@ -183,6 +183,9 @@
         "repository": "oci://registry-1.docker.io/bitnamicharts",
         "version": "28.1.9"
       },
+      "ssl": {
+        "enabled": true
+      },
       "requirements": {
         "cpu": 2,
         "memory": "4Gi",
@@ -264,5 +267,5 @@
       ]
     }
   ],
-  "generated": "2026-02-17T20:22:57Z"
+  "generated": "2026-02-17T21:19:34Z"
 }

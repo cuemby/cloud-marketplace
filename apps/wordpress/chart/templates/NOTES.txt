@@ -2,14 +2,12 @@ Cuemby Cloud Marketplace — WordPress deployed!
 
 Access your WordPress site:
 
-  {{- if eq .Values.wordpress.service.type "NodePort" }}
-  HTTP:  http://<VM_IP>:{{ .Values.wordpress.service.nodePorts.http }}
-  HTTPS: https://<VM_IP>:{{ .Values.wordpress.service.nodePorts.https }}
-  {{- else }}
-  kubectl get svc -n {{ .Release.Namespace }}
-  {{- end }}
+  Site:  https://<HOSTNAME>  (see /var/log/cuemby/bootstrap.log for exact URL)
+  Admin: https://<HOSTNAME>/wp-admin
 
-Admin panel: http://<VM_IP>:{{ .Values.wordpress.service.nodePorts.http }}/wp-admin
+TLS certificate is provisioned by cert-manager (Let's Encrypt).
+It may take 60-120 seconds for the certificate to be issued.
 
-Check deployment status:
+Check status:
   cat /var/lib/cuemby/marketplace-state.json
+  kubectl describe certificate -n {{ .Release.Namespace }}

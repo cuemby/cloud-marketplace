@@ -1,0 +1,25 @@
+# traefik-config.yaml — HelmChartConfig to enable Gateway API in the K3s-bundled Traefik.
+# Placed at /var/lib/rancher/k3s/server/manifests/ before K3s starts.
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    providers:
+      kubernetesGateway:
+        enabled: true
+    gateway:
+      listeners:
+        web:
+          namespacePolicy: All
+        websecure:
+          namespacePolicy: All
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 200Mi

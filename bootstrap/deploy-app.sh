@@ -32,14 +32,14 @@ deploy_app() {
         values_args+=("-f" "$profile_values")
     fi
 
-    # Build --set flags from PARAM_* env vars
+    # Run pre-install hook FIRST (may export PARAM_* vars like WORDPRESS_HOSTNAME)
+    run_hook "$app_dir" "pre-install"
+
+    # Build --set flags from PARAM_* env vars (after pre-install hook)
     local set_args=()
     while IFS= read -r line; do
         [[ -n "$line" ]] && set_args+=("--set" "$line")
     done < <(build_set_args "$app_yaml")
-
-    # Run pre-install hook
-    run_hook "$app_dir" "pre-install"
 
     # Create namespace
     log_info "Creating namespace: ${namespace}"
@@ -152,6 +152,7 @@ build_set_args() {
 }
 
 # Run a lifecycle hook if it exists.
+# Hooks are sourced (not subshelled) so they can export PARAM_* variables.
 # Usage: run_hook <app_dir> <hook_name>
 run_hook() {
     local app_dir="$1"
@@ -160,7 +161,8 @@ run_hook() {
 
     if [[ -f "$hook_script" ]]; then
         log_info "Running ${hook_name} hook..."
-        bash "$hook_script"
+        # shellcheck disable=SC1090
+        source "$hook_script"
         log_info "${hook_name} hook completed."
     else
         log_debug "No ${hook_name} hook found, skipping."

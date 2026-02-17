@@ -32,8 +32,8 @@ readonly RETRY_BACKOFF_MAX=60
 readonly DEFAULT_K3S_CHANNEL="stable"
 readonly DEFAULT_HELM_VERSION="v3.17.0"
 
-# K3s flags
-readonly K3S_INSTALL_FLAGS="--disable=traefik --write-kubeconfig-mode=644"
+# K3s flags (Traefik enabled — serves as Gateway API controller)
+readonly K3S_INSTALL_FLAGS="--write-kubeconfig-mode=644"
 
 # Helm defaults
 readonly HELM_NAMESPACE_PREFIX="app-"
@@ -44,10 +44,19 @@ readonly HELM_WAIT="--wait"
 readonly DEFAULT_HTTP_NODEPORT=30080
 readonly DEFAULT_HTTPS_NODEPORT=30443
 
+# cert-manager
+readonly CERT_MANAGER_VERSION="${CERT_MANAGER_VERSION:-v1.17.0}"
+readonly CERT_MANAGER_NAMESPACE="cert-manager"
+readonly TIMEOUT_CERT_MANAGER=300
+readonly ACME_SERVER_PROD="https://acme-v02.api.letsencrypt.org/directory"
+readonly ACME_SERVER_STAGING="https://acme-staging-v02.api.letsencrypt.org/directory"
+readonly DEFAULT_ACME_SERVER="${ACME_SERVER_PROD}"
+
 # State machine phases
 readonly STATE_VALIDATING="validating"
 readonly STATE_PREPARING="preparing"
 readonly STATE_INSTALLING_K3S="installing_k3s"
+readonly STATE_INSTALLING_SSL="installing_ssl"
 readonly STATE_INSTALLING_HELM="installing_helm"
 readonly STATE_DEPLOYING="deploying"
 readonly STATE_HEALTHCHECK="healthcheck"

@@ -9,6 +9,9 @@ chart:
   repository: oci://registry-1.docker.io/bitnamicharts
   version: "28.1.9"
 
+ssl:
+  enabled: true
+
 requirements:
   cpu: 2
   memory: 4Gi

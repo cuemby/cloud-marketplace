@@ -2,12 +2,16 @@
 # These override the upstream bitnami/wordpress defaults for our environment.
 
 wordpress:
-  # Expose via NodePort (no ingress controller on K3s with Traefik disabled)
+  # ClusterIP — Traefik Gateway routes external traffic to WordPress
   service:
-    type: NodePort
-    nodePorts:
-      http: 30080
-      https: 30443
+    type: ClusterIP
+
+  # Tell WordPress it's behind HTTPS (Traefik terminates TLS)
+  wordpressScheme: https
+
+  # Disable built-in ingress — routing is via Gateway API
+  ingress:
+    enabled: false
 
   # Conservative resource requests for shared VMs
   resources:

@@ -6,7 +6,7 @@
 # or they will use the default values shown below.
 #
 # VM requirements: 2 CPU, 4 GB RAM, 20 GB disk, Ubuntu 22.04 LTS recommended.
-# Firewall: allow inbound TCP on ports 30080 (HTTP) and 30443 (HTTPS).
+# Firewall: allow inbound TCP on ports 80 (HTTP) and 443 (HTTPS).
 
 set -euo pipefail
 
@@ -29,6 +29,11 @@ export PARAM_MARIADB_PASSWORD="${PARAM_MARIADB_PASSWORD:?PARAM_MARIADB_PASSWORD 
 export PARAM_WORDPRESS_BLOG_NAME="${PARAM_WORDPRESS_BLOG_NAME:-My Cuemby Blog}"
 export PARAM_WORDPRESS_FIRST_NAME="${PARAM_WORDPRESS_FIRST_NAME:-Admin}"
 export PARAM_WORDPRESS_LAST_NAME="${PARAM_WORDPRESS_LAST_NAME:-User}"
+
+# SSL parameters (optional — hostname auto-detected via sslip.io if not set)
+export PARAM_WORDPRESS_HOSTNAME="${PARAM_WORDPRESS_HOSTNAME:-}"
+export ACME_EMAIL="${ACME_EMAIL:-${PARAM_WORDPRESS_EMAIL}}"
+export ACME_USE_STAGING="${ACME_USE_STAGING:-false}"
 
 # ── Deploy ───────────────────────────────────────────────────────────────────
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
