@@ -60,21 +60,21 @@ main() {
     install_k3s
     export KUBECONFIG="$KUBECONFIG_PATH"
 
-    # Phase 3.5: Install SSL infrastructure (if app requires it)
-    local ssl_enabled
-    ssl_enabled="$(yq -r '.ssl.enabled // false' "${APPS_DIR}/${APP_NAME}/app.yaml")"
-    if [[ "${ssl_enabled}" == "true" ]]; then
-        write_state "$STATE_INSTALLING_SSL"
-        log_section "Phase 3.5: Installing SSL infrastructure"
-        source "${SCRIPT_DIR}/install-ssl.sh"
-        install_ssl
-    fi
-
     # Phase 4: Install Helm
     write_state "$STATE_INSTALLING_HELM"
     log_section "Phase 4: Installing Helm"
     source "${SCRIPT_DIR}/install-helm.sh"
     install_helm
+
+    # Phase 4.5: Install SSL infrastructure (requires Helm from Phase 4)
+    local ssl_enabled
+    ssl_enabled="$(yq -r '.ssl.enabled // false' "${APPS_DIR}/${APP_NAME}/app.yaml")"
+    if [[ "${ssl_enabled}" == "true" ]]; then
+        write_state "$STATE_INSTALLING_SSL"
+        log_section "Phase 4.5: Installing SSL infrastructure"
+        source "${SCRIPT_DIR}/install-ssl.sh"
+        install_ssl
+    fi
 
     # Phase 5: Deploy application
     write_state "$STATE_DEPLOYING"
