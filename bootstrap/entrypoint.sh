@@ -37,21 +37,21 @@ main() {
     log_info "App: ${APP_NAME:-<not set>}"
     log_info "Version: ${APP_VERSION:-<default>}"
 
-    # Phase 1: Validate inputs
+    # Phase 1: System preparation (network + dependencies first, yq needed for validation)
+    write_state "$STATE_PREPARING"
+    log_section "Phase 1: Preparing system"
+    wait_for_network
+    ensure_dependencies
+    log_info "System preparation complete."
+
+    # Phase 2: Validate inputs (requires yq from Phase 1)
     write_state "$STATE_VALIDATING"
-    log_section "Phase 1: Validating inputs"
+    log_section "Phase 2: Validating inputs"
     validate_required_env APP_NAME
     validate_app_exists "$APP_NAME"
     validate_app_version "$APP_NAME" "${APP_VERSION:-}"
     validate_parameters "$APP_NAME"
     log_info "Input validation passed."
-
-    # Phase 2: System preparation
-    write_state "$STATE_PREPARING"
-    log_section "Phase 2: Preparing system"
-    wait_for_network
-    ensure_dependencies
-    log_info "System preparation complete."
 
     # Phase 3: Install K3s
     write_state "$STATE_INSTALLING_K3S"

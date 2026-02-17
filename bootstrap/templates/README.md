@@ -41,7 +41,7 @@ The bootstrap writes progress to `/var/lib/cuemby/marketplace-state.json`. The U
 ### State Machine
 
 ```
-validating → preparing → installing_k3s → installing_helm → deploying → healthcheck → ready
+preparing → validating → installing_k3s → installing_helm → deploying → healthcheck → ready
                                                                                      ↘ error
 ```
 

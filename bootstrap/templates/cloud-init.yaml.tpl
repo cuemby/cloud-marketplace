@@ -24,10 +24,5 @@ write_files:
       {{ /each }}
 
 runcmd:
-  # Clone the marketplace repo
   - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
-
-  # Source environment and run bootstrap
-  - source /opt/cuemby/marketplace-env.sh
-  - chmod +x /opt/cuemby/marketplace/bootstrap/entrypoint.sh
-  - /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

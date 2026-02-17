@@ -112,7 +112,7 @@ ssh user@<VM_IP> 'tail -f /var/log/cuemby/bootstrap.log'
 The deployment progresses through these phases:
 
 ```text
-validating → preparing → installing_k3s → installing_helm → deploying → healthcheck → ready
+preparing → validating → installing_k3s → installing_helm → deploying → healthcheck → ready
 ```
 
 A successful deployment ends with:
@@ -213,7 +213,7 @@ The bootstrap accepts parameters as `PARAM_*` environment variables. These are m
 The bootstrap writes progress to `/var/lib/cuemby/marketplace-state.json`:
 
 ```
-validating → preparing → installing_k3s → installing_helm → deploying → healthcheck → ready
+preparing → validating → installing_k3s → installing_helm → deploying → healthcheck → ready
 ```
 
 Each state includes timestamp, app name, version, and error details if applicable. The UI polls this file to show deployment progress.
