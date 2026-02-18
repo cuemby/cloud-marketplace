@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coolify-redis
+  labels:
+    app.kubernetes.io/name: coolify
+    app.kubernetes.io/component: cache
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: coolify
+      app.kubernetes.io/component: cache
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: coolify
+        app.kubernetes.io/component: cache
+    spec:
+      containers:
+        - name: redis
+          image: docker.io/library/redis:7-alpine
+          command:
+            - redis-server
+            - --appendonly
+            - "yes"
+            - --requirepass
+            - $(REDIS_PASSWORD)
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: coolify-app-secret
+                  key: REDIS_PASSWORD
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - redis-cli -a "$REDIS_PASSWORD" ping | grep -q PONG
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 15
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - redis-cli -a "$REDIS_PASSWORD" ping | grep -q PONG
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - redis-cli -a "$REDIS_PASSWORD" ping | grep -q PONG
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_COOLIFY_REDIS_CPU_REQUEST}
+              memory: ${PARAM_COOLIFY_REDIS_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_COOLIFY_REDIS_CPU_LIMIT}
+              memory: ${PARAM_COOLIFY_REDIS_MEMORY_LIMIT}
+      volumes:
+        - name: redis-data
+          persistentVolumeClaim:
+            claimName: coolify-redis-data

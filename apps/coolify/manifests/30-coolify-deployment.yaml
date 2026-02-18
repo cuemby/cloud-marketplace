@@ -1,0 +1,102 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coolify
+  labels:
+    app.kubernetes.io/name: coolify
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: coolify
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: coolify
+        app.kubernetes.io/component: app
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL at coolify-postgres:5432..."
+              until nc -z coolify-postgres 5432; do
+                echo "PostgreSQL not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "PostgreSQL is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: coolify
+          image: "ghcr.io/coollabsio/coolify:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - name: ui
+              containerPort: 8080
+              protocol: TCP
+            - name: http
+              containerPort: 80
+              hostPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              hostPort: 443
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: coolify-app-secret
+            - configMapRef:
+                name: coolify-config
+          volumeMounts:
+            - name: coolify-data
+              mountPath: /data
+            - name: docker-socket
+              mountPath: /var/run/docker.sock
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_COOLIFY_CPU_REQUEST}
+              memory: ${PARAM_COOLIFY_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_COOLIFY_CPU_LIMIT}
+              memory: ${PARAM_COOLIFY_MEMORY_LIMIT}
+      volumes:
+        - name: coolify-data
+          persistentVolumeClaim:
+            claimName: coolify-data
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock

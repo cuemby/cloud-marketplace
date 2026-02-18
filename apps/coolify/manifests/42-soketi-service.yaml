@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: coolify-soketi
+  labels:
+    app.kubernetes.io/name: coolify
+    app.kubernetes.io/component: websocket
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: coolify
+    app.kubernetes.io/component: websocket
+  ports:
+    - port: 6001
+      targetPort: 6001
+      protocol: TCP

@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coolify-config
+  labels:
+    app.kubernetes.io/name: coolify
+    app.kubernetes.io/component: app
+data:
+  APP_ENV: "production"
+  APP_NAME: "Coolify"
+  APP_PORT: "8080"
+  PHP_MEMORY_LIMIT: "256M"
+  PUSHER_HOST: "coolify-soketi"
+  PUSHER_PORT: "6001"

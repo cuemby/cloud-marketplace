@@ -84,6 +84,93 @@
       ]
     },
     {
+      "name": "coolify",
+      "displayName": "Coolify",
+      "description": "Open-source self-hosted PaaS alternative to Heroku, Netlify, and Vercel.",
+      "category": "devops",
+      "icon": "https://coolify.io/favicon.png",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "50Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "latest",
+          "imageTag": "latest",
+          "default": true
+        }
+      ],
+      "parameters": [
+        {
+          "name": "COOLIFY_DB_PASSWORD",
+          "displayName": "Database Password",
+          "description": "PostgreSQL password for Coolify database (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "COOLIFY_REDIS_PASSWORD",
+          "displayName": "Redis Password",
+          "description": "Redis password for session and cache store (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "COOLIFY_APP_KEY",
+          "displayName": "Application Key",
+          "description": "Laravel APP_KEY for encryption (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "COOLIFY_PUSHER_APP_ID",
+          "displayName": "Pusher App ID",
+          "description": "Soketi WebSocket app ID",
+          "type": "string",
+          "required": false,
+          "default": "coolify"
+        },
+        {
+          "name": "COOLIFY_PUSHER_APP_KEY",
+          "displayName": "Pusher App Key",
+          "description": "Soketi WebSocket app key (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "COOLIFY_PUSHER_APP_SECRET",
+          "displayName": "Pusher App Secret",
+          "description": "Soketi WebSocket app secret (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "COOLIFY_DB_DATA_SIZE",
+          "displayName": "Database Storage Size",
+          "description": "Size of persistent volume for PostgreSQL data",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        },
+        {
+          "name": "COOLIFY_DATA_SIZE",
+          "displayName": "Coolify Storage Size",
+          "description": "Size of persistent volume for Coolify application data",
+          "type": "string",
+          "required": false,
+          "default": "20Gi"
+        }
+      ]
+    },
+    {
       "name": "postgresql",
       "displayName": "PostgreSQL",
       "description": "Open-source relational database known for reliability, extensibility, and SQL compliance.",
@@ -272,5 +359,5 @@
       ]
     }
   ],
-  "generated": "2026-02-18T21:26:49Z"
+  "generated": "2026-02-18T22:42:45Z"
 }

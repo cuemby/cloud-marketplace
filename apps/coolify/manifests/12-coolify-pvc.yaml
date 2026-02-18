@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: coolify-data
+  labels:
+    app.kubernetes.io/name: coolify
+    app.kubernetes.io/component: app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: "${PARAM_COOLIFY_DATA_SIZE}"
