@@ -3,7 +3,7 @@ name: cuemby-discourse
 description: Cuemby wrapper chart for Discourse (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "3.4.2"
+appVersion: "3.5.0"
 
 dependencies:
   - name: discourse

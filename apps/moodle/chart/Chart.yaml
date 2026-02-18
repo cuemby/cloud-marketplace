@@ -3,7 +3,7 @@ name: cuemby-moodle
 description: Cuemby wrapper chart for Moodle (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "4.5.2"
+appVersion: "5.0.2"
 
 dependencies:
   - name: moodle

@@ -3,7 +3,7 @@ name: cuemby-cassandra
 description: Cuemby wrapper chart for Cassandra (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "5.0.4"
+appVersion: "5.0.5"
 
 dependencies:
   - name: cassandra

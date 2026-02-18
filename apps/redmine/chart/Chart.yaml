@@ -3,7 +3,7 @@ name: cuemby-redmine
 description: Cuemby wrapper chart for Redmine (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "6.0.3"
+appVersion: "6.0.6"
 
 dependencies:
   - name: redmine

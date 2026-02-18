@@ -10,7 +10,7 @@ neo4j:
   boltService:
     type: NodePort
     nodePorts:
-      bolt: 30687
+      bolt: "30687"
 
   # Disable built-in ingress — routing is via Gateway API
   ingress:

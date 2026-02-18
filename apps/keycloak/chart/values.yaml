@@ -17,8 +17,8 @@ keycloak:
       http: 80
       https: 443
     nodePorts:
-      http: 30880
-      https: 30843
+      http: "30880"
+      https: "30843"
 
   # Conservative resource requests for shared VMs
   resources:

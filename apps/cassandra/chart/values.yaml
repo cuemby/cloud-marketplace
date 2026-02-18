@@ -13,7 +13,7 @@ cassandra:
   service:
     type: NodePort
     nodePorts:
-      cql: 30942
+      cql: "30942"
 
   # Conservative resources
   resources:

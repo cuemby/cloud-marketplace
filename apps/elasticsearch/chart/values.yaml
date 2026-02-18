@@ -48,7 +48,7 @@ elasticsearch:
   service:
     type: NodePort
     nodePorts:
-      restAPI: 30920
+      restAPI: "30920"
 
   # Security
   security:

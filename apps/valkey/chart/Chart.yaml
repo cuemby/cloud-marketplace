@@ -3,7 +3,7 @@ name: cuemby-valkey
 description: Cuemby wrapper chart for Valkey (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "8.1.1"
+appVersion: "9.0.2"
 
 dependencies:
   - name: valkey

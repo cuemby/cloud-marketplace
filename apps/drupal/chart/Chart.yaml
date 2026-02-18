@@ -3,7 +3,7 @@ name: cuemby-drupal
 description: Cuemby wrapper chart for Drupal (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "11.1.7"
+appVersion: "11.2.3"
 
 dependencies:
   - name: drupal

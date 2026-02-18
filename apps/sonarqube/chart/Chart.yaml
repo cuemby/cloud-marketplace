@@ -3,7 +3,7 @@ name: cuemby-sonarqube
 description: Cuemby wrapper chart for SonarQube (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "25.1.0"
+appVersion: "25.8.0"
 
 dependencies:
   - name: sonarqube

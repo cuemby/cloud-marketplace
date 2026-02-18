@@ -3,7 +3,7 @@ name: cuemby-nats
 description: Cuemby wrapper chart for NATS (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "2.11.1"
+appVersion: "2.11.8"
 
 dependencies:
   - name: nats

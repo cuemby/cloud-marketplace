@@ -3,7 +3,7 @@ name: cuemby-superset
 description: Cuemby wrapper chart for Superset (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "4.1.2"
+appVersion: "5.0.0"
 
 dependencies:
   - name: superset

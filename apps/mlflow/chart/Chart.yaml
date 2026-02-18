@@ -3,7 +3,7 @@ name: cuemby-mlflow
 description: Cuemby wrapper chart for MLflow (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "2.20.2"
+appVersion: "3.3.2"
 
 dependencies:
   - name: mlflow

@@ -15,7 +15,7 @@ etcd:
   service:
     type: NodePort
     nodePorts:
-      client: 30239
+      client: "30239"
 
   # Conservative resource requests for shared VMs
   resources:

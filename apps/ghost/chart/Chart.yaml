@@ -3,7 +3,7 @@ name: cuemby-ghost
 description: Cuemby wrapper chart for Ghost (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "5.113.2"
+appVersion: "6.0.5"
 
 dependencies:
   - name: ghost

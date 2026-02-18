@@ -3,7 +3,7 @@ name: cuemby-jupyterhub
 description: Cuemby wrapper chart for JupyterHub (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "5.2.1"
+appVersion: "5.3.0"
 
 dependencies:
   - name: jupyterhub

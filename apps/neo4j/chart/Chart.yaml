@@ -3,7 +3,7 @@ name: cuemby-neo4j
 description: Cuemby wrapper chart for Neo4j (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "5.26.3"
+appVersion: "5.26.11"
 
 dependencies:
   - name: neo4j

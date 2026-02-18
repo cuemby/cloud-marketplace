@@ -3,7 +3,7 @@ name: cuemby-matomo
 description: Cuemby wrapper chart for Matomo (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "5.3.1"
+appVersion: "5.3.2"
 
 dependencies:
   - name: matomo

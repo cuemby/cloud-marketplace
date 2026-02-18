@@ -3,7 +3,7 @@ name: cuemby-elasticsearch
 description: Cuemby wrapper chart for Elasticsearch (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "8.17.0"
+appVersion: "9.1.2"
 
 dependencies:
   - name: elasticsearch

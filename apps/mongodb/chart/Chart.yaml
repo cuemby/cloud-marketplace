@@ -3,7 +3,7 @@ name: cuemby-mongodb
 description: Cuemby wrapper chart for MongoDB (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "8.0.9"
+appVersion: "8.2.5"
 
 dependencies:
   - name: mongodb

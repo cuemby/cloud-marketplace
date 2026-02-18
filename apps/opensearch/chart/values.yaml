@@ -44,7 +44,7 @@ opensearch:
   service:
     type: NodePort
     nodePorts:
-      restAPI: 30921
+      restAPI: "30921"
 
   security:
     enabled: true

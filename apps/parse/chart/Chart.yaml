@@ -3,7 +3,7 @@ name: cuemby-parse
 description: Cuemby wrapper chart for Parse (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "7.4.0"
+appVersion: "8.2.3"
 
 dependencies:
   - name: parse

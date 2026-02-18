@@ -13,7 +13,7 @@ nats:
     service:
       type: NodePort
       nodePorts:
-        client: 30222
+        client: "30222"
 
   # Conservative resource requests for shared VMs
   resources:

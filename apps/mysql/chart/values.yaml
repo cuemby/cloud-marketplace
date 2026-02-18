@@ -11,7 +11,7 @@ mysql:
     service:
       type: NodePort
       nodePorts:
-        mysql: 30306
+        mysql: "30306"
 
     # Conservative resource requests for shared VMs
     resources:

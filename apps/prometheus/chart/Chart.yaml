@@ -3,7 +3,7 @@ name: cuemby-prometheus
 description: Cuemby wrapper chart for Prometheus (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "3.2.1"
+appVersion: "3.5.0"
 
 dependencies:
   - name: prometheus

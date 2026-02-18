@@ -52,7 +52,7 @@ kafka:
   service:
     type: NodePort
     nodePorts:
-      client: 30092
+      client: "30092"
 
   metrics:
     kafka:

@@ -3,7 +3,7 @@ name: cuemby-minio
 description: Cuemby wrapper chart for MinIO (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "2025.2.18"
+appVersion: "2025.7.23"
 
 dependencies:
   - name: minio

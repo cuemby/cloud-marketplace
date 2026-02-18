@@ -11,7 +11,7 @@ postgresql:
     service:
       type: NodePort
       nodePorts:
-        postgresql: 30432
+        postgresql: "30432"
 
     # Conservative resource requests for shared VMs
     resources:

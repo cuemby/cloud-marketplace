@@ -3,7 +3,7 @@ name: cuemby-mariadb
 description: Cuemby wrapper chart for MariaDB (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "11.7.2"
+appVersion: "12.2.2"
 
 dependencies:
   - name: mariadb

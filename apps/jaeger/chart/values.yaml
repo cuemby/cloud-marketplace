@@ -35,7 +35,7 @@ jaeger:
     service:
       type: NodePort
       nodePorts:
-        grpc: 31468
+        grpc: "31468"
     resources:
       requests:
         cpu: 100m

@@ -10,8 +10,8 @@ clickhouse:
   service:
     type: NodePort
     nodePorts:
-      http: 30123
-      tcp: 30901
+      http: "30123"
+      tcp: "30901"
 
   resources:
     requests:

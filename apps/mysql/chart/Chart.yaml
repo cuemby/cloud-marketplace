@@ -3,7 +3,7 @@ name: cuemby-mysql
 description: Cuemby wrapper chart for MySQL (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "8.4.4"
+appVersion: "9.4.0"
 
 dependencies:
   - name: mysql

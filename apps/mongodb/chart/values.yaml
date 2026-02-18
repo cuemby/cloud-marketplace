@@ -13,7 +13,7 @@ mongodb:
   service:
     type: NodePort
     nodePorts:
-      mongodb: 30017
+      mongodb: "30017"
 
   # Conservative resource requests for shared VMs
   resources:

@@ -11,7 +11,7 @@ mariadb:
     service:
       type: NodePort
       nodePorts:
-        mysql: 30307
+        mysql: "30307"
 
     # Conservative resource requests for shared VMs
     resources:

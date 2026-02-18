@@ -3,7 +3,7 @@ name: cuemby-concourse
 description: Cuemby wrapper chart for Concourse (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "7.12.1"
+appVersion: "7.13.2"
 
 dependencies:
   - name: concourse

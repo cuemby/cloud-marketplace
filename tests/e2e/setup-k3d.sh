@@ -17,7 +17,20 @@ k3d cluster create "$CLUSTER_NAME" \
 # Wait for node readiness
 kubectl wait --for=condition=Ready nodes --all --timeout=120s
 
-# Wait for CoreDNS
+# Wait for CoreDNS pods to exist, then wait for readiness
+echo "Waiting for CoreDNS pods to be created..."
+for i in $(seq 1 30); do
+    if kubectl get pods -n kube-system -l k8s-app=kube-dns --no-headers 2>/dev/null | grep -q .; then
+        break
+    fi
+    if [[ $i -eq 30 ]]; then
+        echo "ERROR: CoreDNS pods were not created after 60s"
+        kubectl get pods -n kube-system || true
+        exit 1
+    fi
+    sleep 2
+done
+
 kubectl wait --for=condition=Ready pod \
     -l k8s-app=kube-dns \
     -n kube-system \

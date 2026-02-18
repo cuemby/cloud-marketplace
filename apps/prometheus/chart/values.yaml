@@ -8,7 +8,7 @@ prometheus:
     service:
       type: NodePort
       nodePorts:
-        http: 30090
+        http: "30090"
 
     resources:
       requests:

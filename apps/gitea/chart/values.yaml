@@ -11,7 +11,7 @@ gitea:
     service:
       type: NodePort
       nodePorts:
-        ssh: 30022
+        ssh: "30022"
 
   # Disable built-in ingress — routing is via Gateway API
   ingress:

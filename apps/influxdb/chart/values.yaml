@@ -9,7 +9,7 @@ influxdb:
   service:
     type: NodePort
     nodePorts:
-      http: 30086
+      http: "30086"
 
   # Conservative resources
   resources:

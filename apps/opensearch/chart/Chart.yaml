@@ -3,7 +3,7 @@ name: cuemby-opensearch
 description: Cuemby wrapper chart for OpenSearch (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "2.19.0"
+appVersion: "3.2.0"
 
 dependencies:
   - name: opensearch

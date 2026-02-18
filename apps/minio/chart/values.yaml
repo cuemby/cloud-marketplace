@@ -13,7 +13,7 @@ minio:
   apiService:
     type: NodePort
     nodePorts:
-      api: 30900
+      api: "30900"
 
   # Disable built-in ingress — routing is via Gateway API
   ingress:

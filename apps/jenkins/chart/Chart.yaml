@@ -3,7 +3,7 @@ name: cuemby-jenkins
 description: Cuemby wrapper chart for Jenkins (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "2.504.1"
+appVersion: "2.516.2"
 
 dependencies:
   - name: jenkins

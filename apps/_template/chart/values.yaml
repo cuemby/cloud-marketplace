@@ -5,7 +5,7 @@ APPNAME:
   service:
     type: NodePort
     nodePorts:
-      http: 30080
+      http: "30080"
 
   resources:
     requests:

@@ -15,7 +15,7 @@ valkey:
     service:
       type: NodePort
       nodePorts:
-        valkey: 30637
+        valkey: "30637"
 
     # Conservative resource requests for shared VMs
     resources:

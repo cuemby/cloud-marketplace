@@ -3,7 +3,7 @@ name: cuemby-kafka
 description: Cuemby wrapper chart for Kafka (Bitnami upstream)
 type: application
 version: 1.0.0
-appVersion: "3.9.0"
+appVersion: "4.0.0"
 
 dependencies:
   - name: kafka
