@@ -1,6 +1,97 @@
 {
   "apps": [
     {
+      "name": "postgresql",
+      "displayName": "PostgreSQL",
+      "description": "Open-source relational database known for reliability, extensibility, and SQL compliance.",
+      "category": "database",
+      "icon": "https://wiki.postgresql.org/images/a/a4/PostgreSQL_logo.3colors.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "30Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "17.8",
+          "imageTag": "17.8-alpine",
+          "default": true
+        },
+        {
+          "appVersion": "16.12",
+          "imageTag": "16.12-alpine"
+        },
+        {
+          "appVersion": "15.16",
+          "imageTag": "15.16-alpine"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "POSTGRES_PASSWORD",
+          "displayName": "Superuser Password",
+          "description": "PostgreSQL superuser password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "POSTGRES_USER",
+          "displayName": "Superuser Username",
+          "description": "PostgreSQL superuser username",
+          "type": "string",
+          "required": false,
+          "default": "postgres"
+        },
+        {
+          "name": "POSTGRES_DB",
+          "displayName": "Default Database",
+          "description": "Name of the default database created on first start",
+          "type": "string",
+          "required": false,
+          "default": "postgres"
+        },
+        {
+          "name": "POSTGRESQL_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for PostgreSQL data",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        },
+        {
+          "name": "POSTGRESQL_MAX_CONNECTIONS",
+          "displayName": "Max Connections",
+          "description": "Maximum number of concurrent client connections",
+          "type": "string",
+          "required": false,
+          "default": "100"
+        },
+        {
+          "name": "POSTGRESQL_SHARED_BUFFERS",
+          "displayName": "Shared Buffers",
+          "description": "Amount of memory for shared buffer cache",
+          "type": "string",
+          "required": false,
+          "default": "256MB"
+        },
+        {
+          "name": "POSTGRESQL_WORK_MEM",
+          "displayName": "Work Memory",
+          "description": "Memory per query operation (sorts, hashes)",
+          "type": "string",
+          "required": false,
+          "default": "4MB"
+        }
+      ]
+    },
+    {
       "name": "wordpress",
       "displayName": "WordPress",
       "description": "Open-source content management system for building websites, blogs, and applications.",
@@ -98,5 +189,5 @@
       ]
     }
   ],
-  "generated": "2026-02-18T20:27:21Z"
+  "generated": "2026-02-18T20:51:42Z"
 }

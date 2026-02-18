@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-config
+  labels:
+    app.kubernetes.io/name: postgresql
+    app.kubernetes.io/component: database
+data:
+  POSTGRESQL_MAX_CONNECTIONS: "${PARAM_POSTGRESQL_MAX_CONNECTIONS}"
+  POSTGRESQL_SHARED_BUFFERS: "${PARAM_POSTGRESQL_SHARED_BUFFERS}"
+  POSTGRESQL_WORK_MEM: "${PARAM_POSTGRESQL_WORK_MEM}"
