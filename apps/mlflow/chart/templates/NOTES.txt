@@ -1,0 +1,12 @@
+Cuemby Cloud Marketplace — MLflow deployed!
+
+Access MLflow Tracking Server:
+
+  https://{{ .Release.Name }}.sslip.io
+
+TLS certificate is provisioned by cert-manager (Let's Encrypt).
+It may take 60-120 seconds for the certificate to be issued.
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json
+  kubectl describe certificate -n {{ .Release.Namespace }}

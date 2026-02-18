@@ -1,0 +1,56 @@
+# Cuemby defaults for etcd on single-node K3s.
+# These override the upstream bitnami/etcd defaults for our environment.
+
+etcd:
+  # Single-node deployment
+  replicaCount: 1
+
+  # Authentication (password set via PARAM_ETCD_ROOT_PASSWORD)
+  auth:
+    rbac:
+      create: true
+      allowNoneAuthentication: false
+
+  # Expose via NodePort
+  service:
+    type: NodePort
+    nodePorts:
+      client: 30239
+
+  # Conservative resource requests for shared VMs
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Use K3s default StorageClass
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 8Gi
+
+  # Tuned probes for slower VM startup
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 15
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 20
+    successThreshold: 1
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+
+  # Disable metrics by default
+  metrics:
+    enabled: false

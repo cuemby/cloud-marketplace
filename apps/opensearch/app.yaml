@@ -1,0 +1,26 @@
+name: opensearch
+displayName: OpenSearch
+description: Open source search and analytics suite derived from Elasticsearch with built-in dashboards.
+category: search
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/opensearch/img/opensearch-stack-220x234.png
+
+chart:
+  name: opensearch
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "2.0.10"
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+
+versions:
+  - "2.0.10"
+
+parameters:
+  - name: OPENSEARCH_PASSWORD
+    displayName: Admin Password
+    description: Password for the OpenSearch admin user
+    type: password
+    required: true
+    helmMapping: opensearch.security.adminPassword

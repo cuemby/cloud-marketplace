@@ -1,0 +1,23 @@
+# Minimal profile for small VMs (2 CPU / 4 GB RAM).
+
+sonarqube:
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  persistence:
+    size: 5Gi
+  postgresql:
+    primary:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+      persistence:
+        size: 4Gi

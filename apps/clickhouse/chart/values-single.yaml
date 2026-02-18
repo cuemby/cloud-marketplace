@@ -1,0 +1,12 @@
+# Minimal profile for small VMs (2 CPU / 4 GB RAM).
+
+clickhouse:
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+  persistence:
+    size: 10Gi

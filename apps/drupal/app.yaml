@@ -1,0 +1,58 @@
+name: drupal
+displayName: Drupal
+description: Flexible and extensible open source content management platform for ambitious digital experiences.
+category: cms
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/drupal/img/drupal-stack-220x234.png
+
+chart:
+  name: drupal
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "23.0.0"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "23.0.0"
+
+parameters:
+  - name: DRUPAL_USERNAME
+    displayName: Admin Username
+    description: Drupal administrator username
+    type: string
+    required: true
+    default: admin
+    helmMapping: drupal.drupalUsername
+
+  - name: DRUPAL_PASSWORD
+    displayName: Admin Password
+    description: Drupal administrator password
+    type: password
+    required: true
+    helmMapping: drupal.drupalPassword
+
+  - name: DRUPAL_EMAIL
+    displayName: Admin Email
+    description: Drupal administrator email address
+    type: string
+    required: true
+    helmMapping: drupal.drupalEmail
+
+  - name: MARIADB_ROOT_PASSWORD
+    displayName: MariaDB Root Password
+    description: Root password for the bundled MariaDB database
+    type: password
+    required: true
+    helmMapping: drupal.mariadb.auth.rootPassword
+
+  - name: MARIADB_PASSWORD
+    displayName: MariaDB User Password
+    description: User password for the bundled MariaDB database
+    type: password
+    required: true
+    helmMapping: drupal.mariadb.auth.password

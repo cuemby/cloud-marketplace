@@ -1,0 +1,13 @@
+# Minimal profile for small VMs (1 CPU / 2 GB RAM).
+
+vault:
+  server:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
+    persistence:
+      size: 4Gi

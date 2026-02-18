@@ -1,0 +1,9 @@
+Cuemby Cloud Marketplace — ClickHouse deployed!
+
+Connect to ClickHouse:
+
+  HTTP: curl http://<VM_IP>:30123/?query=SELECT+1
+  Native: clickhouse-client --host <VM_IP> --port 30901 --user default --password <password>
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

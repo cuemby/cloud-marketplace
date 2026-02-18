@@ -1,0 +1,57 @@
+name: influxdb
+displayName: InfluxDB
+description: Purpose-built time series database for real-time analytics and IoT workloads.
+category: database
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/influxdb/img/influxdb-stack-220x234.png
+
+chart:
+  name: influxdb
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "7.1.20"
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "7.1.20"
+
+parameters:
+  - name: INFLUXDB_ADMIN_USER
+    displayName: Admin Username
+    description: InfluxDB administrator username
+    type: string
+    required: true
+    default: admin
+    helmMapping: influxdb.auth.admin.username
+
+  - name: INFLUXDB_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: InfluxDB administrator password
+    type: password
+    required: true
+    helmMapping: influxdb.auth.admin.password
+
+  - name: INFLUXDB_ADMIN_TOKEN
+    displayName: Admin API Token
+    description: InfluxDB admin API authentication token
+    type: password
+    required: true
+    helmMapping: influxdb.auth.admin.token
+
+  - name: INFLUXDB_ADMIN_ORG
+    displayName: Organization
+    description: Default InfluxDB organization name
+    type: string
+    required: false
+    default: "cuemby"
+    helmMapping: influxdb.auth.admin.org
+
+  - name: INFLUXDB_ADMIN_BUCKET
+    displayName: Default Bucket
+    description: Default InfluxDB storage bucket name
+    type: string
+    required: false
+    default: "default"
+    helmMapping: influxdb.auth.admin.bucket

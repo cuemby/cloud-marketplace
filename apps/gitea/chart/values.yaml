@@ -1,0 +1,73 @@
+# Cuemby defaults for Gitea on single-node K3s.
+# These override the upstream bitnami/gitea defaults for our environment.
+
+gitea:
+  # ClusterIP for HTTP — Traefik Gateway routes external HTTPS traffic
+  service:
+    type: ClusterIP
+
+  # SSH via NodePort for git clone over SSH
+  ssh:
+    service:
+      type: NodePort
+      nodePorts:
+        ssh: 30022
+
+  # Disable built-in ingress — routing is via Gateway API
+  ingress:
+    enabled: false
+
+  # Conservative resource requests for shared VMs
+  resources:
+    requests:
+      cpu: 300m
+      memory: 512Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  # Use K3s default StorageClass
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+  # Tuned probes for slower VM startup
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+    successThreshold: 1
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+
+  # Bundled PostgreSQL
+  postgresql:
+    enabled: true
+    architecture: standalone
+    primary:
+      persistence:
+        enabled: true
+        storageClass: local-path
+        size: 8Gi
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+
+  # Disable metrics by default
+  metrics:
+    enabled: false

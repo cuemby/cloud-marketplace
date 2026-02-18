@@ -1,0 +1,66 @@
+name: discourse
+displayName: Discourse
+description: Modern open source community discussion platform with real-time chat and rich formatting.
+category: collaboration
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/discourse/img/discourse-stack-220x234.png
+
+chart:
+  name: discourse
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "17.0.1"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "17.0.1"
+
+parameters:
+  - name: DISCOURSE_USERNAME
+    displayName: Admin Username
+    description: Discourse administrator username
+    type: string
+    required: true
+    default: admin
+    helmMapping: discourse.discourse.username
+
+  - name: DISCOURSE_PASSWORD
+    displayName: Admin Password
+    description: Discourse administrator password
+    type: password
+    required: true
+    helmMapping: discourse.discourse.password
+
+  - name: DISCOURSE_EMAIL
+    displayName: Admin Email
+    description: Discourse administrator email address
+    type: string
+    required: true
+    helmMapping: discourse.discourse.email
+
+  - name: DISCOURSE_SITE_NAME
+    displayName: Site Name
+    description: Discourse site name
+    type: string
+    required: false
+    default: "My Discourse"
+    helmMapping: discourse.discourse.siteName
+
+  - name: DISCOURSE_POSTGRES_PASSWORD
+    displayName: PostgreSQL Password
+    description: Password for the bundled PostgreSQL database
+    type: password
+    required: true
+    helmMapping: discourse.postgresql.auth.password
+
+  - name: DISCOURSE_REDIS_PASSWORD
+    displayName: Redis Password
+    description: Password for the bundled Redis instance
+    type: password
+    required: true
+    helmMapping: discourse.redis.auth.password

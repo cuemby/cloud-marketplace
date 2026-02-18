@@ -1,0 +1,9 @@
+Cuemby Cloud Marketplace — Parse deployed!
+
+Access Parse:
+
+  Dashboard: https://{{ .Release.Name }}.sslip.io/dashboard
+  API:       https://{{ .Release.Name }}.sslip.io/parse
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

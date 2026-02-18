@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-drupal
+description: Cuemby wrapper chart for Drupal (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "11.1.7"
+
+dependencies:
+  - name: drupal
+    version: "23.0.0"
+    repository: oci://registry-1.docker.io/bitnamicharts

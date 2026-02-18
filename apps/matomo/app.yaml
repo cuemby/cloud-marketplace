@@ -1,0 +1,58 @@
+name: matomo
+displayName: Matomo
+description: Privacy-focused open source web analytics platform, alternative to Google Analytics.
+category: analytics
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/matomo/img/matomo-stack-220x234.png
+
+chart:
+  name: matomo
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "11.0.0"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "11.0.0"
+
+parameters:
+  - name: MATOMO_USERNAME
+    displayName: Admin Username
+    description: Matomo administrator username
+    type: string
+    required: true
+    default: admin
+    helmMapping: matomo.matomoUsername
+
+  - name: MATOMO_PASSWORD
+    displayName: Admin Password
+    description: Matomo administrator password
+    type: password
+    required: true
+    helmMapping: matomo.matomoPassword
+
+  - name: MATOMO_EMAIL
+    displayName: Admin Email
+    description: Matomo administrator email address
+    type: string
+    required: true
+    helmMapping: matomo.matomoEmail
+
+  - name: MARIADB_ROOT_PASSWORD
+    displayName: MariaDB Root Password
+    description: Root password for the bundled MariaDB database
+    type: password
+    required: true
+    helmMapping: matomo.mariadb.auth.rootPassword
+
+  - name: MARIADB_PASSWORD
+    displayName: MariaDB User Password
+    description: User password for the bundled MariaDB database
+    type: password
+    required: true
+    helmMapping: matomo.mariadb.auth.password

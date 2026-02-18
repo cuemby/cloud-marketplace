@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-grafana
+description: Cuemby wrapper chart for Grafana (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "11.6.0"
+
+dependencies:
+  - name: grafana
+    version: "12.1.8"
+    repository: oci://registry-1.docker.io/bitnamicharts

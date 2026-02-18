@@ -1,0 +1,33 @@
+#cloud-config
+# Cloud-init user-data for deploying Neo4j via Cuemby Cloud Marketplace.
+#
+# Parameters can be set as environment variables in the write_files section below,
+# or they will use the default values shown.
+#
+# VM requirements: 2 CPU, 4 GB RAM, 20 GB disk, Ubuntu 22.04 LTS recommended.
+# Firewall: allow inbound TCP on ports 80 (HTTP), 443 (HTTPS), and 30687 (Bolt).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="neo4j"
+      export APP_VERSION="${APP_VERSION:-0.4.14}"
+      # Required parameters
+      export PARAM_NEO4J_PASSWORD="${PARAM_NEO4J_PASSWORD:?PARAM_NEO4J_PASSWORD is required}"
+      # SSL parameters (optional — hostname auto-detected via sslip.io if not set)
+      export PARAM_NEO4J_HOSTNAME="${PARAM_NEO4J_HOSTNAME:-}"
+      export ACME_EMAIL="${ACME_EMAIL:?ACME_EMAIL is required for SSL}"
+      export ACME_USE_STAGING="${ACME_USE_STAGING:-false}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

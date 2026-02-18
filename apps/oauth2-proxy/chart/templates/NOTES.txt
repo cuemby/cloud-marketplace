@@ -1,0 +1,11 @@
+Cuemby Cloud Marketplace — OAuth2 Proxy deployed!
+
+Access OAuth2 Proxy:
+
+  https://{{ .Release.Name }}.sslip.io
+
+Note: Ensure your OAuth provider (Google, GitHub, etc.) has been configured
+with the correct redirect URL: https://{{ .Release.Name }}.sslip.io/oauth2/callback
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

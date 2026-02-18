@@ -1,0 +1,23 @@
+name: nginx
+displayName: NGINX
+description: High-performance web server for serving static content, reverse proxying, and load balancing.
+category: devtools
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/nginx/img/nginx-stack-220x234.png
+
+chart:
+  name: nginx
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "22.5.0"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 1
+  memory: 1Gi
+  disk: 5Gi
+
+versions:
+  - "22.5.0"
+
+parameters: []

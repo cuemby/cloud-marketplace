@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-prometheus
+description: Cuemby wrapper chart for Prometheus (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "3.2.1"
+
+dependencies:
+  - name: prometheus
+    version: "2.1.23"
+    repository: oci://registry-1.docker.io/bitnamicharts

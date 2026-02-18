@@ -1,0 +1,12 @@
+Cuemby Cloud Marketplace — Neo4j deployed!
+
+Access Neo4j:
+
+  Browser: https://{{ .Release.Name }}.sslip.io
+  Bolt:    bolt://<VM_IP>:30687
+
+  Use cypher-shell to connect:
+    cypher-shell -a bolt://<VM_IP>:30687 -u neo4j -p <NEO4J_PASSWORD>
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

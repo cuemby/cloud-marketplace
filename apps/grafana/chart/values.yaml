@@ -1,0 +1,49 @@
+# Cuemby defaults for Grafana on single-node K3s.
+# These override the upstream bitnami/grafana defaults for our environment.
+
+grafana:
+  # ClusterIP — Traefik Gateway routes external traffic to Grafana
+  service:
+    type: ClusterIP
+
+  # Disable built-in ingress — routing is via Gateway API
+  ingress:
+    enabled: false
+
+  # Conservative resource requests for shared VMs
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+  # Use K3s default StorageClass
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 10Gi
+
+  # Tuned probes for slower VM startup
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+    successThreshold: 1
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 6
+
+  # Disable metrics by default
+  metrics:
+    enabled: false

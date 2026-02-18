@@ -1,0 +1,8 @@
+Cuemby Cloud Marketplace — Mastodon deployed!
+
+Access Mastodon:
+
+  https://{{ .Release.Name }}.sslip.io
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

@@ -1,0 +1,19 @@
+# Minimal profile for small VMs (2 CPU / 4 GB RAM).
+
+jaeger:
+  query:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
+  collector:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi

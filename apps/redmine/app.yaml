@@ -1,0 +1,58 @@
+name: redmine
+displayName: Redmine
+description: Flexible project management and issue tracking web application.
+category: collaboration
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/redmine/img/redmine-stack-220x234.png
+
+chart:
+  name: redmine
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "34.0.0"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "34.0.0"
+
+parameters:
+  - name: REDMINE_USERNAME
+    displayName: Admin Username
+    description: Redmine administrator username
+    type: string
+    required: true
+    default: admin
+    helmMapping: redmine.redmineUsername
+
+  - name: REDMINE_PASSWORD
+    displayName: Admin Password
+    description: Redmine administrator password
+    type: password
+    required: true
+    helmMapping: redmine.redminePassword
+
+  - name: REDMINE_EMAIL
+    displayName: Admin Email
+    description: Redmine administrator email address
+    type: string
+    required: true
+    helmMapping: redmine.redmineEmail
+
+  - name: REDMINE_MARIADB_ROOT_PASSWORD
+    displayName: MariaDB Root Password
+    description: Root password for the bundled MariaDB database
+    type: password
+    required: true
+    helmMapping: redmine.mariadb.auth.rootPassword
+
+  - name: REDMINE_MARIADB_PASSWORD
+    displayName: MariaDB User Password
+    description: User password for the bundled MariaDB database
+    type: password
+    required: true
+    helmMapping: redmine.mariadb.auth.password

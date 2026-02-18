@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-sonarqube
+description: Cuemby wrapper chart for SonarQube (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "25.1.0"
+
+dependencies:
+  - name: sonarqube
+    version: "8.1.17"
+    repository: oci://registry-1.docker.io/bitnamicharts

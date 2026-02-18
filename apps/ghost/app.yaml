@@ -1,0 +1,66 @@
+name: ghost
+displayName: Ghost
+description: Professional open source publishing platform for modern online publications.
+category: cms
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/ghost/img/ghost-stack-220x234.png
+
+chart:
+  name: ghost
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "25.0.4"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "25.0.4"
+
+parameters:
+  - name: GHOST_EMAIL
+    displayName: Admin Email
+    description: Ghost administrator email address
+    type: string
+    required: true
+    helmMapping: ghost.ghostEmail
+
+  - name: GHOST_PASSWORD
+    displayName: Admin Password
+    description: Ghost administrator password
+    type: password
+    required: true
+    helmMapping: ghost.ghostPassword
+
+  - name: GHOST_USERNAME
+    displayName: Admin Username
+    description: Ghost administrator username
+    type: string
+    required: false
+    default: user
+    helmMapping: ghost.ghostUsername
+
+  - name: GHOST_BLOG_TITLE
+    displayName: Blog Title
+    description: Ghost site title
+    type: string
+    required: false
+    default: "My Blog"
+    helmMapping: ghost.ghostBlogTitle
+
+  - name: MYSQL_ROOT_PASSWORD
+    displayName: MySQL Root Password
+    description: Root password for the bundled MySQL database
+    type: password
+    required: true
+    helmMapping: ghost.mysql.auth.rootPassword
+
+  - name: MYSQL_PASSWORD
+    displayName: MySQL User Password
+    description: User password for the bundled MySQL database
+    type: password
+    required: true
+    helmMapping: ghost.mysql.auth.password

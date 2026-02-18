@@ -1,0 +1,23 @@
+name: vault
+displayName: Vault
+description: Secrets management and data protection platform for secure access to tokens, passwords, and certificates.
+category: identity
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/vault/img/vault-stack-220x234.png
+
+chart:
+  name: vault
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "1.9.0"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 1
+  memory: 2Gi
+  disk: 10Gi
+
+versions:
+  - "1.9.0"
+
+parameters: []

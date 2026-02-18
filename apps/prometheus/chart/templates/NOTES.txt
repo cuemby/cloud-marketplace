@@ -1,0 +1,12 @@
+Cuemby Cloud Marketplace — Prometheus deployed!
+
+Access Prometheus:
+
+  {{- if eq .Values.prometheus.server.service.type "NodePort" }}
+  http://<VM_IP>:{{ .Values.prometheus.server.service.nodePorts.http }}
+  {{- else }}
+  kubectl get svc -n {{ .Release.Namespace }}
+  {{- end }}
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

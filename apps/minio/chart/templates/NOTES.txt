@@ -1,0 +1,12 @@
+Cuemby Cloud Marketplace — MinIO deployed!
+
+Access MinIO:
+
+  Console: https://{{ .Release.Name }}.sslip.io
+  S3 API:  http://<VM_IP>:30900
+
+  Use mc (MinIO Client) to connect:
+    mc alias set myminio http://<VM_IP>:30900 <ROOT_USER> <ROOT_PASSWORD>
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

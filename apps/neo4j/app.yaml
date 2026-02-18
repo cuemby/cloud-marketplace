@@ -1,0 +1,29 @@
+name: neo4j
+displayName: Neo4j
+description: Native graph database for connected data with Cypher query language.
+category: database
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/neo4j/img/neo4j-stack-220x234.png
+
+chart:
+  name: neo4j
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "0.4.14"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "0.4.14"
+
+parameters:
+  - name: NEO4J_PASSWORD
+    displayName: Neo4j Password
+    description: Password for the neo4j admin user
+    type: password
+    required: true
+    helmMapping: neo4j.auth.password

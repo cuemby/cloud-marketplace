@@ -1,0 +1,32 @@
+# Minimal profile for small VMs (2 CPU / 4 GB RAM).
+
+concourse:
+  web:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+  worker:
+    resources:
+      requests:
+        cpu: 200m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    persistence:
+      size: 8Gi
+  postgresql:
+    primary:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+      persistence:
+        size: 4Gi

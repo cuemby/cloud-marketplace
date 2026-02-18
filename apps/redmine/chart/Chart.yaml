@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-redmine
+description: Cuemby wrapper chart for Redmine (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "6.0.3"
+
+dependencies:
+  - name: redmine
+    version: "34.0.0"
+    repository: oci://registry-1.docker.io/bitnamicharts

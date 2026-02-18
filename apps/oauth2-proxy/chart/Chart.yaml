@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-oauth2-proxy
+description: Cuemby wrapper chart for OAuth2 Proxy (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "7.8.1"
+
+dependencies:
+  - name: oauth2-proxy
+    version: "8.0.2"
+    repository: oci://registry-1.docker.io/bitnamicharts

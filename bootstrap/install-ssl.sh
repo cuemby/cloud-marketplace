@@ -70,10 +70,12 @@ _create_cluster_issuer() {
         log_warn "Using Let's Encrypt STAGING server (certs will not be trusted)."
     fi
 
-    local acme_email="${ACME_EMAIL:-${PARAM_WORDPRESS_EMAIL:-}}"
+    local acme_email="${ACME_EMAIL:-}"
     if [[ -z "$acme_email" ]] || [[ "$acme_email" == *"@example.com" ]]; then
-        log_fatal "ACME_EMAIL is required for Let's Encrypt (example.com is not accepted). Set ACME_EMAIL or use a real PARAM_WORDPRESS_EMAIL."
+        log_fatal "ACME_EMAIL is required for Let's Encrypt (example.com is not accepted). Set ACME_EMAIL in your cloud-init."
     fi
+
+    local app_namespace="${HELM_NAMESPACE_PREFIX}${APP_NAME}"
 
     log_info "Creating ClusterIssuer 'letsencrypt' (server: ${acme_server})..."
 
@@ -93,7 +95,7 @@ spec:
           gatewayHTTPRoute:
             parentRefs:
               - name: app-gateway
-                namespace: ${HELM_NAMESPACE_PREFIX}wordpress
+                namespace: ${app_namespace}
                 kind: Gateway
 EOF
 

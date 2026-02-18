@@ -1,0 +1,13 @@
+# Minimal profile for small VMs (1 CPU / 2 GB RAM).
+# Layered on top of values.yaml with lower resource limits.
+
+grafana:
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    size: 5Gi

@@ -1,0 +1,44 @@
+name: parse
+displayName: Parse
+description: Open source backend-as-a-service platform for building mobile and web applications.
+category: devtools
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/parse/img/parse-stack-220x234.png
+
+chart:
+  name: parse
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "25.1.15"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "25.1.15"
+
+parameters:
+  - name: PARSE_APP_ID
+    displayName: Application ID
+    description: Parse application identifier
+    type: string
+    required: true
+    default: myappID
+    helmMapping: parse.server.appId
+
+  - name: PARSE_MASTER_KEY
+    displayName: Master Key
+    description: Parse master key for admin operations
+    type: password
+    required: true
+    helmMapping: parse.server.masterKey
+
+  - name: PARSE_MONGODB_ROOT_PASSWORD
+    displayName: MongoDB Root Password
+    description: Root password for the bundled MongoDB database
+    type: password
+    required: true
+    helmMapping: parse.mongodb.auth.rootPassword

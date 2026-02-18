@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-gitea
+description: Cuemby wrapper chart for Gitea (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "1.23.4"
+
+dependencies:
+  - name: gitea
+    version: "3.2.22"
+    repository: oci://registry-1.docker.io/bitnamicharts

@@ -1,0 +1,13 @@
+Cuemby Cloud Marketplace — Harbor deployed!
+
+Access Harbor:
+
+  Web:    https://{{ .Release.Name }}.sslip.io
+  Docker: docker login {{ .Release.Name }}.sslip.io
+
+Push an image:
+  docker tag myimage:latest {{ .Release.Name }}.sslip.io/library/myimage:latest
+  docker push {{ .Release.Name }}.sslip.io/library/myimage:latest
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

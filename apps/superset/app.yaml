@@ -1,0 +1,65 @@
+name: superset
+displayName: Superset
+description: Modern data exploration and visualization platform for interactive analytics dashboards.
+category: analytics
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/superset/img/superset-stack-220x234.png
+
+chart:
+  name: superset
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "5.0.0"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "5.0.0"
+
+parameters:
+  - name: SUPERSET_USERNAME
+    displayName: Admin Username
+    description: Superset administrator username
+    type: string
+    required: true
+    default: admin
+    helmMapping: superset.supersetUsername
+
+  - name: SUPERSET_PASSWORD
+    displayName: Admin Password
+    description: Superset administrator password
+    type: password
+    required: true
+    helmMapping: superset.supersetPassword
+
+  - name: SUPERSET_EMAIL
+    displayName: Admin Email
+    description: Superset administrator email address
+    type: string
+    required: true
+    helmMapping: superset.supersetEmail
+
+  - name: SUPERSET_SECRET_KEY
+    displayName: Secret Key
+    description: Secret key for session encryption (random string)
+    type: password
+    required: true
+    helmMapping: superset.configOverrides.secretKey
+
+  - name: SUPERSET_POSTGRES_PASSWORD
+    displayName: PostgreSQL Password
+    description: Password for the bundled PostgreSQL database
+    type: password
+    required: true
+    helmMapping: superset.postgresql.auth.password
+
+  - name: SUPERSET_REDIS_PASSWORD
+    displayName: Redis Password
+    description: Password for the bundled Redis instance
+    type: password
+    required: true
+    helmMapping: superset.redis.auth.password

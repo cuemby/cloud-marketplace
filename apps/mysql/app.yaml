@@ -1,0 +1,49 @@
+name: mysql
+displayName: MySQL
+description: Popular open source relational database management system for web applications.
+category: database
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/mysql/img/mysql-stack-220x234.png
+
+chart:
+  name: mysql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "14.0.3"
+
+requirements:
+  cpu: 1
+  memory: 2Gi
+  disk: 20Gi
+
+versions:
+  - "14.0.3"
+
+parameters:
+  - name: MYSQL_ROOT_PASSWORD
+    displayName: Root Password
+    description: Password for the MySQL root user
+    type: password
+    required: true
+    helmMapping: mysql.auth.rootPassword
+
+  - name: MYSQL_USERNAME
+    displayName: Custom Username
+    description: Name for an optional custom user to create
+    type: string
+    required: false
+    default: ""
+    helmMapping: mysql.auth.username
+
+  - name: MYSQL_PASSWORD
+    displayName: Custom User Password
+    description: Password for the optional custom user
+    type: password
+    required: false
+    helmMapping: mysql.auth.password
+
+  - name: MYSQL_DATABASE
+    displayName: Database Name
+    description: Name for an optional custom database to create
+    type: string
+    required: false
+    default: ""
+    helmMapping: mysql.auth.database

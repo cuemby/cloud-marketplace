@@ -1,0 +1,49 @@
+name: mongodb
+displayName: MongoDB
+description: Document-oriented NoSQL database for modern applications requiring flexible schemas.
+category: database
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/mongodb/img/mongodb-stack-220x234.png
+
+chart:
+  name: mongodb
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "18.5.0"
+
+requirements:
+  cpu: 1
+  memory: 2Gi
+  disk: 20Gi
+
+versions:
+  - "18.5.0"
+
+parameters:
+  - name: MONGODB_ROOT_PASSWORD
+    displayName: Root Password
+    description: Password for the MongoDB root user
+    type: password
+    required: true
+    helmMapping: mongodb.auth.rootPassword
+
+  - name: MONGODB_USERNAME
+    displayName: Custom Username
+    description: Name for an optional custom user to create
+    type: string
+    required: false
+    default: ""
+    helmMapping: mongodb.auth.username
+
+  - name: MONGODB_PASSWORD
+    displayName: Custom User Password
+    description: Password for the optional custom user
+    type: password
+    required: false
+    helmMapping: mongodb.auth.password
+
+  - name: MONGODB_DATABASE
+    displayName: Database Name
+    description: Name for an optional custom database to create
+    type: string
+    required: false
+    default: ""
+    helmMapping: mongodb.auth.database

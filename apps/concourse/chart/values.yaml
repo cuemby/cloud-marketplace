@@ -1,0 +1,67 @@
+# Cuemby defaults for Concourse on single-node K3s.
+
+concourse:
+  web:
+    replicaCount: 1
+    service:
+      type: ClusterIP
+    resources:
+      requests:
+        cpu: 300m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    startupProbe:
+      enabled: true
+      initialDelaySeconds: 30
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 30
+      successThreshold: 1
+    livenessProbe:
+      initialDelaySeconds: 60
+      periodSeconds: 15
+      timeoutSeconds: 10
+      failureThreshold: 6
+    readinessProbe:
+      initialDelaySeconds: 15
+      periodSeconds: 10
+      timeoutSeconds: 5
+      failureThreshold: 6
+
+  worker:
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 300m
+        memory: 512Mi
+      limits:
+        cpu: "1"
+        memory: 1Gi
+    persistence:
+      enabled: true
+      storageClass: local-path
+      size: 15Gi
+
+  ingress:
+    enabled: false
+
+  postgresql:
+    enabled: true
+    architecture: standalone
+    primary:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 128Mi
+        limits:
+          cpu: 500m
+          memory: 512Mi
+      persistence:
+        enabled: true
+        storageClass: local-path
+        size: 8Gi
+
+  metrics:
+    enabled: false

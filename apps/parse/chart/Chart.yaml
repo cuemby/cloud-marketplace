@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-parse
+description: Cuemby wrapper chart for Parse (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "7.4.0"
+
+dependencies:
+  - name: parse
+    version: "25.1.15"
+    repository: oci://registry-1.docker.io/bitnamicharts

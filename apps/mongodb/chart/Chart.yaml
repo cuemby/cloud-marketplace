@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-mongodb
+description: Cuemby wrapper chart for MongoDB (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "8.0.9"
+
+dependencies:
+  - name: mongodb
+    version: "18.5.0"
+    repository: oci://registry-1.docker.io/bitnamicharts

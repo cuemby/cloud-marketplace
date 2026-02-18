@@ -1,0 +1,9 @@
+Cuemby Cloud Marketplace — Gitea deployed!
+
+Access Gitea:
+
+  Web:  https://{{ .Release.Name }}.sslip.io
+  SSH:  git clone ssh://git@<VM_IP>:30022/<owner>/<repo>.git
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

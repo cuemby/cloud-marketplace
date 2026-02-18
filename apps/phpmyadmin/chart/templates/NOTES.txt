@@ -1,0 +1,10 @@
+Cuemby Cloud Marketplace — phpMyAdmin deployed!
+
+Access phpMyAdmin:
+
+  https://{{ .Release.Name }}.sslip.io
+
+  Log in with your MySQL/MariaDB credentials.
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

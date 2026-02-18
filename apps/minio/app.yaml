@@ -1,0 +1,37 @@
+name: minio
+displayName: MinIO
+description: High-performance S3-compatible object storage for cloud-native workloads.
+category: storage
+icon: https://min.io/resources/img/logo/MINIO_Bird.png
+
+chart:
+  name: minio
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "17.0.21"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 50Gi
+
+versions:
+  - "17.0.21"
+
+parameters:
+  - name: MINIO_ROOT_USER
+    displayName: Root User
+    description: MinIO root user (access key)
+    type: string
+    required: true
+    default: admin
+    helmMapping: minio.auth.rootUser
+
+  - name: MINIO_ROOT_PASSWORD
+    displayName: Root Password
+    description: MinIO root password (secret key)
+    type: password
+    required: true
+    helmMapping: minio.auth.rootPassword

@@ -1,0 +1,51 @@
+name: gitea
+displayName: Gitea
+description: Lightweight self-hosted Git service for code hosting, review, and collaboration.
+category: devtools
+icon: https://about.gitea.com/gitea-text.svg
+
+chart:
+  name: gitea
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "3.2.22"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "3.2.22"
+
+parameters:
+  - name: GITEA_ADMIN_USER
+    displayName: Admin Username
+    description: Gitea administrator username
+    type: string
+    required: true
+    default: gitea_admin
+    helmMapping: gitea.gitea.admin.username
+
+  - name: GITEA_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: Gitea administrator password
+    type: password
+    required: true
+    helmMapping: gitea.gitea.admin.password
+
+  - name: GITEA_ADMIN_EMAIL
+    displayName: Admin Email
+    description: Gitea administrator email address
+    type: string
+    required: true
+    helmMapping: gitea.gitea.admin.email
+
+  - name: GITEA_POSTGRES_PASSWORD
+    displayName: PostgreSQL Password
+    description: Password for the bundled PostgreSQL database
+    type: password
+    required: true
+    helmMapping: gitea.postgresql.auth.password

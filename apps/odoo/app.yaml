@@ -1,0 +1,43 @@
+name: odoo
+displayName: Odoo
+description: Open source business suite for CRM, e-commerce, accounting, inventory, and project management.
+category: erp
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/odoo/img/odoo-stack-220x234.png
+
+chart:
+  name: odoo
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "28.2.10"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "28.2.10"
+
+parameters:
+  - name: ODOO_EMAIL
+    displayName: Admin Email
+    description: Odoo administrator email address
+    type: string
+    required: true
+    helmMapping: odoo.odooEmail
+
+  - name: ODOO_PASSWORD
+    displayName: Admin Password
+    description: Odoo administrator password
+    type: password
+    required: true
+    helmMapping: odoo.odooPassword
+
+  - name: ODOO_POSTGRES_PASSWORD
+    displayName: PostgreSQL Password
+    description: Password for the bundled PostgreSQL database
+    type: password
+    required: true
+    helmMapping: odoo.postgresql.auth.password

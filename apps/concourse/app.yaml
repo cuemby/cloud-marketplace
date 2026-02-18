@@ -1,0 +1,44 @@
+name: concourse
+displayName: Concourse
+description: Container-based continuous integration and delivery platform with a pipeline-first approach.
+category: ci-cd
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/concourse/img/concourse-stack-220x234.png
+
+chart:
+  name: concourse
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "5.1.45"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "5.1.45"
+
+parameters:
+  - name: CONCOURSE_ADMIN_USER
+    displayName: Admin Username
+    description: Concourse local admin username
+    type: string
+    required: true
+    default: admin
+    helmMapping: concourse.web.auth.mainTeam.localUser
+
+  - name: CONCOURSE_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: Concourse local admin password
+    type: password
+    required: true
+    helmMapping: concourse.secrets.localUsers
+
+  - name: CONCOURSE_POSTGRES_PASSWORD
+    displayName: PostgreSQL Password
+    description: Password for the bundled PostgreSQL database
+    type: password
+    required: true
+    helmMapping: concourse.postgresql.auth.password

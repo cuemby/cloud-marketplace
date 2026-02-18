@@ -1,0 +1,25 @@
+# Minimal profile for small VMs (2 CPU / 4 GB RAM).
+# Layered on top of values.yaml with lower resource limits.
+# Note: Odoo + PostgreSQL requires at least 2 CPU / 4 GB RAM.
+
+odoo:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+  persistence:
+    size: 5Gi
+  postgresql:
+    primary:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 64Mi
+        limits:
+          cpu: 250m
+          memory: 256Mi
+      persistence:
+        size: 4Gi

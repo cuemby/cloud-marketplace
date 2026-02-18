@@ -1,0 +1,53 @@
+# Cuemby defaults for Cassandra on single-node K3s.
+
+cassandra:
+  # Single node
+  replicaCount: 1
+
+  # JVM heap tuning for constrained VMs
+  jvm:
+    maxHeapSize: 1024M
+    newHeapSize: 256M
+
+  # Expose CQL via NodePort
+  service:
+    type: NodePort
+    nodePorts:
+      cql: 30942
+
+  # Conservative resources
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+    limits:
+      cpu: "2"
+      memory: 2Gi
+
+  # Storage
+  persistence:
+    enabled: true
+    storageClass: local-path
+    size: 20Gi
+
+  # Generous JVM probes
+  startupProbe:
+    enabled: true
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 30
+    successThreshold: 1
+  livenessProbe:
+    initialDelaySeconds: 120
+    periodSeconds: 20
+    timeoutSeconds: 10
+    failureThreshold: 6
+  readinessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 6
+
+  metrics:
+    enabled: false

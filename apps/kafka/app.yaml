@@ -1,0 +1,26 @@
+name: kafka
+displayName: Kafka
+description: Distributed event streaming platform for high-throughput real-time data pipelines.
+category: messaging
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/kafka/img/kafka-stack-220x234.png
+
+chart:
+  name: kafka
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "32.4.3"
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "32.4.3"
+
+parameters:
+  - name: KAFKA_CLIENT_PASSWORD
+    displayName: Client Password
+    description: Password for SASL client authentication (optional, leave empty to disable auth)
+    type: password
+    required: false
+    helmMapping: kafka.sasl.client.passwords

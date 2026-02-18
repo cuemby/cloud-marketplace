@@ -1,0 +1,9 @@
+Cuemby Cloud Marketplace — Drupal deployed!
+
+Access Drupal:
+
+  Site:  https://{{ .Release.Name }}.sslip.io
+  Admin: https://{{ .Release.Name }}.sslip.io/user/login
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

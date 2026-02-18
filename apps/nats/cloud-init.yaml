@@ -1,0 +1,29 @@
+#cloud-config
+# Cloud-init user-data for deploying NATS via Cuemby Cloud Marketplace.
+#
+# Parameters can be set as environment variables in the write_files section below,
+# or they will use the default values shown.
+#
+# VM requirements: 1 CPU, 1 GB RAM, 5 GB disk, Ubuntu 22.04 LTS recommended.
+# Firewall: allow inbound TCP on port 30222 (NATS client).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="nats"
+      export APP_VERSION="${APP_VERSION:-9.0.28}"
+      # Optional parameters
+      export PARAM_NATS_PASSWORD="${PARAM_NATS_PASSWORD:-}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-discourse
+description: Cuemby wrapper chart for Discourse (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "3.4.2"
+
+dependencies:
+  - name: discourse
+    version: "17.0.1"
+    repository: oci://registry-1.docker.io/bitnamicharts

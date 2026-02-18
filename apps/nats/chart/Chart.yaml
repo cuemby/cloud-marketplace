@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cuemby-nats
+description: Cuemby wrapper chart for NATS (Bitnami upstream)
+type: application
+version: 1.0.0
+appVersion: "2.11.1"
+
+dependencies:
+  - name: nats
+    version: "9.0.28"
+    repository: oci://registry-1.docker.io/bitnamicharts

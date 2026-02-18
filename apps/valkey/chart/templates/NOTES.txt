@@ -1,0 +1,12 @@
+Cuemby Cloud Marketplace — Valkey deployed!
+
+Connect to Valkey:
+
+  {{- if eq .Values.valkey.master.service.type "NodePort" }}
+  valkey-cli -h <VM_IP> -p {{ .Values.valkey.master.service.nodePorts.valkey }} -a <password>
+  {{- else }}
+  kubectl get svc -n {{ .Release.Namespace }}
+  {{- end }}
+
+Check deployment status:
+  cat /var/lib/cuemby/marketplace-state.json

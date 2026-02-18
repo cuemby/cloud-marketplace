@@ -1,0 +1,10 @@
+# Minimal profile for small VMs (1 CPU / 1 GB RAM).
+
+nginx:
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 250m
+      memory: 128Mi

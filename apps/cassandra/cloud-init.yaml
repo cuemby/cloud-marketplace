@@ -1,0 +1,32 @@
+#cloud-config
+# Cloud-init user-data for deploying Cassandra via Cuemby Cloud Marketplace.
+#
+# Parameters can be set as environment variables in the write_files section below,
+# or they will use the default values shown. Required passwords have no default
+# and must be set before use.
+#
+# VM requirements: 2 CPU, 4 GB RAM, 30 GB disk, Ubuntu 22.04 LTS recommended.
+# Firewall: allow inbound TCP on port 30942 (Cassandra CQL).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="cassandra"
+      export APP_VERSION="${APP_VERSION:-12.3.11}"
+      # Required parameters
+      export PARAM_CASSANDRA_PASSWORD="${PARAM_CASSANDRA_PASSWORD:?PARAM_CASSANDRA_PASSWORD is required}"
+      # Optional parameters
+      export PARAM_CASSANDRA_CLUSTER_NAME="${PARAM_CASSANDRA_CLUSTER_NAME:-cuemby-cassandra}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

@@ -1,0 +1,50 @@
+name: appsmith
+displayName: Appsmith
+description: Open source low-code platform for building internal tools and business applications.
+category: devtools
+icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/appsmith/img/appsmith-stack-220x234.png
+
+chart:
+  name: appsmith
+  repository: oci://registry-1.docker.io/bitnamicharts
+  version: "7.0.3"
+
+ssl:
+  enabled: true
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - "7.0.3"
+
+parameters:
+  - name: APPSMITH_EMAIL
+    displayName: Admin Email
+    description: Appsmith administrator email address
+    type: string
+    required: true
+    helmMapping: appsmith.clientConfig.adminEmail
+
+  - name: APPSMITH_PASSWORD
+    displayName: Admin Password
+    description: Appsmith administrator password
+    type: password
+    required: true
+    helmMapping: appsmith.clientConfig.adminPassword
+
+  - name: APPSMITH_MONGODB_ROOT_PASSWORD
+    displayName: MongoDB Root Password
+    description: Root password for the bundled MongoDB database
+    type: password
+    required: true
+    helmMapping: appsmith.mongodb.auth.rootPassword
+
+  - name: APPSMITH_REDIS_PASSWORD
+    displayName: Redis Password
+    description: Password for the bundled Redis instance
+    type: password
+    required: true
+    helmMapping: appsmith.redis.auth.password
