@@ -28,6 +28,8 @@ apps/*/chart/Chart.lock
 # Test artifacts
 tests/integration/tmp/
 tests/.bats/
+.e2e-logs/
+.e2e-state/
 
 # Node (if any tooling)
 node_modules/
