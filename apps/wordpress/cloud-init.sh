@@ -15,19 +15,19 @@ apt-get install -y curl git jq
 
 # -- Application configuration --
 export APP_NAME="wordpress"
-export APP_VERSION="${APP_VERSION:-6.9.1}"
+export APP_VERSION="{{app-version}}"
 
-# Credentials (auto-generated if not set)
-export PARAM_MARIADB_ROOT_PASSWORD="${PARAM_MARIADB_ROOT_PASSWORD:-}"
-export PARAM_MARIADB_PASSWORD="${PARAM_MARIADB_PASSWORD:-}"
-export PARAM_WORDPRESS_ADMIN_PASSWORD="${PARAM_WORDPRESS_ADMIN_PASSWORD:-}"
+# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+export PARAM_MARIADB_ROOT_PASSWORD="{{param-mariadb-root-password}}"
+export PARAM_MARIADB_PASSWORD="{{param-mariadb-password}}"
+export PARAM_WORDPRESS_ADMIN_PASSWORD="{{param-wordpress-admin-password}}"
 
-# Optional parameters
-export PARAM_WORDPRESS_ADMIN_USER="${PARAM_WORDPRESS_ADMIN_USER:-admin}"
-export PARAM_WORDPRESS_ADMIN_EMAIL="${PARAM_WORDPRESS_ADMIN_EMAIL:-admin@example.com}"
-export PARAM_WORDPRESS_SITE_TITLE="${PARAM_WORDPRESS_SITE_TITLE:-My WordPress Site}"
-export PARAM_WORDPRESS_DATA_SIZE="${PARAM_WORDPRESS_DATA_SIZE:-10Gi}"
-export PARAM_MARIADB_DATA_SIZE="${PARAM_MARIADB_DATA_SIZE:-5Gi}"
+# Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
+export PARAM_WORDPRESS_ADMIN_USER="{{param-wordpress-admin-user}}"
+export PARAM_WORDPRESS_ADMIN_EMAIL="{{param-wordpress-admin-email}}"
+export PARAM_WORDPRESS_SITE_TITLE="{{param-wordpress-site-title}}"
+export PARAM_WORDPRESS_DATA_SIZE="{{param-wordpress-data-size}}"
+export PARAM_MARIADB_DATA_SIZE="{{param-mariadb-data-size}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
