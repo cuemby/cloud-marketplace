@@ -1,0 +1,7 @@
+next_number: 2
+rfds:
+  - number: 1
+    title: "Application Deployment Pattern for Cloud Marketplace"
+    state: published
+    path: .claude/rfd/0001.md
+    created: 2026-02-18
