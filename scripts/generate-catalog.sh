@@ -13,7 +13,7 @@ main() {
     mkdir -p "$CATALOG_DIR"
 
     local app_dirs
-    app_dirs="$(find "$APPS_DIR" -maxdepth 2 -name 'app.yaml' -not -path '*/_template/*' | sort)"
+    app_dirs="$(find "$APPS_DIR" -maxdepth 2 -name 'app.yaml' -not -path '*/_template*' | sort)"
 
     if [[ -z "$app_dirs" ]]; then
         echo "No apps found in ${APPS_DIR}"
