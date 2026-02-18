@@ -8,13 +8,13 @@
 readonly _CONSTANTS_LOADED=1
 
 # Paths
-readonly MARKETPLACE_DIR="/opt/cuemby/marketplace"
-readonly APPS_DIR="${MARKETPLACE_DIR}/apps"
-readonly LOG_DIR="/var/log/cuemby"
-readonly LOG_FILE="${LOG_DIR}/bootstrap.log"
-readonly STATE_DIR="/var/lib/cuemby"
-readonly STATE_FILE="${STATE_DIR}/marketplace-state.json"
-readonly KUBECONFIG_PATH="/etc/rancher/k3s/k3s.yaml"
+readonly MARKETPLACE_DIR="${MARKETPLACE_DIR:-/opt/cuemby/marketplace}"
+readonly APPS_DIR="${APPS_DIR:-${MARKETPLACE_DIR}/apps}"
+readonly LOG_DIR="${LOG_DIR:-/var/log/cuemby}"
+readonly LOG_FILE="${LOG_FILE:-${LOG_DIR}/bootstrap.log}"
+readonly STATE_DIR="${STATE_DIR:-/var/lib/cuemby}"
+readonly STATE_FILE="${STATE_FILE:-${STATE_DIR}/marketplace-state.json}"
+readonly KUBECONFIG_PATH="${KUBECONFIG_PATH:-/etc/rancher/k3s/k3s.yaml}"
 
 # Timeouts (seconds)
 readonly TIMEOUT_K3S=300

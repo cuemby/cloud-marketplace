@@ -1,4 +1,4 @@
-.PHONY: lint test test-unit test-integration catalog validate new-app help
+.PHONY: lint test test-unit test-integration test-e2e catalog validate new-app help
 
 SHELL := /bin/bash
 APPS_DIR := apps
@@ -28,6 +28,10 @@ test-unit: ## Run unit tests (bats)
 test-integration: ## Run integration tests (requires Docker)
 	@echo "==> Running integration tests..."
 	@bats $(TESTS_DIR)/integration/
+
+test-e2e: ## Run E2E test for a single app (usage: make test-e2e APP=redis)
+	@if [ -z "$(APP)" ]; then echo "Usage: make test-e2e APP=redis"; exit 1; fi
+	@APP_NAME=$(APP) $(TESTS_DIR)/e2e/run-e2e.sh
 
 catalog: ## Generate catalog.json from all app.yaml files
 	@$(SCRIPTS_DIR)/generate-catalog.sh

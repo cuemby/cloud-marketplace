@@ -12,12 +12,12 @@ source "${SCRIPT_DIR}/lib/logging.sh"
 # shellcheck source=lib/retry.sh
 source "${SCRIPT_DIR}/lib/retry.sh"
 
-run_healthcheck() {
+run_generic_healthcheck() {
     local app_name="${APP_NAME:?APP_NAME is required}"
     local namespace="${HELM_NAMESPACE_PREFIX}${app_name}"
     local timeout="${TIMEOUT_HEALTH}"
 
-    log_info "Running health checks for ${app_name} (timeout: ${timeout}s)..."
+    log_info "Running generic health checks for ${app_name} (timeout: ${timeout}s)..."
 
     # Generic check: all pods Running/Completed in app namespace
     log_info "Checking pod health in namespace ${namespace}..."
@@ -28,8 +28,13 @@ run_healthcheck() {
     log_info "Checking service endpoints..."
     _check_service_endpoints "$namespace"
     log_info "Service endpoints verified."
+}
+
+run_healthcheck() {
+    run_generic_healthcheck
 
     # App-specific healthcheck hook (sourced to inherit PARAM_* env vars)
+    local app_name="${APP_NAME:?APP_NAME is required}"
     local app_dir="${APPS_DIR}/${app_name}"
     local hook="${app_dir}/hooks/healthcheck.sh"
     if [[ -f "$hook" ]]; then

@@ -1,0 +1,138 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/**'
+      - 'bootstrap/**'
+      - 'tests/e2e/**'
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'Specific app to test (blank = all apps)'
+        required: false
+        type: string
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  determine-apps:
+    name: Detect changed apps
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      has_apps: ${{ steps.set-matrix.outputs.has_apps }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - id: set-matrix
+        run: |
+          if [[ -n "${{ github.event.inputs.app }}" ]]; then
+            # Manual trigger: specific app
+            echo 'matrix=["${{ github.event.inputs.app }}"]' >> "$GITHUB_OUTPUT"
+            echo "has_apps=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Detect what changed between this push and the previous commit
+          changed_files=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
+
+          # If bootstrap/ or tests/e2e/ changed, test ALL apps
+          if echo "$changed_files" | grep -qE '^(bootstrap/|tests/e2e/)'; then
+            apps=$(ls -d apps/*/ | grep -v _template \
+              | xargs -I{} basename {} \
+              | jq -R -s -c 'split("\n") | map(select(. != ""))')
+            echo "matrix=${apps}" >> "$GITHUB_OUTPUT"
+            echo "has_apps=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Otherwise, only test apps whose folder changed
+          changed_apps=$(echo "$changed_files" \
+            | grep -oP '^apps/\K[^/]+' \
+            | grep -v _template \
+            | sort -u \
+            | jq -R -s -c 'split("\n") | map(select(. != ""))')
+
+          if [[ "$changed_apps" == "[]" ]] || [[ -z "$changed_apps" ]]; then
+            echo "matrix=[]" >> "$GITHUB_OUTPUT"
+            echo "has_apps=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "matrix=${changed_apps}" >> "$GITHUB_OUTPUT"
+            echo "has_apps=true" >> "$GITHUB_OUTPUT"
+          fi
+
+  e2e:
+    name: E2E · ${{ matrix.app }}
+    needs: determine-apps
+    if: needs.determine-apps.outputs.has_apps == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        app: ${{ fromJSON(needs.determine-apps.outputs.matrix) }}
+      fail-fast: false
+      max-parallel: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install k3d
+        run: curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
+      - name: Create k3d cluster
+        run: ./tests/e2e/setup-k3d.sh
+
+      - name: Run E2E test
+        env:
+          APP_NAME: ${{ matrix.app }}
+        run: ./tests/e2e/run-e2e.sh
+
+      - name: Collect logs on failure
+        if: failure()
+        run: |
+          echo "=== Pods ==="
+          kubectl get pods -A || true
+          echo ""
+          echo "=== Pod details (app namespace) ==="
+          kubectl describe pods -n "app-${{ matrix.app }}" || true
+          echo ""
+          echo "=== Events ==="
+          kubectl get events -n "app-${{ matrix.app }}" --sort-by='.lastTimestamp' || true
+          echo ""
+          echo "=== Helm status ==="
+          helm status "${{ matrix.app }}" -n "app-${{ matrix.app }}" || true
+          echo ""
+          echo "=== Bootstrap log ==="
+          cat .e2e-logs/bootstrap.log 2>/dev/null || true
+
+      - name: Teardown k3d cluster
+        if: always()
+        run: ./tests/e2e/teardown-k3d.sh
+
+  e2e-summary:
+    name: E2E Summary
+    needs: [determine-apps, e2e]
+    runs-on: ubuntu-latest
+    if: always() && needs.determine-apps.outputs.has_apps == 'true'
+    steps:
+      - name: Check results
+        run: |
+          if [[ "${{ needs.e2e.result }}" == "failure" ]]; then
+            echo "::error::Some E2E tests failed — check individual job logs."
+            exit 1
+          fi
+          echo "All E2E tests passed."

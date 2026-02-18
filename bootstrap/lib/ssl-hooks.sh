@@ -191,6 +191,14 @@ ssl_full_setup() {
     local service_port="${4:-80}"
     local tls_secret="${5:-${app_name}-tls}"
 
+    # CI guard: skip SSL infrastructure, set dummy hostname
+    if [[ "${CI_SKIP_SSL:-false}" == "true" ]]; then
+        log_info "[ssl-hooks] CI_SKIP_SSL=true — skipping Gateway/HTTPRoute."
+        export "$hostname_var=localhost"
+        export SSL_HOSTNAME="localhost"
+        return 0
+    fi
+
     ssl_setup_hostname "$hostname_var"
     ssl_apply_gateway "$app_name" "$SSL_HOSTNAME" "$tls_secret"
     ssl_apply_httproute "$app_name" "$SSL_HOSTNAME" "$service_name" "$service_port"
