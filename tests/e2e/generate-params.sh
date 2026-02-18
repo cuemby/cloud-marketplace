@@ -46,7 +46,7 @@ load_test_params() {
         if [[ "$required" == "true" ]]; then
             case "$param_type" in
                 password)
-                    export "$env_var=TestP@ss123!"
+                    export "$env_var=TestPass1234"
                     ;;
                 *)
                     if [[ -n "$default_val" ]]; then
