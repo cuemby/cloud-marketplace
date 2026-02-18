@@ -3,6 +3,8 @@
 
 global:
   imageRegistry: public.ecr.aws
+  security:
+    allowInsecureImages: true
 
 elasticsearch:
   # Single-node mode: master handles all roles

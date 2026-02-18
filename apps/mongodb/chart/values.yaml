@@ -3,6 +3,8 @@
 
 global:
   imageRegistry: public.ecr.aws
+  security:
+    allowInsecureImages: true
 
 mongodb:
   # Standalone mode (no replica set on K3s)

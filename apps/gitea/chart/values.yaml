@@ -3,6 +3,8 @@
 
 global:
   imageRegistry: public.ecr.aws
+  security:
+    allowInsecureImages: true
 
 gitea:
   # ClusterIP for HTTP — Traefik Gateway routes external HTTPS traffic

@@ -3,6 +3,8 @@
 
 global:
   imageRegistry: public.ecr.aws
+  security:
+    allowInsecureImages: true
 
 postgresql:
   # Single-node architecture (no read replicas on K3s)

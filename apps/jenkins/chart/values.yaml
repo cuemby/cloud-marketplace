@@ -3,6 +3,8 @@
 
 global:
   imageRegistry: public.ecr.aws
+  security:
+    allowInsecureImages: true
 
 jenkins:
   # ClusterIP — Traefik Gateway routes external traffic to Jenkins

@@ -3,6 +3,8 @@
 
 global:
   imageRegistry: public.ecr.aws
+  security:
+    allowInsecureImages: true
 
 moodle:
   # ClusterIP — Gateway API routes external traffic to Moodle

@@ -2,6 +2,8 @@
 
 global:
   imageRegistry: public.ecr.aws
+  security:
+    allowInsecureImages: true
 
 discourse:
   discourse:
