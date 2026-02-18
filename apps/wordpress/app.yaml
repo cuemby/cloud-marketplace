@@ -23,8 +23,8 @@ versions:
     default: true
   - appVersion: "6.8.3"
     imageTag: "6.8.3-apache"
-  - appVersion: "6.7.4"
-    imageTag: "6.7.4-apache"
+  - appVersion: "6.7.2"
+    imageTag: "6.7.2-apache"
 
 parameters:
   - name: WORDPRESS_ADMIN_USER
