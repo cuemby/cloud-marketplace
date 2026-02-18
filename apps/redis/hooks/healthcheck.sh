@@ -33,7 +33,7 @@ _redis_responds() {
 
     local result
     result="$(kubectl exec -n "$namespace" "$pod" -- \
-        sh -c 'redis-cli -a "$REDIS_PASSWORD" --no-auth-warning ping' 2>/dev/null)" || return 1
+        sh -c 'redis-cli -a "$(cat /opt/bitnami/redis/secrets/redis-password)" --no-auth-warning ping' 2>/dev/null)" || return 1
 
     [[ "$result" == "PONG" ]]
 }

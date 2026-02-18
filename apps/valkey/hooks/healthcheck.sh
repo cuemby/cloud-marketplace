@@ -26,14 +26,14 @@ _valkey_responds() {
     local namespace="$1"
     local pod
     pod="$(kubectl get pods -n "$namespace" \
-        -l app.kubernetes.io/component=master \
+        -l app.kubernetes.io/component=primary \
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
 
     [[ -n "$pod" ]] || return 1
 
     local result
     result="$(kubectl exec -n "$namespace" "$pod" -- \
-        sh -c 'valkey-cli -a "$VALKEY_PASSWORD" --no-auth-warning ping' 2>/dev/null)" || return 1
+        sh -c 'valkey-cli -a "$(cat /opt/bitnami/valkey/secrets/valkey-password)" --no-auth-warning ping' 2>/dev/null)" || return 1
 
     [[ "$result" == "PONG" ]]
 }
