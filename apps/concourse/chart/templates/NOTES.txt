@@ -1,8 +1,0 @@
-Cuemby Cloud Marketplace — Concourse deployed!
-
-Access Concourse:
-
-  https://{{ .Release.Name }}.sslip.io
-
-Check deployment status:
-  cat /var/lib/cuemby/marketplace-state.json

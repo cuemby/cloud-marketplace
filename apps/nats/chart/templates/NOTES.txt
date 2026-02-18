@@ -1,8 +1,0 @@
-Cuemby Cloud Marketplace — NATS deployed!
-
-Connect to NATS:
-
-  nats-cli -s nats://<VM_IP>:30222
-
-Check deployment status:
-  cat /var/lib/cuemby/marketplace-state.json

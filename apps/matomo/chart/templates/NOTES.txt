@@ -1,8 +1,0 @@
-Cuemby Cloud Marketplace — Matomo deployed!
-
-Access Matomo:
-
-  https://{{ .Release.Name }}.sslip.io
-
-Check deployment status:
-  cat /var/lib/cuemby/marketplace-state.json

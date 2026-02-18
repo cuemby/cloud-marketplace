@@ -1,9 +1,0 @@
-Cuemby Cloud Marketplace — Ghost deployed!
-
-Access Ghost:
-
-  Site:  https://{{ .Release.Name }}.sslip.io
-  Admin: https://{{ .Release.Name }}.sslip.io/ghost
-
-Check deployment status:
-  cat /var/lib/cuemby/marketplace-state.json

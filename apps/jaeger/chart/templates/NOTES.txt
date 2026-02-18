@@ -1,9 +1,0 @@
-Cuemby Cloud Marketplace — Jaeger deployed!
-
-Access Jaeger:
-
-  UI:        https://{{ .Release.Name }}.sslip.io
-  Collector: <VM_IP>:31468 (gRPC)
-
-Check deployment status:
-  cat /var/lib/cuemby/marketplace-state.json

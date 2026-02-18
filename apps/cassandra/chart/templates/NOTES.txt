@@ -1,8 +1,0 @@
-Cuemby Cloud Marketplace — Cassandra deployed!
-
-Connect to Cassandra:
-
-  cqlsh <VM_IP> 30942 -u cassandra -p <password>
-
-Check deployment status:
-  cat /var/lib/cuemby/marketplace-state.json
