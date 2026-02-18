@@ -342,14 +342,18 @@ AI agents automatically discover and load these files when working in subdirecto
 - **Language**: Bash 5.x, YAML
 - **Runtime**: K3s (lightweight Kubernetes), Helm 3
 - **Infrastructure**: Provider-agnostic VMs (AWS, GCP, Azure, etc.) via cloud-init
-- **Testing**: bats-core (Bash), ShellCheck (linting)
+- **Testing**: bats-core (unit), ShellCheck (linting), k3d (E2E)
 - **YAML Processing**: yq
+- **Reference RFD**: `.claude/rfd/0001.md` — Application Deployment Pattern
 
 ### Architecture
 - **Type**: Single-node K3s cluster per VM, one app per VM
-- **Key Patterns**: Cloud-init bootstrap, wrapper Helm charts (upstream dependencies), state machine (JSON state file), PARAM_* env var mapping to Helm --set flags
+- **Deploy Methods**: Helm wrapper charts, raw manifests (envsubst), Kustomize overlays
+- **Key Patterns**: Cloud-init bootstrap, state machine (JSON state file), `PARAM_*` env var convention, `{{param-kebab-case}}` interpolation for Cuemby Cloud web UI
 - **Entry Point**: `bootstrap/entrypoint.sh` — orchestrates validation, K3s, Helm, app deployment, health check
-- **App Catalog**: `apps/*/app.yaml` — metadata, parameters, helmMappings per application
+- **Deploy Dispatcher**: `bootstrap/deploy-app.sh` reads `deployMethod` from `app.yaml`, dispatches to `deploy-helm.sh`, `deploy-manifest.sh`, or `deploy-kustomize.sh`
+- **App Catalog**: `apps/*/app.yaml` — metadata, versions, parameters, deploy method config
+- **E2E Testing**: Per-app, per-version matrix on k3d clusters (`.github/workflows/e2e.yml`)
 
 ### Key Design Decisions
 - **Decision**: Disable Traefik in K3s | **Date**: 2026-02-17 | **Rationale**: Saves resources; single-app VMs use NodePort directly
@@ -358,6 +362,10 @@ AI agents automatically discover and load these files when working in subdirecto
 - **Decision**: `PARAM_*` prefix for env vars | **Date**: 2026-02-17 | **Rationale**: Prevents collision with system env vars
 - **Decision**: State file (not callback API) | **Date**: 2026-02-17 | **Rationale**: Simpler, no outbound endpoint dependency
 - **Decision**: Wrapper charts (not forks) | **Date**: 2026-02-17 | **Rationale**: Get upstream security patches by bumping version
+- **Decision**: Three deploy methods (Helm/manifest/Kustomize) | **Date**: 2026-02-18 | **Rationale**: Flexibility per app; Helm for existing charts, manifests for full control, Kustomize for overlay-based apps
+- **Decision**: `{{param-kebab-case}}` interpolation | **Date**: 2026-02-18 | **Rationale**: Cuemby Cloud web UI substitutes values before VM boot; `_needs_value()` detects uninterpolated placeholders
+- **Decision**: `kubectl exec` for health checks | **Date**: 2026-02-18 | **Rationale**: Works in both production VMs and k3d E2E (NodePort not always exposed)
+- **Decision**: 100% open source images only | **Date**: 2026-02-18 | **Rationale**: Licensing compliance; verify license before using any chart/image
 
 ---
 
