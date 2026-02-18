@@ -29,9 +29,13 @@ test-integration: ## Run integration tests (requires Docker)
 	@echo "==> Running integration tests..."
 	@bats $(TESTS_DIR)/integration/
 
-test-e2e: ## Run E2E test for a single app (usage: make test-e2e APP=redis)
-	@if [ -z "$(APP)" ]; then echo "Usage: make test-e2e APP=redis"; exit 1; fi
-	@APP_NAME=$(APP) $(TESTS_DIR)/e2e/run-e2e.sh
+test-e2e: ## Run E2E test (usage: make test-e2e APP=wordpress [VERSION=6.8.3])
+	@if [ -z "$(APP)" ]; then echo "Usage: make test-e2e APP=wordpress [VERSION=6.8.3]"; exit 1; fi
+	@$(TESTS_DIR)/e2e/setup-k3d.sh
+	@APP_NAME=$(APP) APP_VERSION=$(VERSION) $(TESTS_DIR)/e2e/run-e2e.sh; \
+		exit_code=$$?; \
+		$(TESTS_DIR)/e2e/teardown-k3d.sh; \
+		exit $$exit_code
 
 catalog: ## Generate catalog.json from all app.yaml files
 	@$(SCRIPTS_DIR)/generate-catalog.sh

@@ -4,7 +4,7 @@
 #
 # Prerequisites: k3d cluster running, kubectl/helm/yq available.
 #
-# Usage: APP_NAME=redis ./tests/e2e/run-e2e.sh
+# Usage: APP_NAME=redis APP_VERSION=7.4.0 ./tests/e2e/run-e2e.sh
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -19,6 +19,16 @@ export STATE_DIR="${REPO_DIR}/.e2e-state"
 export KUBECONFIG_PATH="${KUBECONFIG:-${HOME}/.kube/config}"
 export KUBECONFIG="$KUBECONFIG_PATH"
 export CI_SKIP_SSL=true
+
+# ── Switch to k3d cluster context ────────────────────────────────────────────
+K3D_CLUSTER="${K3D_CLUSTER_NAME:-e2e-test}"
+K3D_CONTEXT="k3d-${K3D_CLUSTER}"
+if kubectl config get-contexts "$K3D_CONTEXT" &>/dev/null; then
+    kubectl config use-context "$K3D_CONTEXT" >/dev/null
+else
+    echo "WARNING: k3d context '${K3D_CONTEXT}' not found — using current context."
+    echo "Run ./tests/e2e/setup-k3d.sh first, or use: make test-e2e APP=${APP_NAME:-myapp}"
+fi
 
 # ── Source bootstrap libraries ───────────────────────────────────────────────
 
@@ -43,9 +53,10 @@ mkdir -p "$LOG_DIR" "$STATE_DIR"
 
 : "${APP_NAME:?APP_NAME is required}"
 
-log_section "E2E Test: ${APP_NAME}"
+log_section "E2E Test: ${APP_NAME}${APP_VERSION:+ v${APP_VERSION}}"
 log_info "MARKETPLACE_DIR=${MARKETPLACE_DIR}"
 log_info "APPS_DIR=${APPS_DIR}"
+log_info "APP_VERSION=${APP_VERSION:-(default)}"
 
 write_state "$STATE_VALIDATING"
 

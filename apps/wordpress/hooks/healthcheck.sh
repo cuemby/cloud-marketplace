@@ -32,11 +32,16 @@ log_info "[wordpress/healthcheck] MariaDB is accepting connections."
 
 # --- Check 2: WordPress HTTP response ---
 _wp_responds() {
-    local port="${PARAM_HTTP_NODEPORT:-${DEFAULT_HTTP_NODEPORT}}"
+    local pod
+    pod="$(kubectl get pods -n "${local_namespace}" \
+        -l app.kubernetes.io/name=wordpress,app.kubernetes.io/component=app \
+        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
+    [[ -n "$pod" ]] || return 1
     local status_code
-    status_code="$(curl -sS -o /dev/null -w '%{http_code}' \
+    status_code="$(kubectl exec -n "${local_namespace}" "$pod" -- \
+        curl -sS -o /dev/null -w '%{http_code}' \
         --max-time 10 \
-        "http://localhost:${port}/wp-login.php" 2>/dev/null || true)"
+        "http://localhost/wp-login.php" 2>/dev/null || true)"
     [[ "$status_code" =~ ^(200|301|302)$ ]]
 }
 

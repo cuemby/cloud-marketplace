@@ -13,6 +13,10 @@ on:
         description: 'Specific app to test (blank = all apps)'
         required: false
         type: string
+      version:
+        description: 'Specific version to test (blank = all versions)'
+        required: false
+        type: string
 
 concurrency:
   group: e2e-${{ github.ref }}
@@ -30,11 +34,46 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install yq
+        run: |
+          sudo wget -qO /usr/local/bin/yq \
+            https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+          sudo chmod +x /usr/local/bin/yq
+
       - id: set-matrix
         run: |
+          # Build a JSON array of {app, version} objects from a list of app names.
+          # Reads each app's app.yaml to extract all versions.
+          build_matrix() {
+            local app_list="$1"
+            local matrix="[]"
+            for app in $app_list; do
+              local app_yaml="apps/${app}/app.yaml"
+              [[ -f "$app_yaml" ]] || continue
+              local versions
+              versions=$(yq -r '.versions[].appVersion // empty' "$app_yaml" 2>/dev/null)
+              if [[ -z "$versions" ]]; then
+                # No versions array — single entry with empty version (use default)
+                matrix=$(echo "$matrix" | jq -c ". + [{\"app\": \"${app}\", \"version\": \"\"}]")
+              else
+                while IFS= read -r ver; do
+                  matrix=$(echo "$matrix" | jq -c ". + [{\"app\": \"${app}\", \"version\": \"${ver}\"}]")
+                done <<< "$versions"
+              fi
+            done
+            echo "$matrix"
+          }
+
+          # Manual trigger: specific app + optional version
           if [[ -n "${{ github.event.inputs.app }}" ]]; then
-            # Manual trigger: specific app
-            echo 'matrix=["${{ github.event.inputs.app }}"]' >> "$GITHUB_OUTPUT"
+            app="${{ github.event.inputs.app }}"
+            version="${{ github.event.inputs.version }}"
+            if [[ -n "$version" ]]; then
+              matrix="[{\"app\": \"${app}\", \"version\": \"${version}\"}]"
+            else
+              matrix=$(build_matrix "$app")
+            fi
+            echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
             echo "has_apps=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -42,40 +81,40 @@ jobs:
           # Detect what changed between this push and the previous commit
           changed_files=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only HEAD)
 
-          # If bootstrap/ or tests/e2e/ changed, test ALL apps
+          # If bootstrap/ or tests/e2e/ changed, test ALL apps × ALL versions
           if echo "$changed_files" | grep -qE '^(bootstrap/|tests/e2e/)'; then
-            apps=$(ls -d apps/*/ | grep -v _template \
-              | xargs -I{} basename {} \
-              | jq -R -s -c 'split("\n") | map(select(. != ""))')
-            echo "matrix=${apps}" >> "$GITHUB_OUTPUT"
+            app_list=$(ls -d apps/*/ | grep -v _template \
+              | xargs -I{} basename {})
+            matrix=$(build_matrix "$app_list")
+            echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
             echo "has_apps=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
 
-          # Otherwise, only test apps whose folder changed
-          changed_apps=$(echo "$changed_files" \
+          # Otherwise, only test apps whose folder changed × ALL their versions
+          app_list=$(echo "$changed_files" \
             | grep -oP '^apps/\K[^/]+' \
             | grep -v _template \
-            | sort -u \
-            | jq -R -s -c 'split("\n") | map(select(. != ""))')
+            | sort -u)
 
-          if [[ "$changed_apps" == "[]" ]] || [[ -z "$changed_apps" ]]; then
+          if [[ -z "$app_list" ]]; then
             echo "matrix=[]" >> "$GITHUB_OUTPUT"
             echo "has_apps=false" >> "$GITHUB_OUTPUT"
           else
-            echo "matrix=${changed_apps}" >> "$GITHUB_OUTPUT"
+            matrix=$(build_matrix "$app_list")
+            echo "matrix=${matrix}" >> "$GITHUB_OUTPUT"
             echo "has_apps=true" >> "$GITHUB_OUTPUT"
           fi
 
   e2e:
-    name: E2E · ${{ matrix.app }}
+    name: E2E · ${{ matrix.combo.app }} v${{ matrix.combo.version }}
     needs: determine-apps
     if: needs.determine-apps.outputs.has_apps == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     strategy:
       matrix:
-        app: ${{ fromJSON(needs.determine-apps.outputs.matrix) }}
+        combo: ${{ fromJSON(needs.determine-apps.outputs.matrix) }}
       fail-fast: false
       max-parallel: 20
     steps:
@@ -98,23 +137,30 @@ jobs:
 
       - name: Run E2E test
         env:
-          APP_NAME: ${{ matrix.app }}
+          APP_NAME: ${{ matrix.combo.app }}
+          APP_VERSION: ${{ matrix.combo.version }}
         run: ./tests/e2e/run-e2e.sh
 
       - name: Collect logs on failure
         if: failure()
         run: |
           echo "=== Pods ==="
-          kubectl get pods -A || true
+          kubectl get pods -n "app-${{ matrix.combo.app }}" -o wide || true
           echo ""
-          echo "=== Pod details (app namespace) ==="
-          kubectl describe pods -n "app-${{ matrix.app }}" || true
+          echo "=== Pod details ==="
+          kubectl describe pods -n "app-${{ matrix.combo.app }}" || true
+          echo ""
+          echo "=== Services ==="
+          kubectl get svc -n "app-${{ matrix.combo.app }}" || true
+          echo ""
+          echo "=== PVCs ==="
+          kubectl get pvc -n "app-${{ matrix.combo.app }}" || true
           echo ""
           echo "=== Events ==="
-          kubectl get events -n "app-${{ matrix.app }}" --sort-by='.lastTimestamp' || true
+          kubectl get events -n "app-${{ matrix.combo.app }}" --sort-by='.lastTimestamp' || true
           echo ""
-          echo "=== Helm status ==="
-          helm status "${{ matrix.app }}" -n "app-${{ matrix.app }}" || true
+          echo "=== Helm status (if Helm deploy) ==="
+          helm status "${{ matrix.combo.app }}" -n "app-${{ matrix.combo.app }}" 2>/dev/null || true
           echo ""
           echo "=== Bootstrap log ==="
           cat .e2e-logs/bootstrap.log 2>/dev/null || true
