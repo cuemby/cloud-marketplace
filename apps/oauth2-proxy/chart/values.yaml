@@ -1,5 +1,8 @@
 # Cuemby defaults for OAuth2 Proxy on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 oauth2-proxy:
   replicaCount: 1
 

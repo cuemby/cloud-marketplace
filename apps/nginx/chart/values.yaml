@@ -1,5 +1,8 @@
 # Cuemby defaults for NGINX on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 nginx:
   replicaCount: 1
 

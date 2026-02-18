@@ -1,5 +1,8 @@
 # Cuemby defaults for Redmine on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 redmine:
   service:
     type: ClusterIP

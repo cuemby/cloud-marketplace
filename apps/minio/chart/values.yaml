@@ -1,6 +1,9 @@
 # Cuemby defaults for MinIO on single-node K3s.
 # These override the upstream bitnami/minio defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 minio:
   # Standalone mode (no distributed)
   mode: standalone

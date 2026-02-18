@@ -7,7 +7,7 @@ icon: https://dyltqmyl993wv.cloudfront.net/assets/stacks/postgresql/img/postgres
 chart:
   name: postgresql
   repository: oci://registry-1.docker.io/bitnamicharts
-  version: "18.3.0"
+  version: "18.4.0"
 
 requirements:
   cpu: 1
@@ -15,6 +15,7 @@ requirements:
   disk: 20Gi
 
 versions:
+  - "18.4.0"
   - "18.3.0"
 
 parameters:

@@ -1,6 +1,9 @@
 # Cuemby defaults for Gitea on single-node K3s.
 # These override the upstream bitnami/gitea defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 gitea:
   # ClusterIP for HTTP — Traefik Gateway routes external HTTPS traffic
   service:

@@ -1,6 +1,9 @@
 # Cuemby defaults for Keycloak on single-node K3s.
 # These override the upstream bitnami/keycloak defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 keycloak:
   # Single replica (single-node K3s)
   replicaCount: 1

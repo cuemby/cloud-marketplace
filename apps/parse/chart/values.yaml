@@ -1,5 +1,8 @@
 # Cuemby defaults for Parse on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 parse:
   server:
     replicaCount: 1

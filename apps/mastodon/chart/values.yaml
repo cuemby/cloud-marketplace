@@ -1,5 +1,8 @@
 # Cuemby defaults for Mastodon on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 mastodon:
   web:
     replicaCount: 1

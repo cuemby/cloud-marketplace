@@ -1,6 +1,9 @@
 # Cuemby defaults for Superset on single-node K3s.
 # These override the upstream bitnami/superset defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 superset:
   # ClusterIP — Gateway API routes external traffic to Superset
   service:

@@ -1,6 +1,9 @@
 # Cuemby defaults for Prometheus on single-node K3s.
 # These override the upstream bitnami/prometheus defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 prometheus:
   server:
     replicaCount: 1

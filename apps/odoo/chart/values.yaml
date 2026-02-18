@@ -1,6 +1,9 @@
 # Cuemby defaults for Odoo on single-node K3s.
 # These override the upstream bitnami/odoo defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 odoo:
   # ClusterIP — Traefik Gateway routes external traffic to Odoo
   service:

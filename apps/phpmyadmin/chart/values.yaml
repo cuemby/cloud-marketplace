@@ -1,6 +1,9 @@
 # Cuemby defaults for phpMyAdmin on single-node K3s.
 # These override the upstream bitnami/phpmyadmin defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 phpmyadmin:
   # ClusterIP — Traefik Gateway routes external traffic to phpMyAdmin
   service:

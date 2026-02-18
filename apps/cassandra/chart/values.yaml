@@ -1,5 +1,8 @@
 # Cuemby defaults for Cassandra on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 cassandra:
   # Single node
   replicaCount: 1

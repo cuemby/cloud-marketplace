@@ -1,6 +1,9 @@
 # Cuemby defaults for etcd on single-node K3s.
 # These override the upstream bitnami/etcd defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 etcd:
   # Single-node deployment
   replicaCount: 1

@@ -1,6 +1,9 @@
 # Cuemby defaults for Ghost on single-node K3s.
 # These override the upstream bitnami/ghost defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 ghost:
   # ClusterIP — Traefik Gateway routes external traffic to Ghost
   service:

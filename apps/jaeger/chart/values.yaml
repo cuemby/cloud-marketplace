@@ -1,5 +1,8 @@
 # Cuemby defaults for Jaeger on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 jaeger:
   query:
     replicaCount: 1

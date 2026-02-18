@@ -1,5 +1,8 @@
 # Cuemby defaults for Kafka on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 kafka:
   # KRaft mode (no ZooKeeper)
   kraft:

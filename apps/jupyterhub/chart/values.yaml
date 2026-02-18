@@ -1,5 +1,8 @@
 # Cuemby defaults for JupyterHub on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 jupyterhub:
   hub:
     replicaCount: 1

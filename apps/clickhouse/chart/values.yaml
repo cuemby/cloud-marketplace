@@ -1,5 +1,8 @@
 # Cuemby defaults for ClickHouse on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 clickhouse:
   shards: 1
   replicaCount: 1

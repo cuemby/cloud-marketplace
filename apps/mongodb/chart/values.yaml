@@ -1,6 +1,9 @@
 # Cuemby defaults for MongoDB on single-node K3s.
 # These override the upstream bitnami/mongodb defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 mongodb:
   # Standalone mode (no replica set on K3s)
   architecture: standalone

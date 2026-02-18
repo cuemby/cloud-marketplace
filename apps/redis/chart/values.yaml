@@ -1,6 +1,9 @@
 # Cuemby defaults for Redis on single-node K3s.
 # These override the upstream bitnami/redis defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 redis:
   # Single-node architecture (no replicas on K3s)
   architecture: standalone

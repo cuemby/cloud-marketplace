@@ -1,6 +1,9 @@
 # Cuemby defaults for Elasticsearch on single-node K3s.
 # These override the upstream bitnami/elasticsearch defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 elasticsearch:
   # Single-node mode: master handles all roles
   master:

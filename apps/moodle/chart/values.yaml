@@ -1,6 +1,9 @@
 # Cuemby defaults for Moodle on single-node K3s.
 # These override the upstream bitnami/moodle defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 moodle:
   # ClusterIP — Gateway API routes external traffic to Moodle
   service:

@@ -1,6 +1,9 @@
 # Cuemby defaults for Valkey on single-node K3s.
 # These override the upstream bitnami/valkey defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 valkey:
   # Single-node architecture (no replicas on K3s)
   architecture: standalone

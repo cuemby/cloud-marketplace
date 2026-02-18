@@ -1,5 +1,8 @@
 # Cuemby defaults for InfluxDB on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 influxdb:
   # Authentication
   auth:

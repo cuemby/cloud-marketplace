@@ -1,5 +1,8 @@
 # Cuemby defaults for Concourse on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 concourse:
   web:
     replicaCount: 1

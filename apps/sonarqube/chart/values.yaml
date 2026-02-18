@@ -1,5 +1,8 @@
 # Cuemby defaults for SonarQube on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 sonarqube:
   service:
     type: ClusterIP

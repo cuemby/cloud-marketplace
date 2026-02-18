@@ -1,5 +1,8 @@
 # Cuemby defaults for Discourse on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 discourse:
   discourse:
     replicaCount: 1

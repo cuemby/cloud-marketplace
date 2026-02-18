@@ -1,5 +1,8 @@
 # Cuemby defaults for Vault on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 vault:
   server:
     replicaCount: 1

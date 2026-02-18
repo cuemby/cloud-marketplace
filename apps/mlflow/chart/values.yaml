@@ -1,6 +1,9 @@
 # Cuemby defaults for MLflow on single-node K3s.
 # These override the upstream bitnami/mlflow defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 mlflow:
   tracking:
     replicaCount: 1

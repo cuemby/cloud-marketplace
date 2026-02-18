@@ -1,5 +1,8 @@
 # Cuemby defaults for OpenSearch on single-node K3s.
 
+global:
+  imageRegistry: public.ecr.aws
+
 opensearch:
   # Single-node mode
   master:

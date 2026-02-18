@@ -1,6 +1,9 @@
 # Cuemby defaults for MySQL on single-node K3s.
 # These override the upstream bitnami/mysql defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 mysql:
   # Single-node architecture (no read replicas on K3s)
   architecture: standalone

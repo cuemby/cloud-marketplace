@@ -1,6 +1,9 @@
 # Cuemby defaults for MariaDB on single-node K3s.
 # These override the upstream bitnami/mariadb defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 mariadb:
   # Single-node architecture (no read replicas on K3s)
   architecture: standalone

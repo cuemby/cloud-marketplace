@@ -1,6 +1,9 @@
 # Cuemby defaults for Grafana on single-node K3s.
 # These override the upstream bitnami/grafana defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 grafana:
   # ClusterIP — Traefik Gateway routes external traffic to Grafana
   service:

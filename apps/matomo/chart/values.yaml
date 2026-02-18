@@ -1,6 +1,9 @@
 # Cuemby defaults for Matomo on single-node K3s.
 # These override the upstream bitnami/matomo defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 matomo:
   # ClusterIP — Traefik Gateway routes external traffic to Matomo
   service:

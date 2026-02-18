@@ -1,6 +1,9 @@
 # Cuemby defaults for Neo4j on single-node K3s.
 # These override the upstream bitnami/neo4j defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 neo4j:
   # HTTP/Browser service via ClusterIP — Gateway API routes external HTTPS traffic
   service:

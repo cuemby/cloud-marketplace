@@ -1,6 +1,9 @@
 # Cuemby defaults for RabbitMQ on single-node K3s.
 # These override the upstream bitnami/rabbitmq defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 rabbitmq:
   # Single replica (single-node K3s)
   replicaCount: 1

@@ -1,6 +1,9 @@
 # Cuemby defaults for WordPress on single-node K3s.
 # These override the upstream bitnami/wordpress defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 wordpress:
   # ClusterIP — Traefik Gateway routes external traffic to WordPress
   service:

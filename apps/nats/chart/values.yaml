@@ -1,6 +1,9 @@
 # Cuemby defaults for NATS on single-node K3s.
 # These override the upstream bitnami/nats defaults for our environment.
 
+global:
+  imageRegistry: public.ecr.aws
+
 nats:
   # Single replica (single-node K3s)
   replicaCount: 1
