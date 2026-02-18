@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# deploy-app.sh — Deploy an application via its wrapper Helm chart.
-# Reads PARAM_* env vars and maps them to Helm --set flags using app.yaml helmMapping.
+# deploy-app.sh — Deploy an application via its declared deployment method.
+# Dispatches to helm, kustomize, or manifest deployer based on app.yaml deployMethod.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -11,114 +11,53 @@ source "${SCRIPT_DIR}/lib/constants.sh"
 source "${SCRIPT_DIR}/lib/logging.sh"
 # shellcheck source=lib/retry.sh
 source "${SCRIPT_DIR}/lib/retry.sh"
+# shellcheck source=lib/deploy-helpers.sh
+source "${SCRIPT_DIR}/lib/deploy-helpers.sh"
+
+# Source deployer strategies
+# shellcheck source=deploy-helm.sh
+source "${SCRIPT_DIR}/deploy-helm.sh"
+# shellcheck source=deploy-kustomize.sh
+source "${SCRIPT_DIR}/deploy-kustomize.sh"
+# shellcheck source=deploy-manifest.sh
+source "${SCRIPT_DIR}/deploy-manifest.sh"
 
 deploy_app() {
     local app_name="${APP_NAME:?APP_NAME is required}"
     local app_dir="${APPS_DIR}/${app_name}"
     local app_yaml="${app_dir}/app.yaml"
-    local chart_dir="${app_dir}/chart"
     local namespace="${HELM_NAMESPACE_PREFIX}${app_name}"
-    local release_name="$app_name"
 
-    # Resolve chart version from app.yaml if APP_VERSION set
-    local values_args=()
-    values_args+=("-f" "${chart_dir}/values.yaml")
+    # Determine deployment method (default: helm for backward compatibility)
+    local deploy_method
+    deploy_method="$(yq -r '.deployMethod // "helm"' "$app_yaml")"
+    log_info "Deploy method: ${deploy_method}"
 
-    # Use size profile if available
-    local profile="${VM_PROFILE:-single}"
-    local profile_values="${chart_dir}/values-${profile}.yaml"
-    if [[ -f "$profile_values" ]]; then
-        log_info "Using profile: ${profile}"
-        values_args+=("-f" "$profile_values")
-    fi
-
-    # Run pre-install hook FIRST (may export PARAM_* vars like WORDPRESS_HOSTNAME)
-    run_hook "$app_dir" "pre-install"
-
-    # Build --set flags from PARAM_* env vars (after pre-install hook)
-    local set_args=()
-    while IFS= read -r line; do
-        [[ -n "$line" ]] && set_args+=("--set" "$line")
-    done < <(build_set_args "$app_yaml")
-
-    # Create namespace
+    # Create namespace (shared across all methods)
     log_info "Creating namespace: ${namespace}"
     kubectl create namespace "$namespace" --dry-run=client -o yaml | kubectl apply -f -
 
-    # Clean up stuck/failed releases before deploying
-    cleanup_stuck_release "$release_name" "$namespace"
+    # Run pre-install hook (shared — may export PARAM_* vars)
+    run_hook "$app_dir" "pre-install"
 
-    # Update chart dependencies
-    log_info "Updating Helm dependencies..."
-    helm dependency update "$chart_dir"
-
-    # Deploy
-    log_info "Deploying ${app_name} (release: ${release_name}, namespace: ${namespace})..."
-    local helm_cmd=(
-        helm upgrade --install "$release_name" "$chart_dir"
-        --namespace "$namespace"
-        "${values_args[@]}"
-        --atomic
-        --wait
-        --timeout "${TIMEOUT_HELM_DEPLOY}s"
-    )
-
-    # Append --set flags if any
-    if [[ ${#set_args[@]} -gt 0 ]]; then
-        helm_cmd+=("${set_args[@]}")
-    fi
-
-    log_debug "Helm command: ${helm_cmd[*]}"
-    "${helm_cmd[@]}"
-
-    log_info "Helm release deployed successfully."
-
-    # Run post-install hook
-    run_hook "$app_dir" "post-install"
-}
-
-# Clean up a Helm release stuck in a failed or pending state.
-# This handles scenarios where a previous deploy crashed or was interrupted,
-# leaving the release in a state that blocks subsequent deployments.
-# Usage: cleanup_stuck_release <release_name> <namespace>
-cleanup_stuck_release() {
-    local release_name="$1"
-    local namespace="$2"
-
-    local status
-    status="$(helm status "$release_name" --namespace "$namespace" -o json 2>/dev/null | jq -r '.info.status // empty')" || true
-
-    if [[ -z "$status" ]]; then
-        log_debug "No existing release '${release_name}' found — clean install."
-        return 0
-    fi
-
-    log_info "Existing release '${release_name}' status: ${status}"
-
-    case "$status" in
-        deployed)
-            log_info "Release is deployed — upgrade will proceed normally."
+    # Dispatch to deployer
+    case "$deploy_method" in
+        helm)
+            deploy_helm "$app_name" "$app_dir" "$app_yaml" "$namespace"
             ;;
-        failed|pending-install|pending-upgrade|pending-rollback)
-            log_warn "Release is stuck in '${status}' state — removing before redeploy."
-            if helm uninstall "$release_name" --namespace "$namespace" --wait 2>/dev/null; then
-                log_info "Stuck release removed successfully."
-            else
-                log_warn "helm uninstall returned non-zero — forcing cleanup via secret deletion."
-                kubectl delete secrets -n "$namespace" -l "owner=helm,name=${release_name}" --ignore-not-found
-                log_info "Helm release secrets cleaned up."
-            fi
+        kustomize)
+            deploy_kustomize "$app_name" "$app_dir" "$app_yaml" "$namespace"
             ;;
-        uninstalling)
-            log_warn "Release is stuck uninstalling — cleaning up secrets directly."
-            kubectl delete secrets -n "$namespace" -l "owner=helm,name=${release_name}" --ignore-not-found
-            log_info "Helm release secrets cleaned up."
+        manifest)
+            deploy_manifest "$app_name" "$app_dir" "$app_yaml" "$namespace"
             ;;
         *)
-            log_warn "Unexpected release status '${status}' — attempting uninstall."
-            helm uninstall "$release_name" --namespace "$namespace" --wait 2>/dev/null || true
+            log_fatal "Unknown deployment method: ${deploy_method}"
             ;;
     esac
+
+    # Run post-install hook (shared)
+    run_hook "$app_dir" "post-install"
 }
 
 # Build --set flags from PARAM_* environment variables using helmMapping.

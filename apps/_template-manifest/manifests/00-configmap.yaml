@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: APPNAME-config
+  labels:
+    app: APPNAME
+data:
+  EXAMPLE_PARAM: "${PARAM_EXAMPLE_PARAM}"

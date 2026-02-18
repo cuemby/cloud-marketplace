@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: APPNAME
+  labels:
+    app: APPNAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: APPNAME
+  template:
+    metadata:
+      labels:
+        app: APPNAME
+    spec:
+      containers:
+        - name: APPNAME
+          image: "CHANGE_ME:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: APPNAME-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

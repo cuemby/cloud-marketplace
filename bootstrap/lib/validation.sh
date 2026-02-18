@@ -39,6 +39,8 @@ validate_app_exists() {
 }
 
 # Validate app version against supported versions in app.yaml.
+# Supports both old-style flat string arrays and new-style versionMap objects.
+# New-style matches against appVersion (user-facing version).
 # Usage: validate_app_version <app_name> <version>
 validate_app_version() {
     local app_name="$1"
@@ -50,17 +52,41 @@ validate_app_version() {
         return 0
     fi
 
-    local supported
-    supported="$(yq -r '.versions[]' "$app_yaml" 2>/dev/null)"
-    if [[ -z "$supported" ]]; then
+    local version_count
+    version_count="$(yq -r '.versions | length' "$app_yaml" 2>/dev/null)"
+    if [[ "$version_count" == "0" ]] || [[ "$version_count" == "null" ]]; then
         log_warn "No versions list in app.yaml, skipping version check"
         return 0
     fi
 
-    if ! echo "$supported" | grep -qx "$version"; then
-        log_error "Version '${version}' not in supported versions for ${app_name}"
-        log_error "Supported: ${supported}"
-        return 1
+    # Check if versions entries are objects (new-style) or strings (old-style)
+    local first_type
+    first_type="$(yq -r '.versions[0] | type' "$app_yaml" 2>/dev/null)"
+
+    if [[ "$first_type" == "!!map" ]]; then
+        # New-style: match against appVersion field
+        local found
+        found="$(yq -r ".versions[] | select(.appVersion == \"${version}\") | .appVersion" "$app_yaml" 2>/dev/null)"
+        if [[ -z "$found" ]] || [[ "$found" == "null" ]]; then
+            local supported
+            supported="$(yq -r '.versions[].appVersion' "$app_yaml" 2>/dev/null)"
+            log_error "Version '${version}' not in supported versions for ${app_name}"
+            log_error "Supported: ${supported}"
+            return 1
+        fi
+    else
+        # Old-style: flat string match
+        local supported
+        supported="$(yq -r '.versions[]' "$app_yaml" 2>/dev/null)"
+        if [[ -z "$supported" ]]; then
+            log_warn "No versions list in app.yaml, skipping version check"
+            return 0
+        fi
+        if ! echo "$supported" | grep -qx "$version"; then
+            log_error "Version '${version}' not in supported versions for ${app_name}"
+            log_error "Supported: ${supported}"
+            return 1
+        fi
     fi
 
     return 0

@@ -4,12 +4,10 @@ description: Short description of the application.
 category: general
 icon: ""
 
-deployMethod: helm
+deployMethod: manifest
 
-chart:
-  name: APPNAME
-  repository: ""
-  version: "0.1.0"
+manifests:
+  path: manifests/
 
 ssl:
   enabled: false
@@ -21,7 +19,7 @@ requirements:
 
 versions:
   - appVersion: "0.1.0"
-    chartVersion: "0.1.0"
+    imageTag: "0.1.0"
     default: true
 
 parameters:
@@ -31,4 +29,3 @@ parameters:
     type: string
     required: false
     default: "example"
-    helmMapping: APPNAME.exampleParam

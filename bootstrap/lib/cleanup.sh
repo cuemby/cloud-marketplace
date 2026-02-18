@@ -3,6 +3,7 @@
 # Source this file; do not execute directly.
 
 # Write state to the JSON state file.
+# Includes deployMethod from app.yaml for UI consumption.
 # Usage: write_state <phase> [error_message]
 write_state() {
     local phase="$1"
@@ -12,6 +13,12 @@ write_state() {
 
     mkdir -p "$(dirname "$STATE_FILE")"
 
+    # Read deployment method from app.yaml if available
+    local deploy_method=""
+    if [[ -n "${APP_NAME:-}" ]] && [[ -f "${APPS_DIR:-}/${APP_NAME}/app.yaml" ]]; then
+        deploy_method="$(yq -r '.deployMethod // "helm"' "${APPS_DIR}/${APP_NAME}/app.yaml" 2>/dev/null || echo "")"
+    fi
+
     local state_json
     if [[ -n "$error_msg" ]]; then
         state_json="$(jq -n \
@@ -19,15 +26,17 @@ write_state() {
             --arg ts "$timestamp" \
             --arg app "${APP_NAME:-unknown}" \
             --arg ver "${APP_VERSION:-unknown}" \
+            --arg method "$deploy_method" \
             --arg err "$error_msg" \
-            '{phase: $phase, timestamp: $ts, app: $app, version: $ver, error: $err}')"
+            '{phase: $phase, timestamp: $ts, app: $app, version: $ver, deployMethod: $method, error: $err}')"
     else
         state_json="$(jq -n \
             --arg phase "$phase" \
             --arg ts "$timestamp" \
             --arg app "${APP_NAME:-unknown}" \
             --arg ver "${APP_VERSION:-unknown}" \
-            '{phase: $phase, timestamp: $ts, app: $app, version: $ver}')"
+            --arg method "$deploy_method" \
+            '{phase: $phase, timestamp: $ts, app: $app, version: $ver, deployMethod: $method}')"
     fi
 
     echo "$state_json" > "$STATE_FILE"

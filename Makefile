@@ -39,6 +39,6 @@ catalog: ## Generate catalog.json from all app.yaml files
 validate: ## Validate all app.yaml files
 	@$(SCRIPTS_DIR)/validate-apps.sh
 
-new-app: ## Create a new app from template (usage: make new-app NAME=myapp)
-	@if [ -z "$(NAME)" ]; then echo "Usage: make new-app NAME=myapp"; exit 1; fi
-	@$(SCRIPTS_DIR)/new-app.sh $(NAME)
+new-app: ## Create a new app from template (usage: make new-app NAME=myapp [METHOD=kustomize])
+	@if [ -z "$(NAME)" ]; then echo "Usage: make new-app NAME=myapp [METHOD=helm|kustomize|manifest]"; exit 1; fi
+	@$(SCRIPTS_DIR)/new-app.sh $(NAME) $(if $(METHOD),--method $(METHOD))
