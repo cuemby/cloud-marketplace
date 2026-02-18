@@ -51,7 +51,7 @@ jobs:
               local app_yaml="apps/${app}/app.yaml"
               [[ -f "$app_yaml" ]] || continue
               local versions
-              versions=$(yq -r '.versions[].appVersion // empty' "$app_yaml" 2>/dev/null)
+              versions=$(yq -r '.versions[].appVersion' "$app_yaml" 2>/dev/null)
               if [[ -z "$versions" ]]; then
                 # No versions array — single entry with empty version (use default)
                 matrix=$(echo "$matrix" | jq -c ". + [{\"app\": \"${app}\", \"version\": \"\"}]")
