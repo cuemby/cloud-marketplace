@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cassandra
+  labels:
+    app.kubernetes.io/name: cassandra
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cassandra
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cassandra
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: cassandra
+          image: docker.io/library/cassandra:${PARAM_APP_IMAGE_TAG}
+          ports:
+            - name: cql
+              containerPort: 9042
+              protocol: TCP
+            - name: internode
+              containerPort: 7000
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: cassandra-config
+          volumeMounts:
+            - name: cassandra-data
+              mountPath: /var/lib/cassandra
+              subPath: data
+          startupProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - cqlsh -e "SELECT bootstrapped FROM system.local" 2>/dev/null
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 60
+          livenessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - nodetool status 2>/dev/null | grep -q "^UN"
+            periodSeconds: 30
+            timeoutSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/bash
+                - -c
+                - cqlsh -e "SELECT cluster_name FROM system.local" 2>/dev/null
+            periodSeconds: 10
+            timeoutSeconds: 10
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_CASSANDRA_CPU_REQUEST}
+              memory: ${PARAM_CASSANDRA_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_CASSANDRA_CPU_LIMIT}
+              memory: ${PARAM_CASSANDRA_MEMORY_LIMIT}
+      volumes:
+        - name: cassandra-data
+          persistentVolumeClaim:
+            claimName: cassandra-data

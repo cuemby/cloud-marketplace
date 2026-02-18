@@ -1,6 +1,89 @@
 {
   "apps": [
     {
+      "name": "cassandra",
+      "displayName": "Apache Cassandra",
+      "description": "Open-source NoSQL distributed database for scalable, high-availability data.",
+      "category": "database",
+      "icon": "https://cassandra.apache.org/_/img/cassandra-icon.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 4,
+        "memory": "8Gi",
+        "disk": "50Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "5.0.6",
+          "imageTag": "5.0.6",
+          "default": true
+        },
+        {
+          "appVersion": "4.1.10",
+          "imageTag": "4.1.10"
+        },
+        {
+          "appVersion": "4.0.19",
+          "imageTag": "4.0.19"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "CASSANDRA_PASSWORD",
+          "displayName": "Superuser Password",
+          "description": "Cassandra superuser password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "CASSANDRA_CLUSTER_NAME",
+          "displayName": "Cluster Name",
+          "description": "Name of the Cassandra cluster",
+          "type": "string",
+          "required": false,
+          "default": "CuembyCassandra"
+        },
+        {
+          "name": "CASSANDRA_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for Cassandra data",
+          "type": "string",
+          "required": false,
+          "default": "20Gi"
+        },
+        {
+          "name": "CASSANDRA_MAX_HEAP_SIZE",
+          "displayName": "JVM Max Heap Size",
+          "description": "Maximum JVM heap size (recommend ~25% of VM RAM)",
+          "type": "string",
+          "required": false,
+          "default": "2G"
+        },
+        {
+          "name": "CASSANDRA_HEAP_NEWSIZE",
+          "displayName": "JVM Young Gen Size",
+          "description": "JVM young generation heap size",
+          "type": "string",
+          "required": false,
+          "default": "512M"
+        },
+        {
+          "name": "CASSANDRA_NUM_TOKENS",
+          "displayName": "Virtual Node Tokens",
+          "description": "Number of virtual node tokens",
+          "type": "string",
+          "required": false,
+          "default": "256"
+        }
+      ]
+    },
+    {
       "name": "postgresql",
       "displayName": "PostgreSQL",
       "description": "Open-source relational database known for reliability, extensibility, and SQL compliance.",
@@ -189,5 +272,5 @@
       ]
     }
   ],
-  "generated": "2026-02-18T20:51:42Z"
+  "generated": "2026-02-18T21:26:49Z"
 }
