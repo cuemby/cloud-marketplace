@@ -1631,17 +1631,9 @@
       },
       "versions": [
         {
-          "appVersion": "2026.2.17",
-          "imageTag": "2026.2.17",
+          "appVersion": "2026.2.19",
+          "imageTag": "2026.2.19",
           "default": true
-        },
-        {
-          "appVersion": "2026.2.6",
-          "imageTag": "2026.2.6"
-        },
-        {
-          "appVersion": "2026.2.3",
-          "imageTag": "2026.2.3"
         }
       ],
       "parameters": [
@@ -2523,5 +2515,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T20:26:19Z"
+  "generated": "2026-02-19T21:56:54Z"
 }
