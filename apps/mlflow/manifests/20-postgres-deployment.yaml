@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mlflow-postgres
+  labels:
+    app.kubernetes.io/name: mlflow
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: mlflow
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: mlflow
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: postgres
+          image: docker.io/library/postgres:17.8-alpine
+          ports:
+            - containerPort: 5432
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: mlflow-db-secret
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U mlflow
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U mlflow
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - pg_isready -U mlflow
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_MLFLOW_POSTGRES_CPU_REQUEST}
+              memory: ${PARAM_MLFLOW_POSTGRES_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_MLFLOW_POSTGRES_CPU_LIMIT}
+              memory: ${PARAM_MLFLOW_POSTGRES_MEMORY_LIMIT}
+      volumes:
+        - name: postgres-data
+          persistentVolumeClaim:
+            claimName: mlflow-postgres-data

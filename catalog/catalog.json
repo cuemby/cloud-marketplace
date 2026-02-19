@@ -737,6 +737,65 @@
       ]
     },
     {
+      "name": "mlflow",
+      "displayName": "MLflow",
+      "description": "Open-source platform for managing the end-to-end machine learning lifecycle.",
+      "category": "analytics",
+      "icon": "https://mlflow.org/img/mlflow-black.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "30Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "3.9.0",
+          "imageTag": "v3.9.0",
+          "default": true
+        },
+        {
+          "appVersion": "3.8.1",
+          "imageTag": "v3.8.1"
+        },
+        {
+          "appVersion": "3.7.0",
+          "imageTag": "v3.7.0"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "MLFLOW_DB_PASSWORD",
+          "displayName": "Database Password",
+          "description": "PostgreSQL password for MLflow (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "MLFLOW_DB_DATA_SIZE",
+          "displayName": "Database Storage Size",
+          "description": "Size of persistent volume for PostgreSQL data",
+          "type": "string",
+          "required": false,
+          "default": "5Gi"
+        },
+        {
+          "name": "MLFLOW_ARTIFACT_SIZE",
+          "displayName": "Artifact Storage Size",
+          "description": "Size of persistent volume for MLflow artifact storage",
+          "type": "string",
+          "required": false,
+          "default": "20Gi"
+        }
+      ]
+    },
+    {
       "name": "mongodb",
       "displayName": "MongoDB",
       "description": "Document-oriented NoSQL database for modern applications with flexible schemas.",
@@ -1747,5 +1806,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T06:30:00Z"
+  "generated": "2026-02-19T06:36:25Z"
 }
