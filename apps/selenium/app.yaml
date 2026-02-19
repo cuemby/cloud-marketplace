@@ -1,0 +1,42 @@
+name: selenium
+displayName: Selenium Grid
+description: Browser automation infrastructure for running automated tests across multiple browsers in parallel.
+category: devops
+icon: https://www.selenium.dev/images/selenium_logo_square_green.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 4
+  memory: 8Gi
+  disk: 20Gi
+
+versions:
+  - appVersion: "4.40.0"
+    imageTag: "4.40.0-20260202"
+    default: true
+  - appVersion: "4.39.0"
+    imageTag: "4.39.0-20251212"
+  - appVersion: "4.38.0"
+    imageTag: "4.38.0-20251101"
+
+parameters:
+  - name: SELENIUM_CHROME_NODES
+    displayName: Chrome Node Count
+    description: Number of Chrome browser nodes (1 on single-node VMs)
+    type: string
+    required: false
+    default: "1"
+
+  - name: SELENIUM_FIREFOX_NODES
+    displayName: Firefox Node Count
+    description: Number of Firefox browser nodes (1 on single-node VMs)
+    type: string
+    required: false
+    default: "1"

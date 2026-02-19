@@ -453,19 +453,20 @@
       "parent_id": "6.0",
       "depends_on": [
         "6.0"
-      ]
+      ],
+      "commit_sha": "0b7867a"
     },
     {
       "id": "7.0",
       "title": "Phase 7 — Complex Multi-Component (selenium, harbor)",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium"
     },
     {
       "id": "7.1",
       "title": "Create Selenium Grid app [~6,000 tokens — Medium]",
-      "status": "pending",
+      "status": "in_progress",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "7.0",

@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: selenium-node-firefox
+  labels:
+    app.kubernetes.io/name: selenium
+    app.kubernetes.io/component: node-firefox
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: selenium
+      app.kubernetes.io/component: node-firefox
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: selenium
+        app.kubernetes.io/component: node-firefox
+    spec:
+      initContainers:
+        - name: wait-for-hub
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Selenium Hub..."
+              until nc -z selenium-hub 4444; do
+                echo "Hub not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "Hub is reachable, proceeding."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: node-firefox
+          image: "docker.io/selenium/node-firefox:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - name: vnc
+              containerPort: 5900
+              protocol: TCP
+            - name: node
+              containerPort: 5555
+              protocol: TCP
+          env:
+            - name: SE_EVENT_BUS_HOST
+              value: "selenium-hub"
+            - name: SE_EVENT_BUS_PUBLISH_PORT
+              value: "4442"
+            - name: SE_EVENT_BUS_SUBSCRIBE_PORT
+              value: "4443"
+            - name: SE_NODE_MAX_SESSIONS
+              value: "1"
+            - name: SE_NODE_OVERRIDE_MAX_SESSIONS
+              value: "true"
+          startupProbe:
+            tcpSocket:
+              port: 5555
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: 5555
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 5555
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_SELENIUM_FIREFOX_CPU_REQUEST}
+              memory: ${PARAM_SELENIUM_FIREFOX_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_SELENIUM_FIREFOX_CPU_LIMIT}
+              memory: ${PARAM_SELENIUM_FIREFOX_MEMORY_LIMIT}
+          volumeMounts:
+            - name: dshm
+              mountPath: /dev/shm
+      volumes:
+        - name: dshm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 2Gi

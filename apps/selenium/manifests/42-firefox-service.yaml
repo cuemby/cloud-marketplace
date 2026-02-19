@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: selenium-node-firefox
+  labels:
+    app.kubernetes.io/name: selenium
+    app.kubernetes.io/component: node-firefox
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: selenium
+    app.kubernetes.io/component: node-firefox
+  ports:
+    - name: node
+      port: 5555
+      targetPort: 5555
+      protocol: TCP
