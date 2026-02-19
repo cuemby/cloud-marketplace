@@ -1,0 +1,55 @@
+name: valkey
+displayName: Valkey
+description: High-performance in-memory data store for caching, messaging, and real-time applications.
+category: database
+icon: https://raw.githubusercontent.com/valkey-io/valkey-io.github.io/main/static/img/Valkey-logo.svg
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - appVersion: "8.1.5"
+    imageTag: "8.1.5-alpine"
+    default: true
+  - appVersion: "9.0.2"
+    imageTag: "9.0.2-alpine"
+  - appVersion: "8.0.3"
+    imageTag: "8.0.3-alpine"
+
+parameters:
+  - name: VALKEY_PASSWORD
+    displayName: Password
+    description: Valkey authentication password (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: VALKEY_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for Valkey data
+    type: string
+    required: false
+    default: "5Gi"
+
+  - name: VALKEY_MAXMEMORY
+    displayName: Max Memory
+    description: Maximum memory Valkey will use for data storage
+    type: string
+    required: false
+    default: "1gb"
+
+  - name: VALKEY_MAXMEMORY_POLICY
+    displayName: Eviction Policy
+    description: Policy for evicting keys when maxmemory is reached
+    type: string
+    required: false
+    default: "allkeys-lru"

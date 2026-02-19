@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: valkey-config
+  labels:
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/component: database
+data:
+  valkey.conf: |
+    maxmemory ${PARAM_VALKEY_MAXMEMORY}
+    maxmemory-policy ${PARAM_VALKEY_MAXMEMORY_POLICY}
+    appendonly yes
+    appendfilename "appendonly.aof"
+    dir /data
+    save 900 1
+    save 300 10
+    save 60 10000

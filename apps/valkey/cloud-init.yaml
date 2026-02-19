@@ -1,0 +1,32 @@
+#cloud-config
+# Cloud-init user-data for deploying Valkey via Cuemby Cloud Marketplace.
+#
+# Password is auto-generated if not provided.
+#
+# VM requirements: 2 CPU, 4 GB RAM, 20 GB disk, Ubuntu 22.04+ recommended.
+# Firewall: allow inbound TCP on port 30379 (Valkey protocol).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="valkey"
+      export APP_VERSION="{{app-version}}"
+      # Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+      export PARAM_VALKEY_PASSWORD="{{param-valkey-password}}"
+      # Optional parameters (defaults applied in pre-install hook)
+      export PARAM_VALKEY_DATA_SIZE="{{param-valkey-data-size}}"
+      export PARAM_VALKEY_MAXMEMORY="{{param-valkey-maxmemory}}"
+      export PARAM_VALKEY_MAXMEMORY_POLICY="{{param-valkey-maxmemory-policy}}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

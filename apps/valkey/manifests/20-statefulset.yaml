@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valkey
+  labels:
+    app.kubernetes.io/name: valkey
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: valkey
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: valkey
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: valkey
+          image: docker.io/valkey/valkey:${PARAM_APP_IMAGE_TAG}
+          command:
+            - valkey-server
+          args:
+            - /etc/valkey/valkey.conf
+            - --requirepass
+            - ${PARAM_VALKEY_PASSWORD}
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          volumeMounts:
+            - name: valkey-data
+              mountPath: /data
+            - name: valkey-config
+              mountPath: /etc/valkey
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - valkey-cli -a ${PARAM_VALKEY_PASSWORD} ping | grep -q PONG
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - valkey-cli -a ${PARAM_VALKEY_PASSWORD} ping | grep -q PONG
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - valkey-cli -a ${PARAM_VALKEY_PASSWORD} ping | grep -q PONG
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_VALKEY_CPU_REQUEST}
+              memory: ${PARAM_VALKEY_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_VALKEY_CPU_LIMIT}
+              memory: ${PARAM_VALKEY_MEMORY_LIMIT}
+      volumes:
+        - name: valkey-data
+          persistentVolumeClaim:
+            claimName: valkey-data
+        - name: valkey-config
+          configMap:
+            name: valkey-config
