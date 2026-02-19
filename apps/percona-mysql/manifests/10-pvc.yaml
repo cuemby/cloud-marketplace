@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: percona-mysql-data
+  labels:
+    app.kubernetes.io/name: percona-mysql
+    app.kubernetes.io/component: database
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: ${PARAM_PERCONA_DATA_SIZE}

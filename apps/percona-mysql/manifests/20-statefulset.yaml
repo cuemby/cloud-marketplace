@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: percona-mysql
+  labels:
+    app.kubernetes.io/name: percona-mysql
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: percona-mysql
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: percona-mysql
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: percona-mysql
+          image: docker.io/percona/percona-server:${PARAM_APP_IMAGE_TAG}
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: percona-mysql-credentials
+          volumeMounts:
+            - name: percona-mysql-data
+              mountPath: /var/lib/mysql
+          startupProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - mysqladmin ping -u root -p${PARAM_PERCONA_ROOT_PASSWORD}
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - mysqladmin ping -u root -p${PARAM_PERCONA_ROOT_PASSWORD}
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - mysqladmin ping -u root -p${PARAM_PERCONA_ROOT_PASSWORD}
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_PERCONA_CPU_REQUEST}
+              memory: ${PARAM_PERCONA_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_PERCONA_CPU_LIMIT}
+              memory: ${PARAM_PERCONA_MEMORY_LIMIT}
+      volumes:
+        - name: percona-mysql-data
+          persistentVolumeClaim:
+            claimName: percona-mysql-data

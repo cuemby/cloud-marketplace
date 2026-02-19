@@ -733,6 +733,80 @@
       ]
     },
     {
+      "name": "percona-mysql",
+      "displayName": "Percona Server for MySQL",
+      "description": "Enhanced, drop-in replacement for MySQL with improved performance and additional features.",
+      "category": "database",
+      "icon": "https://www.percona.com/sites/default/files/percona-logo.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "30Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "8.4.7",
+          "imageTag": "8.4.7",
+          "default": true
+        },
+        {
+          "appVersion": "8.0.45",
+          "imageTag": "8.0.45"
+        },
+        {
+          "appVersion": "8.0.44",
+          "imageTag": "8.0.44"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "PERCONA_ROOT_PASSWORD",
+          "displayName": "Root Password",
+          "description": "Percona MySQL root password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "PERCONA_USER",
+          "displayName": "Database User",
+          "description": "Name of the default non-root user",
+          "type": "string",
+          "required": false,
+          "default": "percona"
+        },
+        {
+          "name": "PERCONA_PASSWORD",
+          "displayName": "User Password",
+          "description": "Password for the default non-root user (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "PERCONA_DATABASE",
+          "displayName": "Default Database",
+          "description": "Name of the default database created on first start",
+          "type": "string",
+          "required": false,
+          "default": "percona"
+        },
+        {
+          "name": "PERCONA_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for Percona MySQL data",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        }
+      ]
+    },
+    {
       "name": "postgresql",
       "displayName": "PostgreSQL",
       "description": "Open-source relational database known for reliability, extensibility, and SQL compliance.",
@@ -988,5 +1062,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T05:10:38Z"
+  "generated": "2026-02-19T05:15:12Z"
 }
