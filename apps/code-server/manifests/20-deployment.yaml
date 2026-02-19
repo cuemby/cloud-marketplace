@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: code-server
+  labels:
+    app.kubernetes.io/name: code-server
+    app.kubernetes.io/component: code-server
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: code-server
+      app.kubernetes.io/component: code-server
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: code-server
+        app.kubernetes.io/component: code-server
+    spec:
+      containers:
+        - name: code-server
+          image: docker.io/codercom/code-server:${PARAM_APP_IMAGE_TAG}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: code-server-credentials
+                  key: PASSWORD
+          volumeMounts:
+            - name: code-server-data
+              mountPath: /home/coder
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_CODE_SERVER_CPU_REQUEST}
+              memory: ${PARAM_CODE_SERVER_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_CODE_SERVER_CPU_LIMIT}
+              memory: ${PARAM_CODE_SERVER_MEMORY_LIMIT}
+      volumes:
+        - name: code-server-data
+          persistentVolumeClaim:
+            claimName: code-server-data

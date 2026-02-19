@@ -1,0 +1,41 @@
+name: code-server
+displayName: code-server
+description: VS Code running in the browser, accessible from any device with a consistent development environment.
+category: devops
+icon: https://raw.githubusercontent.com/coder/code-server/main/src/browser/media/favicon.svg
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+
+versions:
+  - appVersion: "4.109.2"
+    imageTag: "4.109.2"
+    default: true
+  - appVersion: "4.108.2"
+    imageTag: "4.108.2"
+  - appVersion: "4.107.1"
+    imageTag: "4.107.1"
+
+parameters:
+  - name: CODE_SERVER_PASSWORD
+    displayName: Password
+    description: Password for accessing the code-server web IDE
+    type: password
+    required: false
+
+  - name: CODE_SERVER_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for workspace data
+    type: string
+    required: false
+    default: "20Gi"
