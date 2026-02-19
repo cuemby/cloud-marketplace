@@ -10,15 +10,16 @@ source "${BOOTSTRAP_DIR}/lib/retry.sh"
 
 local_namespace="${HELM_NAMESPACE_PREFIX}openbao"
 
-# Check 1: OpenBao health endpoint
+# Check 1: OpenBao health endpoint via built-in CLI
 _openbao_health_ready() {
     local pod
     pod="$(kubectl get pods -n "${local_namespace}" \
         -l app.kubernetes.io/name=openbao,app.kubernetes.io/component=vault \
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
+    # bao status returns 0 when initialized+unsealed (dev mode)
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        wget -q -O /dev/null --spider http://localhost:8200/v1/sys/health 2>/dev/null
+        bao status -format=json 2>/dev/null | grep -q '"sealed": false'
 }
 
 log_info "[openbao/healthcheck] Checking OpenBao health endpoint..."
@@ -33,8 +34,7 @@ _openbao_secrets_ready() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        wget -q -O- --header="X-Vault-Token: ${PARAM_OPENBAO_DEV_ROOT_TOKEN}" \
-        http://localhost:8200/v1/sys/mounts 2>/dev/null | grep -q "secret/"
+        sh -c "BAO_TOKEN=\$BAO_DEV_ROOT_TOKEN_ID bao secrets list" 2>/dev/null | grep -q "secret/"
 }
 
 log_info "[openbao/healthcheck] Checking secrets engine..."

@@ -46,12 +46,15 @@ spec:
             - containerPort: 5000
               protocol: TCP
           command:
-            - mlflow
-            - server
-            - --host=0.0.0.0
-            - --port=5000
-            - --backend-store-uri=postgresql://mlflow:${PARAM_MLFLOW_DB_PASSWORD}@mlflow-postgres:5432/mlflow
-            - --default-artifact-root=/artifacts
+            - /bin/sh
+            - -c
+            - |
+              pip install --no-cache-dir psycopg2-binary &&
+              mlflow server \
+                --host=0.0.0.0 \
+                --port=5000 \
+                --backend-store-uri=postgresql://mlflow:${PARAM_MLFLOW_DB_PASSWORD}@mlflow-postgres:5432/mlflow \
+                --default-artifact-root=/artifacts
           volumeMounts:
             - name: mlflow-artifacts
               mountPath: /artifacts

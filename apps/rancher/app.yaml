@@ -21,10 +21,10 @@ versions:
   - appVersion: "2.13.2"
     imageTag: "v2.13.2"
     default: true
-  - appVersion: "2.12.6"
-    imageTag: "v2.12.6"
-  - appVersion: "2.11.10"
-    imageTag: "v2.11.10"
+  - appVersion: "2.12.3"
+    imageTag: "v2.12.3"
+  - appVersion: "2.11.3"
+    imageTag: "v2.11.3"
 
 parameters:
   - name: RANCHER_BOOTSTRAP_PASSWORD

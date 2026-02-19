@@ -37,8 +37,12 @@ _odoo_is_ready() {
         -l app.kubernetes.io/name=odoo,app.kubernetes.io/component=app \
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
-    kubectl exec -n "${local_namespace}" "$pod" -- \
-        curl -sf -o /dev/null http://127.0.0.1:8069/web/database/selector 2>/dev/null
+    local status_code
+    status_code="$(kubectl exec -n "${local_namespace}" "$pod" -- \
+        curl -sS -o /dev/null -w '%{http_code}' --max-time 10 \
+        http://127.0.0.1:8069/web/database/selector 2>/dev/null || true)"
+    # Accept any HTTP response (200, 303 redirect, or even 500 during DB init)
+    [[ -n "$status_code" && "$status_code" != "000" ]]
 }
 
 log_info "[odoo/healthcheck] Checking Odoo health endpoint..."

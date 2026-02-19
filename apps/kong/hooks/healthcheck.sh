@@ -38,7 +38,7 @@ _kong_admin_ready() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        curl -sf http://localhost:8001/status 2>/dev/null | grep -q '"database"'
+        kong health 2>/dev/null
 }
 
 log_info "[kong/healthcheck] Checking Kong Admin API..."

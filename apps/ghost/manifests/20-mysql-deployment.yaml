@@ -52,9 +52,9 @@ spec:
           startupProbe:
             exec:
               command:
-                - healthcheck.sh
-                - --connect
-                - --innodb_initialized
+                - /bin/sh
+                - -c
+                - mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD"
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
@@ -62,17 +62,18 @@ spec:
           livenessProbe:
             exec:
               command:
-                - healthcheck.sh
-                - --connect
-                - --innodb_initialized
+                - /bin/sh
+                - -c
+                - mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD"
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
             exec:
               command:
-                - healthcheck.sh
-                - --connect
+                - /bin/sh
+                - -c
+                - mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD"
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3

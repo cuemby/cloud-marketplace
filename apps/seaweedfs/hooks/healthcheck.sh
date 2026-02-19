@@ -18,7 +18,7 @@ _seaweedfs_master_ready() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        wget -q -O- http://localhost:9333/cluster/status 2>/dev/null | grep -q "IsLeader"
+        curl -sf http://localhost:9333/cluster/status 2>/dev/null | grep -q "IsLeader"
 }
 
 log_info "[seaweedfs/healthcheck] Checking master cluster status..."
@@ -33,7 +33,7 @@ _seaweedfs_s3_ready() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        wget -q -O /dev/null --spider http://localhost:8333/ 2>/dev/null
+        curl -sf -o /dev/null http://localhost:8333/ 2>/dev/null
 }
 
 log_info "[seaweedfs/healthcheck] Checking S3 API endpoint..."

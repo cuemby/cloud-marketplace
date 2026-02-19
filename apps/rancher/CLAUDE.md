@@ -11,7 +11,7 @@ Complete Kubernetes management platform for deploying and managing clusters acro
 
 ## Versions
 
-Three versions supported: 2.13.2 (default), 2.12.3, 2.11.8.
+Three versions supported: 2.13.2 (default), 2.12.3, 2.11.3.
 
 ## Manifest Ordering
 

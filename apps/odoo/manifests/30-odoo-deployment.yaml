@@ -66,23 +66,20 @@ spec:
               mountPath: /mnt/extra-addons
               subPath: extra-addons
           startupProbe:
-            httpGet:
-              path: /web/database/selector
+            tcpSocket:
               port: 8069
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 30
           livenessProbe:
-            httpGet:
-              path: /web/database/selector
+            tcpSocket:
               port: 8069
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
           readinessProbe:
-            httpGet:
-              path: /web/database/selector
+            tcpSocket:
               port: 8069
             periodSeconds: 10
             timeoutSeconds: 5

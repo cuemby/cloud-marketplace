@@ -21,8 +21,8 @@ versions:
   - appVersion: "3.9.1"
     imageTag: "3.9.1"
     default: true
-  - appVersion: "3.8.1"
-    imageTag: "3.8.1"
+  - appVersion: "3.8.0"
+    imageTag: "3.8.0"
   - appVersion: "3.7.1"
     imageTag: "3.7.1"
 

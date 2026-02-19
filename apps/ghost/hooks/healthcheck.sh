@@ -23,7 +23,7 @@ _mysql_responds() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        healthcheck.sh --connect 2>/dev/null
+        sh -c 'mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD"' 2>/dev/null
 }
 
 log_info "[ghost/healthcheck] Checking MySQL connectivity..."

@@ -42,7 +42,7 @@ fi
 
 # --- Non-secret parameter defaults ---
 _needs_value "${PARAM_NEO4J_DATA_SIZE:-}" && PARAM_NEO4J_DATA_SIZE="10Gi"
-_needs_value "${PARAM_NEO4J_HEAP_SIZE:-}" && PARAM_NEO4J_HEAP_SIZE="1G"
+_needs_value "${PARAM_NEO4J_HEAP_SIZE:-}" && PARAM_NEO4J_HEAP_SIZE="512m"
 export PARAM_NEO4J_DATA_SIZE
 export PARAM_NEO4J_HEAP_SIZE
 

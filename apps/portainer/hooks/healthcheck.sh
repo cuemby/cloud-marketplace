@@ -10,15 +10,14 @@ source "${BOOTSTRAP_DIR}/lib/retry.sh"
 
 local_namespace="${HELM_NAMESPACE_PREFIX}portainer"
 
-# Check 1: Portainer API status endpoint
+# Check 1: Portainer pod is Ready (scratch image — cannot exec into it)
+# Kubernetes HTTP probes on /api/status verify the Portainer API is responding.
 _portainer_api_ready() {
-    local pod
-    pod="$(kubectl get pods -n "${local_namespace}" \
+    local ready
+    ready="$(kubectl get pods -n "${local_namespace}" \
         -l app.kubernetes.io/name=portainer,app.kubernetes.io/component=portainer \
-        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
-    [[ -n "$pod" ]] || return 1
-    kubectl exec -n "${local_namespace}" "$pod" -- \
-        wget -q -O /dev/null --spider http://localhost:9000/api/status 2>/dev/null
+        -o jsonpath='{.items[0].status.conditions[?(@.type=="Ready")].status}' 2>/dev/null)"
+    [[ "$ready" == "True" ]]
 }
 
 log_info "[portainer/healthcheck] Checking Portainer API status..."

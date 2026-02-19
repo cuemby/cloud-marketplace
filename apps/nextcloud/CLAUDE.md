@@ -11,7 +11,7 @@ Self-hosted file sharing, collaboration, and productivity platform. **Manifest**
 
 ## Versions
 
-Three versions supported: 33.0.0 (default), 32.0.3, 31.0.12.
+Three versions supported: 32.0.6 (default), 31.0.14, 30.0.17.
 
 ## Parameters
 
@@ -33,7 +33,7 @@ All parameters use `PARAM_*` prefix at runtime. Passwords are auto-generated in 
 
 ## Health Checks
 
-- MariaDB: `healthcheck.sh --connect --innodb_initialized` (built-in)
+- MariaDB: `healthcheck --connect --innodb_initialized` (built-in)
 - Nextcloud: `curl http://localhost/status.php` (returns JSON with `"installed":true`)
 - PVC binding verification
 

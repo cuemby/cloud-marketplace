@@ -35,10 +35,14 @@ spec:
                 secretKeyRef:
                   name: neo4j-credentials
                   key: NEO4J_AUTH
+            - name: NEO4J_ACCEPT_LICENSE_AGREEMENT
+              value: "yes"
             - name: NEO4J_server_memory_heap_initial__size
               value: "${PARAM_NEO4J_HEAP_SIZE}"
             - name: NEO4J_server_memory_heap_max__size
               value: "${PARAM_NEO4J_HEAP_SIZE}"
+            - name: NEO4J_server_memory_pagecache_size
+              value: "256m"
           volumeMounts:
             - name: neo4j-data
               mountPath: /data

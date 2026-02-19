@@ -12,7 +12,7 @@ Cloud-native API gateway for managing, securing, and observing APIs and microser
 
 ## Versions
 
-Three versions supported: 3.9.1 (default), 3.8.1, 3.7.1.
+Three versions supported: 3.9.1 (default), 3.8.0, 3.7.1.
 
 ## Parameters
 
@@ -34,7 +34,7 @@ All parameters use `PARAM_*` prefix at runtime. Database password is auto-genera
 ## Health Checks
 
 - PostgreSQL: `pg_isready -U kong`
-- Kong: `curl http://localhost:8001/status` (Admin API)
+- Kong: `kong health` (built-in CLI health check)
 - Migrations: Job completion check
 - PVC binding verification
 

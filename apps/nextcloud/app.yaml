@@ -18,13 +18,13 @@ requirements:
   disk: 50Gi
 
 versions:
-  - appVersion: "33.0.0"
-    imageTag: "33.0.0-apache"
+  - appVersion: "32.0.6"
+    imageTag: "32.0.6-apache"
     default: true
-  - appVersion: "32.0.3"
-    imageTag: "32.0.3-apache"
-  - appVersion: "31.0.12"
-    imageTag: "31.0.12-apache"
+  - appVersion: "31.0.14"
+    imageTag: "31.0.14-apache"
+  - appVersion: "30.0.17"
+    imageTag: "30.0.17-apache"
 
 parameters:
   - name: NEXTCLOUD_ADMIN_USER
