@@ -23,8 +23,8 @@ versions:
     default: true
   - appVersion: "5.4.3"
     imageTag: "5.4.3-apache"
-  - appVersion: "5.3.2"
-    imageTag: "5.3.2-apache"
+  - appVersion: "5.3.4"
+    imageTag: "5.3.4-apache"
 
 parameters:
   - name: JOOMLA_DB_PASSWORD

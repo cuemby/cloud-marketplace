@@ -23,8 +23,8 @@ versions:
     default: true
   - appVersion: "2.13.4"
     imageTag: "v2.13.4"
-  - appVersion: "2.12.4"
-    imageTag: "v2.12.4"
+  - appVersion: "2.12.3"
+    imageTag: "v2.12.3"
 
 parameters:
   - name: HARBOR_ADMIN_PASSWORD

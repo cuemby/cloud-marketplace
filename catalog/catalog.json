@@ -622,8 +622,8 @@
           "imageTag": "v2.13.4"
         },
         {
-          "appVersion": "2.12.4",
-          "imageTag": "v2.12.4"
+          "appVersion": "2.12.3",
+          "imageTag": "v2.12.3"
         }
       ],
       "parameters": [
@@ -754,8 +754,8 @@
           "imageTag": "5.4.3-apache"
         },
         {
-          "appVersion": "5.3.2",
-          "imageTag": "5.3.2-apache"
+          "appVersion": "5.3.4",
+          "imageTag": "5.3.4-apache"
         }
       ],
       "parameters": [
@@ -2059,12 +2059,12 @@
           "default": true
         },
         {
-          "appVersion": "2.12.3",
-          "imageTag": "v2.12.3"
+          "appVersion": "2.12.6",
+          "imageTag": "v2.12.6"
         },
         {
-          "appVersion": "2.11.8",
-          "imageTag": "v2.11.8"
+          "appVersion": "2.11.10",
+          "imageTag": "v2.11.10"
         }
       ],
       "parameters": [
@@ -2464,5 +2464,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T07:46:12Z"
+  "generated": "2026-02-19T13:14:01Z"
 }
