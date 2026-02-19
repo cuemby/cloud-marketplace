@@ -1,0 +1,532 @@
+{
+  "version": "1.0",
+  "project": {
+    "name": "prd-0001-marketplace-applications-batch-1-29-new-apps",
+    "description": "PRD-0001: Marketplace Applications — Batch 1 (29 New Apps)",
+    "source_prd": ".claude/tasks/0001-prd-marketplace-apps-batch-1.md",
+    "created_at": "2026-02-19T04:37:18Z",
+    "updated_at": "2026-02-19T04:37:18Z"
+  },
+  "config": {
+    "max_iterations": 50,
+    "quality_checks": [
+      "go test ./...",
+      "go vet ./...",
+      "go build ./..."
+    ],
+    "ai_tool": "claude",
+    "ai_prompt_file": ".claude/auto/prompt.md",
+    "sandbox": "none"
+  },
+  "tasks": [
+    {
+      "id": "1.0",
+      "title": "Phase 1 — Single-Component Databases (mariadb, mysql, valkey, mongodb, percona-mysql)",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "1.1",
+      "title": "Create MariaDB app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "1.0",
+      "depends_on": [
+        "1.0"
+      ],
+      "commit_sha": "a6beeca296d00a5bfeb35f90bb8bf38704c3185e"
+    },
+    {
+      "id": "1.2",
+      "title": "Create MySQL app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "1.0",
+      "depends_on": [
+        "1.0"
+      ],
+      "commit_sha": "1ef478bd1ae6779fc6839f4ba9153f612ceb77da"
+    },
+    {
+      "id": "1.3",
+      "title": "Create Valkey app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "1.0",
+      "depends_on": [
+        "1.0"
+      ],
+      "commit_sha": "f91aa8e6437b20a005561d0ae2099110432d091d"
+    },
+    {
+      "id": "1.4",
+      "title": "Create MongoDB app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "1.0",
+      "depends_on": [
+        "1.0"
+      ],
+      "commit_sha": "3bab29db017412075fba01037963a28e15336328"
+    },
+    {
+      "id": "1.5",
+      "title": "Create Percona Server for MySQL app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "1.0",
+      "depends_on": [
+        "1.0"
+      ],
+      "commit_sha": "84de8c5649b28f179e885a914130140a3c2d865a"
+    },
+    {
+      "id": "1.6",
+      "title": "Create E2E test fixtures for Phase 1 databases [~2,000 tokens — Simple]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "1.0",
+      "depends_on": [
+        "1.0"
+      ],
+      "commit_sha": "d48905e36451c9b884a75a4003c009b18cb7a65f"
+    },
+    {
+      "id": "1.7",
+      "title": "Validate and commit Phase 1 [~1,000 tokens — Simple]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "1.0",
+      "depends_on": [
+        "1.0"
+      ]
+    },
+    {
+      "id": "2.0",
+      "title": "Phase 2 — Single-Component Tools (seaweedfs, docker-registry, haproxy, portainer, openbao)",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "2.1",
+      "title": "Create SeaweedFS app [~6,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "2.0",
+      "depends_on": [
+        "2.0"
+      ],
+      "commit_sha": "3491295f614c762831c3de2fabeed4c2e84cb1c5"
+    },
+    {
+      "id": "2.2",
+      "title": "Create Docker Registry app [~4,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "2.0",
+      "depends_on": [
+        "2.0"
+      ],
+      "commit_sha": "b57bf940c88cb61ce02e98aab412ef10cbfc29ec"
+    },
+    {
+      "id": "2.3",
+      "title": "Create HAProxy app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "2.0",
+      "depends_on": [
+        "2.0"
+      ],
+      "commit_sha": "bff78e8d86ece9e8bfdc4b10ca0e12985662bb0e"
+    },
+    {
+      "id": "2.4",
+      "title": "Create Portainer CE app [~4,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "2.0",
+      "depends_on": [
+        "2.0"
+      ],
+      "commit_sha": "2ad45c8f498ee4b6f822078fd0f037a188cfd091"
+    },
+    {
+      "id": "2.5",
+      "title": "Create OpenBao app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "2.0",
+      "depends_on": [
+        "2.0"
+      ],
+      "commit_sha": "b1f31cf293b180622ab6c061623c5450b2781cd9"
+    },
+    {
+      "id": "2.6",
+      "title": "Validate and commit Phase 2 [~1,000 tokens — Simple]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "2.0",
+      "depends_on": [
+        "2.0"
+      ],
+      "commit_sha": "4d1e7a8"
+    },
+    {
+      "id": "3.0",
+      "title": "Phase 3 — Simple-Medium Apps (code-server, nexus3, rabbitmq, neo4j, vaultwarden)",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "3.1",
+      "title": "Create code-server app [~4,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "3.0",
+      "depends_on": [
+        "3.0"
+      ],
+      "commit_sha": "cf9c19e"
+    },
+    {
+      "id": "3.2",
+      "title": "Create Nexus3 app [~4,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "3.0",
+      "depends_on": [
+        "3.0"
+      ],
+      "commit_sha": "442d5bbe3a4bc59456803e45612655f8e3f63d2b"
+    },
+    {
+      "id": "3.3",
+      "title": "Create RabbitMQ app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "3.0",
+      "depends_on": [
+        "3.0"
+      ],
+      "commit_sha": "7acfb1d9308ac6da882559e0ff0ea9d8683f3734"
+    },
+    {
+      "id": "3.4",
+      "title": "Create Neo4j app [~5,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "3.0",
+      "depends_on": [
+        "3.0"
+      ],
+      "commit_sha": "a75bb46"
+    },
+    {
+      "id": "3.5",
+      "title": "Create Vaultwarden app [~4,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "3.0",
+      "depends_on": [
+        "3.0"
+      ],
+      "commit_sha": "9561672"
+    },
+    {
+      "id": "3.6",
+      "title": "Validate and commit Phase 3 [~1,000 tokens — Simple]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "3.0",
+      "depends_on": [
+        "3.0"
+      ],
+      "commit_sha": "c43d599"
+    },
+    {
+      "id": "4.0",
+      "title": "Phase 4 — App + PostgreSQL (ferretdb, sonarqube, n8n, mlflow, odoo)",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "4.1",
+      "title": "Create FerretDB app [~6,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "4.0",
+      "depends_on": [
+        "4.0"
+      ],
+      "commit_sha": "4492ae6ec18666deaedf22feb3be597aaef5cd00"
+    },
+    {
+      "id": "4.2",
+      "title": "Create SonarQube app [~7,000 tokens — Complex]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "4.0",
+      "depends_on": [
+        "4.0"
+      ],
+      "commit_sha": "f98653f6df74c1886cfac39d0e819decc58f3605"
+    },
+    {
+      "id": "4.3",
+      "title": "Create n8n app [~6,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "4.0",
+      "depends_on": [
+        "4.0"
+      ],
+      "commit_sha": "3db8003c11c945412b79c064a0d34cb64b209d7c"
+    },
+    {
+      "id": "4.4",
+      "title": "Create MLflow app [~6,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "4.0",
+      "depends_on": [
+        "4.0"
+      ],
+      "commit_sha": "06b585a48d7098b3cb5781d057372702cbc50140"
+    },
+    {
+      "id": "4.5",
+      "title": "Create Odoo app [~6,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "4.0",
+      "depends_on": [
+        "4.0"
+      ],
+      "commit_sha": "77febcb"
+    },
+    {
+      "id": "4.6",
+      "title": "Validate and commit Phase 4 [~1,000 tokens — Simple]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "4.0",
+      "depends_on": [
+        "4.0"
+      ],
+      "commit_sha": "12a6989"
+    },
+    {
+      "id": "5.0",
+      "title": "Phase 5 — App + MySQL/MariaDB ± Valkey (ghost, joomla, nextcloud)",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "5.1",
+      "title": "Create Ghost app [~6,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "5.0",
+      "depends_on": [
+        "5.0"
+      ],
+      "commit_sha": "cd69280caad9e86d33f8217a2c0a56b3a564c250"
+    },
+    {
+      "id": "5.2",
+      "title": "Create Joomla app [~6,000 tokens — Medium]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "5.0",
+      "depends_on": [
+        "5.0"
+      ],
+      "commit_sha": "3ae24c063045b37fa8af24fdc7d7ebb056edae73"
+    },
+    {
+      "id": "5.3",
+      "title": "Create Nextcloud app [~8,000 tokens — Complex]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "5.0",
+      "depends_on": [
+        "5.0"
+      ],
+      "commit_sha": "3b36911"
+    },
+    {
+      "id": "5.4",
+      "title": "Validate and commit Phase 5 [~1,000 tokens — Simple]",
+      "status": "completed",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "5.0",
+      "depends_on": [
+        "5.0"
+      ],
+      "commit_sha": "4f2249f"
+    },
+    {
+      "id": "6.0",
+      "title": "Phase 6 — Multi-Component Infrastructure (kong, rancher, owncloud)",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "6.1",
+      "title": "Create Kong Gateway app [~7,000 tokens — Complex]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "6.0",
+      "depends_on": [
+        "6.0"
+      ]
+    },
+    {
+      "id": "6.2",
+      "title": "Create Rancher app [~5,000 tokens — Medium]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "6.0",
+      "depends_on": [
+        "6.0"
+      ]
+    },
+    {
+      "id": "6.3",
+      "title": "Create ownCloud app [~8,000 tokens — Complex]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "6.0",
+      "depends_on": [
+        "6.0"
+      ]
+    },
+    {
+      "id": "6.4",
+      "title": "Validate and commit Phase 6 [~1,000 tokens — Simple]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "6.0",
+      "depends_on": [
+        "6.0"
+      ]
+    },
+    {
+      "id": "7.0",
+      "title": "Phase 7 — Complex Multi-Component (selenium, harbor)",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "7.1",
+      "title": "Create Selenium Grid app [~6,000 tokens — Medium]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "7.0",
+      "depends_on": [
+        "7.0"
+      ]
+    },
+    {
+      "id": "7.2",
+      "title": "Create Harbor app [~12,000 tokens — Complex]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "7.0",
+      "depends_on": [
+        "7.0"
+      ]
+    },
+    {
+      "id": "7.3",
+      "title": "Validate and commit Phase 7 [~1,000 tokens — Simple]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "7.0",
+      "depends_on": [
+        "7.0"
+      ]
+    },
+    {
+      "id": "8.0",
+      "title": "Phase 8 — Complex Platform (devtron)",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium"
+    },
+    {
+      "id": "8.1",
+      "title": "Create Devtron app [~10,000 tokens — Complex]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "8.0",
+      "depends_on": [
+        "8.0"
+      ]
+    },
+    {
+      "id": "8.2",
+      "title": "Validate and commit Phase 8 [~1,000 tokens — Simple]",
+      "status": "pending",
+      "priority": "medium",
+      "complexity": "medium",
+      "parent_id": "8.0",
+      "depends_on": [
+        "8.0"
+      ]
+    }
+  ],
+  "progress": {
+    "total_tasks": 46,
+    "completed_tasks": 34,
+    "current_iteration": 28,
+    "total_iterations_run": 28,
+    "status": "in_progress"
+  }
+}
