@@ -1,0 +1,101 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghost
+  labels:
+    app.kubernetes.io/name: ghost
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ghost
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ghost
+        app.kubernetes.io/component: app
+    spec:
+      initContainers:
+        - name: wait-for-mysql
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MySQL at ghost-mysql:3306..."
+              until nc -z ghost-mysql 3306; do
+                echo "MySQL not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "MySQL is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: ghost
+          image: "docker.io/library/ghost:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - containerPort: 2368
+              protocol: TCP
+          env:
+            - name: database__client
+              value: "mysql"
+            - name: database__connection__host
+              value: "ghost-mysql"
+            - name: database__connection__port
+              value: "3306"
+            - name: database__connection__user
+              value: "ghost"
+            - name: database__connection__password
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-db-secret
+                  key: MYSQL_PASSWORD
+            - name: database__connection__database
+              value: "ghost"
+            - name: url
+              value: "http://localhost:2368"
+          volumeMounts:
+            - name: ghost-data
+              mountPath: /var/lib/ghost/content
+          startupProbe:
+            httpGet:
+              path: /ghost/api/v4/admin/site/
+              port: 2368
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /ghost/api/v4/admin/site/
+              port: 2368
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /ghost/api/v4/admin/site/
+              port: 2368
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_GHOST_CPU_REQUEST}
+              memory: ${PARAM_GHOST_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_GHOST_CPU_LIMIT}
+              memory: ${PARAM_GHOST_MEMORY_LIMIT}
+      volumes:
+        - name: ghost-data
+          persistentVolumeClaim:
+            claimName: ghost-data

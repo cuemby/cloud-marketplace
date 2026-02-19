@@ -1,0 +1,89 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ghost-mysql
+  labels:
+    app.kubernetes.io/name: ghost
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: ghost
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: ghost
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: mysql
+          image: docker.io/library/mysql:8.4
+          ports:
+            - containerPort: 3306
+              protocol: TCP
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-db-secret
+                  key: MYSQL_ROOT_PASSWORD
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-db-secret
+                  key: MYSQL_DATABASE
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-db-secret
+                  key: MYSQL_USER
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: ghost-db-secret
+                  key: MYSQL_PASSWORD
+          volumeMounts:
+            - name: mysql-data
+              mountPath: /var/lib/mysql
+          startupProbe:
+            exec:
+              command:
+                - healthcheck.sh
+                - --connect
+                - --innodb_initialized
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+                - --connect
+                - --innodb_initialized
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - healthcheck.sh
+                - --connect
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_MYSQL_CPU_REQUEST}
+              memory: ${PARAM_MYSQL_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_MYSQL_CPU_LIMIT}
+              memory: ${PARAM_MYSQL_MEMORY_LIMIT}
+      volumes:
+        - name: mysql-data
+          persistentVolumeClaim:
+            claimName: ghost-mysql-data

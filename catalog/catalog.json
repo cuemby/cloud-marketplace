@@ -383,6 +383,72 @@
       ]
     },
     {
+      "name": "ghost",
+      "displayName": "Ghost",
+      "description": "Modern, open-source publishing platform for creating professional blogs and newsletters.",
+      "category": "cms",
+      "icon": "https://ghost.org/favicon.ico",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "30Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "6.19.1",
+          "imageTag": "6.19.1",
+          "default": true
+        },
+        {
+          "appVersion": "5.130.6",
+          "imageTag": "5.130.6"
+        },
+        {
+          "appVersion": "4.48.9",
+          "imageTag": "4.48.9"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "GHOST_DB_PASSWORD",
+          "displayName": "Database Password",
+          "description": "MySQL password for Ghost (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "GHOST_DB_ROOT_PASSWORD",
+          "displayName": "MySQL Root Password",
+          "description": "MySQL root password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "GHOST_DB_DATA_SIZE",
+          "displayName": "Database Storage Size",
+          "description": "Size of persistent volume for MySQL data",
+          "type": "string",
+          "required": false,
+          "default": "5Gi"
+        },
+        {
+          "name": "GHOST_DATA_SIZE",
+          "displayName": "Ghost Content Size",
+          "description": "Size of persistent volume for Ghost content (themes, images, uploads)",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        }
+      ]
+    },
+    {
       "name": "gitea",
       "displayName": "Gitea",
       "description": "Lightweight, self-hosted Git service with web UI, issue tracking, and CI/CD.",
@@ -1872,5 +1938,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T06:43:35Z"
+  "generated": "2026-02-19T06:48:35Z"
 }

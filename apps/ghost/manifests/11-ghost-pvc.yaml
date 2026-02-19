@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ghost-data
+  labels:
+    app.kubernetes.io/name: ghost
+    app.kubernetes.io/component: app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: ${PARAM_GHOST_DATA_SIZE}
