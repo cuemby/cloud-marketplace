@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: haproxy-config
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: proxy
+data:
+  haproxy.cfg: |
+    global
+        log stdout format raw local0
+        maxconn 4096
+        stats socket /tmp/haproxy.sock mode 660 level admin
+
+    defaults
+        log     global
+        mode    http
+        option  httplog
+        option  dontlognull
+        option  forwardfor
+        timeout connect 5s
+        timeout client  30s
+        timeout server  30s
+        timeout check   5s
+        retries 3
+
+    frontend http_front
+        bind *:8080
+        default_backend http_back
+
+    backend http_back
+        balance roundrobin
+        option httpchk GET /
+        # Add backend servers here:
+        # server web1 192.168.1.10:80 check
+        # server web2 192.168.1.11:80 check
+
+    frontend stats_front
+        bind *:8936
+        mode http
+        monitor-uri /healthz
+        stats enable
+        stats uri /stats
+        stats refresh 10s
+        stats show-legends
+        stats auth ${PARAM_HAPROXY_STATS_USER}:${PARAM_HAPROXY_STATS_PASSWORD}

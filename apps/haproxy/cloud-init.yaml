@@ -1,0 +1,21 @@
+#cloud-config
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="haproxy"
+      export APP_VERSION="{{app-version}}"
+      export PARAM_HAPROXY_STATS_PASSWORD="{{param-haproxy-stats-password}}"
+      export PARAM_HAPROXY_STATS_USER="{{param-haproxy-stats-user}}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]
