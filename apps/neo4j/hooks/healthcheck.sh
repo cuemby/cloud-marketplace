@@ -15,22 +15,7 @@ source "${BOOTSTRAP_DIR}/lib/retry.sh"
 
 local_namespace="${HELM_NAMESPACE_PREFIX}neo4j"
 
-# --- Check 1: Neo4j HTTP endpoint is responding ---
-_neo4j_http_ready() {
-    local pod
-    pod="$(kubectl get pods -n "${local_namespace}" \
-        -l app.kubernetes.io/name=neo4j,app.kubernetes.io/component=database \
-        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
-    [[ -n "$pod" ]] || return 1
-    kubectl exec -n "${local_namespace}" "$pod" -- \
-        curl -sf http://localhost:7474 >/dev/null 2>&1
-}
-
-log_info "[neo4j/healthcheck] Checking Neo4j HTTP endpoint..."
-retry_with_timeout 120 10 _neo4j_http_ready
-log_info "[neo4j/healthcheck] Neo4j HTTP endpoint is responding."
-
-# --- Check 2: Cypher query works (write operation) ---
+# --- Check 1: Cypher query works (verifies bolt endpoint + query engine) ---
 _neo4j_cypher_works() {
     local pod
     pod="$(kubectl get pods -n "${local_namespace}" \

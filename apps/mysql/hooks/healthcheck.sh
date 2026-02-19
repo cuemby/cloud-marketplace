@@ -38,7 +38,8 @@ _mysql_query_works() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        mysql -u root -e "SELECT 1" 2>/dev/null | grep -q "1"
+        sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SELECT 1" 2>/dev/null' \
+        2>/dev/null | grep -q "1"
 }
 
 log_info "[mysql/healthcheck] Verifying SQL query execution..."

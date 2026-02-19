@@ -84,6 +84,18 @@ if _needs_value "${PARAM_HARBOR_JOBSERVICE_SECRET:-}"; then
     export PARAM_HARBOR_JOBSERVICE_SECRET
 fi
 
+# --- Token auth certificate (core signs JWTs, registry verifies) ---
+_harbor_token_cert_dir="$(mktemp -d)"
+openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 -nodes \
+    -keyout "${_harbor_token_cert_dir}/tls.key" \
+    -out "${_harbor_token_cert_dir}/tls.crt" \
+    -subj "/CN=harbor-token-service" 2>/dev/null
+PARAM_HARBOR_TOKEN_KEY="$(base64 < "${_harbor_token_cert_dir}/tls.key" | tr -d '\n')"
+PARAM_HARBOR_TOKEN_CERT="$(base64 < "${_harbor_token_cert_dir}/tls.crt" | tr -d '\n')"
+export PARAM_HARBOR_TOKEN_KEY PARAM_HARBOR_TOKEN_CERT
+rm -rf "${_harbor_token_cert_dir}"
+log_info "[harbor/pre-install] Generated token auth key pair."
+
 # --- Non-secret parameter defaults ---
 _needs_value "${PARAM_HARBOR_REGISTRY_DATA_SIZE:-}" && PARAM_HARBOR_REGISTRY_DATA_SIZE="50Gi"
 _needs_value "${PARAM_HARBOR_DB_DATA_SIZE:-}" && PARAM_HARBOR_DB_DATA_SIZE="10Gi"

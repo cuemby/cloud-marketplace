@@ -19,6 +19,7 @@ spec:
         app.kubernetes.io/name: devtron
         app.kubernetes.io/component: orchestrator
     spec:
+      serviceAccountName: devtron
       initContainers:
         - name: wait-for-postgres
           image: docker.io/library/busybox:1.37

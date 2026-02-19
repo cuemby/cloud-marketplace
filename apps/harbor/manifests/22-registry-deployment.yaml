@@ -63,6 +63,9 @@ spec:
             - name: registry-config
               mountPath: /etc/registry/config.yml
               subPath: config.yml
+            - name: token-cert
+              mountPath: /etc/registry/root.crt
+              subPath: tls.crt
           startupProbe:
             httpGet:
               path: /
@@ -151,3 +154,6 @@ spec:
         - name: registry-config
           configMap:
             name: harbor-registry-config
+        - name: token-cert
+          secret:
+            secretName: harbor-token-cert

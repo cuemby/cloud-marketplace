@@ -34,6 +34,7 @@ data:
   REGISTRY_STORAGE_PROVIDER_NAME: "filesystem"
   LOG_LEVEL: "info"
   CONFIG_PATH: "/etc/core/app.conf"
+  TOKEN_PRIVATE_KEY_PATH: "/etc/core/private_key.pem"
   CHART_CACHE_DRIVER: "redis"
   _REDIS_URL_CORE: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/0?idle_timeout_seconds=30"
   _REDIS_URL_REG: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/2?idle_timeout_seconds=30"

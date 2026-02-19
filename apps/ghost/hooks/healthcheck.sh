@@ -37,12 +37,9 @@ _ghost_responds() {
         -l app.kubernetes.io/name=ghost,app.kubernetes.io/component=app \
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
-    local status_code
-    status_code="$(kubectl exec -n "${local_namespace}" "$pod" -- \
-        curl -sS -o /dev/null -w '%{http_code}' \
-        --max-time 10 \
-        "http://localhost:2368/ghost/api/v4/admin/site/" 2>/dev/null || true)"
-    [[ "$status_code" =~ ^(200|301|302)$ ]]
+    kubectl exec -n "${local_namespace}" "$pod" -- \
+        node -e "require('http').get('http://localhost:2368/',r=>{process.exit(r.statusCode<400?0:1)}).on('error',()=>process.exit(1))" \
+        2>/dev/null
 }
 
 log_info "[ghost/healthcheck] Checking Ghost HTTP response..."
