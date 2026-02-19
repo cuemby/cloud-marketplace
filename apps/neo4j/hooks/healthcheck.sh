@@ -28,7 +28,8 @@ _neo4j_cypher_works() {
 }
 
 log_info "[neo4j/healthcheck] Verifying Cypher query execution..."
-retry_with_timeout 120 10 _neo4j_cypher_works
+# Neo4j v5.x LTS may need extra startup time for initial database recovery
+retry_with_timeout 180 10 _neo4j_cypher_works
 log_info "[neo4j/healthcheck] Neo4j Cypher query execution verified."
 
 # --- Check 3: PVCs are bound ---

@@ -18,7 +18,7 @@ data:
   DASHBOARD_PORT: "80"
   DASHBOARD_HOST: "devtron-dashboard"
   DEVTRON_SECRET_NAME: "devtron-secret"
-  DEVTRON_NAMESPACE: "app-devtron"
+  DEVTRON_NAMESPACE: "devtroncd"
 ---
 apiVersion: v1
 kind: ConfigMap

@@ -45,20 +45,20 @@ log_info "[harbor/healthcheck] Checking Harbor Core API..."
 retry_with_timeout 120 10 _core_api_ready
 log_info "[harbor/healthcheck] Harbor Core API is responding."
 
-# --- Check 3: Registry responds ---
+# --- Check 3: Registry pod is fully ready (both registry + registryctl containers) ---
 _registry_ready() {
-    local pod
-    pod="$(kubectl get pods -n "${local_namespace}" \
+    # registry-photon image lacks wget/curl; instead verify via K8s readiness conditions
+    # The pod has HTTP readiness probes on both containers (5000 and 8080)
+    local ready
+    ready="$(kubectl get pods -n "${local_namespace}" \
         -l app.kubernetes.io/name=harbor,app.kubernetes.io/component=registry \
-        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
-    [[ -n "$pod" ]] || return 1
-    kubectl exec -n "${local_namespace}" "$pod" -- \
-        wget -q -O /dev/null --spider http://localhost:5000/ 2>/dev/null
+        -o jsonpath='{.items[0].status.conditions[?(@.type=="Ready")].status}' 2>/dev/null)"
+    [[ "$ready" == "True" ]]
 }
 
-log_info "[harbor/healthcheck] Checking Harbor Registry..."
+log_info "[harbor/healthcheck] Checking Harbor Registry readiness..."
 retry_with_timeout 120 10 _registry_ready
-log_info "[harbor/healthcheck] Harbor Registry is responding."
+log_info "[harbor/healthcheck] Harbor Registry pod is fully ready."
 
 # --- Check 4: PVCs are bound ---
 log_info "[harbor/healthcheck] Checking PVC status..."

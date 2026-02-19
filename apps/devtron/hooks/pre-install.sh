@@ -79,6 +79,21 @@ export PARAM_DEVTRON_DASHBOARD_CPU_LIMIT="${PARAM_DEVTRON_DASHBOARD_CPU_LIMIT:-5
 export PARAM_DEVTRON_DASHBOARD_MEMORY_REQUEST="${PARAM_DEVTRON_DASHBOARD_MEMORY_REQUEST:-128Mi}"
 export PARAM_DEVTRON_DASHBOARD_MEMORY_LIMIT="${PARAM_DEVTRON_DASHBOARD_MEMORY_LIMIT:-512Mi}"
 
+# --- Namespace for RBAC (ClusterRoleBinding needs explicit namespace) ---
+export PARAM_DEVTRON_NAMESPACE="${HELM_NAMESPACE_PREFIX}devtron"
+
+# --- Create devtroncd namespace + secret (Hyperion binary hardcodes this namespace) ---
+log_info "[devtron/pre-install] Creating devtroncd namespace and secret for Hyperion..."
+kubectl create namespace devtroncd --dry-run=client -o yaml | kubectl apply -f -
+kubectl create secret generic devtron-secret \
+    --namespace=devtroncd \
+    --from-literal=PG_PASSWORD="${PARAM_DEVTRON_DB_PASSWORD}" \
+    --from-literal=ADMIN_PASSWORD="${PARAM_DEVTRON_ADMIN_PASSWORD}" \
+    --from-literal=POSTGRES_PASSWORD="${PARAM_DEVTRON_DB_PASSWORD}" \
+    --from-literal=POSTGRES_USER=postgres \
+    --from-literal=POSTGRES_DB=orchestrator \
+    --dry-run=client -o yaml | kubectl apply -f -
+
 log_info "[devtron/pre-install] Pre-install complete."
 readonly _DEVTRON_PRE_INSTALL_DONE=1
 export _DEVTRON_PRE_INSTALL_DONE
