@@ -275,4 +275,28 @@
 [2026-02-19T07:21:00Z] [iteration:32] [task:6.4] COMPLETED: Phase 6 validation passed, catalog confirmed at 36 apps.
 [2026-02-19T07:21:00Z] [iteration:32] [task:6.4] LEARNING: Phase 6 validation was fast — all E2E fixtures (kong.env, rancher.env, owncloud.env) were already created during their respective app tasks. Catalog was already up to date from the Phase 6.3 commit. Only needed to re-run make validate + lint + catalog to confirm.
 [2026-02-19T07:21:00Z] [iteration:32] [task:6.4] LEARNING: Phase 6 complete summary: 3 multi-component infrastructure apps — Kong Gateway (app+PostgreSQL+migrations Job), Rancher (single privileged container with embedded K3s), ownCloud (app+MariaDB+Valkey). Total project now has 36 apps in catalog. Phase 7 (complex multi-component: selenium, harbor) is next.
-[2026-02-19T07:21:00Z] [iteration:32] Iteration 32 complete.
+[2026-02-19T07:21:00Z] [iteration:32] [task:7.0] COMPLETED: Phase 7 parent marker completed.
+[2026-02-19T07:25:00Z] [iteration:32] [task:7.1] COMPLETED: Selenium Grid app created (a09c827).
+[2026-02-19T07:25:00Z] [iteration:32] [task:7.1] LEARNING: Selenium Grid is the simplest multi-component app — no secrets, no PVCs, completely stateless. 3 components (Hub + Chrome Node + Firefox Node) connected via Selenium Event Bus on ports 4442/4443. Hub exposes port 4444 for WebDriver API and Grid UI.
+[2026-02-19T07:25:00Z] [iteration:32] [task:7.1] LEARNING: Browser node containers need shared memory (emptyDir with medium: Memory, sizeLimit: 2Gi) mounted at /dev/shm. Without this, Chrome/Firefox crash with "DevToolsActivePort file doesn't exist" or similar errors due to insufficient shared memory for browser rendering.
+[2026-02-19T07:25:00Z] [iteration:32] [task:7.1] LEARNING: Selenium image tags use date suffixes: `4.40.0-20260202` format. Multiple builds per minor version exist. PRD specified 4.40.0-20260120 but 4.40.0-20260202 is newer — used the latest build. Verified tags via GitHub API (github.com/SeleniumHQ/docker-selenium/releases).
+[2026-02-19T07:25:00Z] [iteration:32] [task:7.1] LEARNING: Node env vars for connecting to Hub: SE_EVENT_BUS_HOST (hub hostname), SE_EVENT_BUS_PUBLISH_PORT (4442), SE_EVENT_BUS_SUBSCRIBE_PORT (4443). SE_NODE_MAX_SESSIONS=1 and SE_NODE_OVERRIDE_MAX_SESSIONS=true ensure single-session-per-node for stability.
+[2026-02-19T07:25:00Z] [iteration:32] Iteration 32 complete.
+[2026-02-19T07:25:45Z] [iteration:32] Iteration 32 complete.
+[2026-02-19T07:25:45Z] [iteration:33] Starting iteration 33 of 50
+[2026-02-19T07:25:45Z] [iteration:33] Running claude...
+[2026-02-19T08:30:00Z] [iteration:33] [task:7.2] COMPLETED: Harbor cloud-native container registry app created (bf4ab36).
+[2026-02-19T08:30:00Z] [iteration:33] [task:7.2] LEARNING: Harbor is the most complex app in the catalog — 7 components (Core, Portal, Registry, DB, JobService, Valkey, Trivy) with 18 manifest files. Component startup order is critical: DB+Valkey first, then Registry (needs Valkey), then Core (needs DB+Registry), then JobService (needs Core), then Portal and Trivy independently.
+[2026-02-19T08:30:00Z] [iteration:33] [task:7.2] LEARNING: Harbor uses goharbor/* Docker images that all share the same version tag (e.g., v2.14.2). The Harbor DB image (goharbor/harbor-db) is a custom PostgreSQL image with Harbor-specific migrations baked in — no separate migration Job needed (unlike Kong which uses a standalone Job for migrations).
+[2026-02-19T08:30:00Z] [iteration:33] [task:7.2] LEARNING: Harbor requires multiple internal secrets: core secret, CSRF key, registry HTTP secret, jobservice secret — all auto-generated in pre-install.sh. The secretKey (16 chars) is used for encrypting Harbor secrets at rest. These internal secrets are not user-facing params in app.yaml.
+[2026-02-19T08:30:00Z] [iteration:33] [task:7.2] LEARNING: Harbor's configmap is extensive — 4 separate ConfigMaps (core-config, registry-config, jobservice-config, portal-config) plus a trivy-config. The portal uses nginx.conf to proxy API requests to harbor-core, enabling the single-port UI+API pattern.
+[2026-02-19T08:30:00Z] [iteration:33] [task:7.2] LEARNING: PRD specified v2.12.3 for Harbor but actual latest patch is v2.12.4. Always verify versions against endoflife.date or GitHub releases for latest patch versions.
+[2026-02-19T08:30:00Z] [iteration:33] [task:7.2] LEARNING: All Phase 7 individual app tasks are now complete (selenium, harbor). Only the Phase 7 validation task (7.3) remains.
+[2026-02-19T08:30:00Z] [iteration:33] Iteration 33 complete.
+[2026-02-19T07:35:37Z] [iteration:33] Iteration 33 complete.
+[2026-02-19T07:35:37Z] [iteration:34] Starting iteration 34 of 50
+[2026-02-19T07:35:37Z] [iteration:34] Running claude...
+[2026-02-19T07:38:00Z] [iteration:34] [task:7.3] COMPLETED: Phase 7 validation passed, catalog confirmed at 38 apps.
+[2026-02-19T07:38:00Z] [iteration:34] [task:7.3] LEARNING: Phase 7 validation was fast — both E2E fixtures (selenium.env, harbor.env) were already created during their respective app tasks. Catalog was already up to date from the Phase 7.2 commit (only timestamp diff). All quality checks passed: make validate (38 apps), make lint (ShellCheck), make catalog (38 apps).
+[2026-02-19T07:38:00Z] [iteration:34] [task:7.3] LEARNING: Phase 7 complete summary: 2 complex multi-component apps — Selenium Grid (Hub + Chrome Node + Firefox Node, stateless) and Harbor (7 components: Core, Portal, Registry, DB, JobService, Valkey, Trivy — most complex app in catalog with 18 manifests). Total project now has 38 apps in catalog. Phase 8 (complex platform: devtron) is next.
+[2026-02-19T07:38:00Z] [iteration:34] Iteration 34 complete.
