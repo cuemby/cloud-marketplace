@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo
+  labels:
+    app.kubernetes.io/name: odoo
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: odoo
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: odoo
+        app.kubernetes.io/component: app
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL at odoo-postgres:5432..."
+              until nc -z odoo-postgres 5432; do
+                echo "PostgreSQL not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "PostgreSQL is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: odoo
+          image: "docker.io/library/odoo:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - containerPort: 8069
+              protocol: TCP
+          env:
+            - name: HOST
+              value: "odoo-postgres"
+            - name: PORT
+              value: "5432"
+            - name: USER
+              value: "odoo"
+            - name: PASSWORD
+              value: "${PARAM_ODOO_DB_PASSWORD}"
+            - name: ADMIN_PASSWD
+              valueFrom:
+                secretKeyRef:
+                  name: odoo-db-secret
+                  key: ODOO_ADMIN_PASSWORD
+          volumeMounts:
+            - name: odoo-data
+              mountPath: /var/lib/odoo
+            - name: odoo-data
+              mountPath: /mnt/extra-addons
+              subPath: extra-addons
+          startupProbe:
+            httpGet:
+              path: /web/database/selector
+              port: 8069
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /web/database/selector
+              port: 8069
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /web/database/selector
+              port: 8069
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_ODOO_CPU_REQUEST}
+              memory: ${PARAM_ODOO_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_ODOO_CPU_LIMIT}
+              memory: ${PARAM_ODOO_MEMORY_LIMIT}
+      volumes:
+        - name: odoo-data
+          persistentVolumeClaim:
+            claimName: odoo-data
