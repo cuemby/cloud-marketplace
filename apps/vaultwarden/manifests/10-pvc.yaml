@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: vaultwarden-data
+  labels:
+    app.kubernetes.io/name: vaultwarden
+    app.kubernetes.io/component: vaultwarden
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: ${PARAM_VAULTWARDEN_DATA_SIZE}
