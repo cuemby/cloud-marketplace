@@ -1190,6 +1190,65 @@
       ]
     },
     {
+      "name": "rabbitmq",
+      "displayName": "RabbitMQ",
+      "description": "Reliable, open-source message broker supporting AMQP, MQTT, and STOMP protocols with a management UI.",
+      "category": "database",
+      "icon": "https://www.rabbitmq.com/img/rabbitmq-logo-with-name.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "20Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "4.2.4",
+          "imageTag": "4.2.4-management",
+          "default": true
+        },
+        {
+          "appVersion": "4.1.8",
+          "imageTag": "4.1.8-management"
+        },
+        {
+          "appVersion": "4.0.9",
+          "imageTag": "4.0.9-management"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "RABBITMQ_DEFAULT_USER",
+          "displayName": "Admin Username",
+          "description": "RabbitMQ admin username",
+          "type": "string",
+          "required": false,
+          "default": "admin"
+        },
+        {
+          "name": "RABBITMQ_DEFAULT_PASS",
+          "displayName": "Admin Password",
+          "description": "RabbitMQ admin password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "RABBITMQ_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for RabbitMQ data (mnesia database)",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        }
+      ]
+    },
+    {
       "name": "seaweedfs",
       "displayName": "SeaweedFS",
       "description": "S3-compatible distributed object storage with built-in filer and high throughput.",
@@ -1406,5 +1465,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T05:58:35Z"
+  "generated": "2026-02-19T06:04:23Z"
 }
