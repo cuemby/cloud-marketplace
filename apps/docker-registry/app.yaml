@@ -1,0 +1,41 @@
+name: docker-registry
+displayName: Docker Registry
+description: Open-source container image registry for storing and distributing Docker images.
+category: devops
+icon: https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 2Gi
+  disk: 50Gi
+
+versions:
+  - appVersion: "3.0.0"
+    imageTag: "3.0.0"
+    default: true
+  - appVersion: "2.8.3"
+    imageTag: "2.8.3"
+  - appVersion: "2.8.1"
+    imageTag: "2.8.1"
+
+parameters:
+  - name: REGISTRY_DATA_SIZE
+    displayName: Storage Size
+    description: Size of persistent volume for registry image storage
+    type: string
+    required: false
+    default: "50Gi"
+
+  - name: REGISTRY_HTTP_SECRET
+    displayName: HTTP Secret
+    description: Secret key used for registry HTTP session signing
+    type: password
+    required: false

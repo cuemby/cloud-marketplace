@@ -1,0 +1,72 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docker-registry
+  labels:
+    app.kubernetes.io/name: docker-registry
+    app.kubernetes.io/component: registry
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: docker-registry
+      app.kubernetes.io/component: registry
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: docker-registry
+        app.kubernetes.io/component: registry
+    spec:
+      containers:
+        - name: registry
+          image: docker.io/library/registry:${PARAM_APP_IMAGE_TAG}
+          ports:
+            - name: http
+              containerPort: 5000
+              protocol: TCP
+          env:
+            - name: REGISTRY_HTTP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: docker-registry-credentials
+                  key: REGISTRY_HTTP_SECRET
+            - name: REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY
+              value: /var/lib/registry
+          volumeMounts:
+            - name: docker-registry-data
+              mountPath: /var/lib/registry
+          startupProbe:
+            httpGet:
+              path: /v2/
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /v2/
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /v2/
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_REGISTRY_CPU_REQUEST}
+              memory: ${PARAM_REGISTRY_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_REGISTRY_CPU_LIMIT}
+              memory: ${PARAM_REGISTRY_MEMORY_LIMIT}
+      volumes:
+        - name: docker-registry-data
+          persistentVolumeClaim:
+            claimName: docker-registry-data
