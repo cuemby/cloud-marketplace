@@ -1,0 +1,73 @@
+name: owncloud
+displayName: ownCloud
+description: Self-hosted file sync and share platform with enterprise-grade security and compliance features.
+category: collaboration
+icon: https://owncloud.com/wp-content/uploads/2022/07/owncloud-logo.svg
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 50Gi
+
+versions:
+  - appVersion: "10.16.0"
+    imageTag: "10.16.0"
+    default: true
+  - appVersion: "10.15.3"
+    imageTag: "10.15.3"
+  - appVersion: "10.14.0"
+    imageTag: "10.14.0"
+
+parameters:
+  - name: OWNCLOUD_ADMIN_USERNAME
+    displayName: Admin Username
+    description: ownCloud administrator username
+    type: string
+    required: false
+    default: "admin"
+
+  - name: OWNCLOUD_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: ownCloud administrator password (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: OWNCLOUD_DB_PASSWORD
+    displayName: Database Password
+    description: MariaDB password for ownCloud (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: OWNCLOUD_DB_ROOT_PASSWORD
+    displayName: MariaDB Root Password
+    description: MariaDB root password (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: OWNCLOUD_VALKEY_PASSWORD
+    displayName: Valkey Password
+    description: Valkey password for ownCloud caching (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: OWNCLOUD_DB_DATA_SIZE
+    displayName: Database Storage Size
+    description: Size of persistent volume for MariaDB data
+    type: string
+    required: false
+    default: "5Gi"
+
+  - name: OWNCLOUD_DATA_SIZE
+    displayName: ownCloud Data Size
+    description: Size of persistent volume for ownCloud data (files, config)
+    type: string
+    required: false
+    default: "30Gi"

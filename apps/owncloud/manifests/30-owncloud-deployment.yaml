@@ -1,0 +1,152 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: owncloud
+  labels:
+    app.kubernetes.io/name: owncloud
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: owncloud
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: owncloud
+        app.kubernetes.io/component: app
+    spec:
+      initContainers:
+        - name: wait-for-mariadb
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MariaDB at owncloud-mariadb:3306..."
+              until nc -z owncloud-mariadb 3306; do
+                echo "MariaDB not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "MariaDB is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+        - name: wait-for-valkey
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Valkey at owncloud-valkey:6379..."
+              until nc -z owncloud-valkey 6379; do
+                echo "Valkey not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "Valkey is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: owncloud
+          image: "docker.io/owncloud/server:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: OWNCLOUD_DOMAIN
+              value: "*"
+            - name: OWNCLOUD_TRUSTED_DOMAINS
+              value: "*"
+            - name: OWNCLOUD_DB_TYPE
+              value: "mysql"
+            - name: OWNCLOUD_DB_HOST
+              value: "owncloud-mariadb"
+            - name: OWNCLOUD_DB_NAME
+              value: "owncloud"
+            - name: OWNCLOUD_DB_USERNAME
+              value: "owncloud"
+            - name: OWNCLOUD_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: owncloud-db-secret
+                  key: MYSQL_PASSWORD
+            - name: OWNCLOUD_MYSQL_UTF8MB4
+              value: "true"
+            - name: OWNCLOUD_ADMIN_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: owncloud-app-secret
+                  key: OWNCLOUD_ADMIN_USERNAME
+            - name: OWNCLOUD_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: owncloud-app-secret
+                  key: OWNCLOUD_ADMIN_PASSWORD
+            - name: OWNCLOUD_REDIS_ENABLED
+              value: "true"
+            - name: OWNCLOUD_REDIS_HOST
+              value: "owncloud-valkey"
+            - name: OWNCLOUD_REDIS_PORT
+              value: "6379"
+            - name: OWNCLOUD_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: owncloud-valkey-secret
+                  key: VALKEY_PASSWORD
+          volumeMounts:
+            - name: owncloud-data
+              mountPath: /mnt/data
+          startupProbe:
+            httpGet:
+              path: /status.php
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /status.php
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /status.php
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_OWNCLOUD_CPU_REQUEST}
+              memory: ${PARAM_OWNCLOUD_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_OWNCLOUD_CPU_LIMIT}
+              memory: ${PARAM_OWNCLOUD_MEMORY_LIMIT}
+      volumes:
+        - name: owncloud-data
+          persistentVolumeClaim:
+            claimName: owncloud-data

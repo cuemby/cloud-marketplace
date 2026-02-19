@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: owncloud-valkey
+  labels:
+    app.kubernetes.io/name: owncloud
+    app.kubernetes.io/component: cache
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: owncloud
+      app.kubernetes.io/component: cache
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: owncloud
+        app.kubernetes.io/component: cache
+    spec:
+      containers:
+        - name: valkey
+          image: docker.io/valkey/valkey:8.1.5-alpine
+          args:
+            - valkey-server
+            - --requirepass
+            - "${PARAM_OWNCLOUD_VALKEY_PASSWORD}"
+            - --maxmemory
+            - 256mb
+            - --maxmemory-policy
+            - allkeys-lru
+          ports:
+            - containerPort: 6379
+              protocol: TCP
+          startupProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - valkey-cli -a "${PARAM_OWNCLOUD_VALKEY_PASSWORD}" ping | grep -q PONG
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 12
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - valkey-cli -a "${PARAM_OWNCLOUD_VALKEY_PASSWORD}" ping | grep -q PONG
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - valkey-cli -a "${PARAM_OWNCLOUD_VALKEY_PASSWORD}" ping | grep -q PONG
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_VALKEY_CPU_REQUEST}
+              memory: ${PARAM_VALKEY_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_VALKEY_CPU_LIMIT}
+              memory: ${PARAM_VALKEY_MEMORY_LIMIT}
