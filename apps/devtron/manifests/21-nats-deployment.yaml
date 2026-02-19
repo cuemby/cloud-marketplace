@@ -40,6 +40,8 @@ spec:
               mountPath: /etc/nats
             - name: nats-data
               mountPath: /data
+            - name: nats-pid
+              mountPath: /var/run/nats
           startupProbe:
             httpGet:
               path: /
@@ -76,3 +78,5 @@ spec:
         - name: nats-data
           persistentVolumeClaim:
             claimName: devtron-nats-data
+        - name: nats-pid
+          emptyDir: {}

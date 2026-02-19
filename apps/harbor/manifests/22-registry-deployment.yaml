@@ -41,16 +41,15 @@ spec:
               memory: 32Mi
       containers:
         - name: registry
-          image: "docker.io/goharbor/harbor-registryctl:${PARAM_APP_IMAGE_TAG}"
-          args:
-            - serve
-            - /etc/registry/config.yml
+          image: "docker.io/goharbor/registry-photon:${PARAM_APP_IMAGE_TAG}"
+          command:
+            - /home/harbor/entrypoint.sh
           ports:
             - name: registry
               containerPort: 5000
               protocol: TCP
-            - name: registryctl
-              containerPort: 8080
+            - name: debug
+              containerPort: 5001
               protocol: TCP
           env:
             - name: REGISTRY_HTTP_SECRET
@@ -64,9 +63,6 @@ spec:
             - name: registry-config
               mountPath: /etc/registry/config.yml
               subPath: config.yml
-            - name: registry-config
-              mountPath: /etc/registryctl/config.yml
-              subPath: ctl-config.yml
           startupProbe:
             httpGet:
               path: /
@@ -96,6 +92,58 @@ spec:
             limits:
               cpu: ${PARAM_HARBOR_REGISTRY_CPU_LIMIT}
               memory: ${PARAM_HARBOR_REGISTRY_MEMORY_LIMIT}
+        - name: registryctl
+          image: "docker.io/goharbor/harbor-registryctl:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - name: registryctl
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: CORE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: harbor-core-secret
+                  key: secret
+            - name: JOBSERVICE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: harbor-core-secret
+                  key: secret
+            - name: REGISTRY_HTTP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: harbor-registry-secret
+                  key: REGISTRY_HTTP_SECRET
+          volumeMounts:
+            - name: registry-data
+              mountPath: /storage
+            - name: registry-config
+              mountPath: /etc/registry/config.yml
+              subPath: config.yml
+            - name: registry-config
+              mountPath: /etc/registryctl/config.yml
+              subPath: ctl-config.yml
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi
       volumes:
         - name: registry-data
           persistentVolumeClaim:
