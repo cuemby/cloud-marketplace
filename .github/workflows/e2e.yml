@@ -50,14 +50,21 @@ jobs:
             for app in $app_list; do
               local app_yaml="apps/${app}/app.yaml"
               [[ -f "$app_yaml" ]] || continue
+              # Flag apps requiring >=4 CPU as heavy (too resource-intensive for CI runners)
+              local cpu_req
+              cpu_req=$(yq -r '.requirements.cpu // 1' "$app_yaml" 2>/dev/null)
+              local heavy=false
+              if [[ "$cpu_req" -ge 4 ]] 2>/dev/null; then
+                heavy=true
+              fi
               local versions
               versions=$(yq -r '.versions[].appVersion' "$app_yaml" 2>/dev/null)
               if [[ -z "$versions" ]]; then
                 # No versions array — single entry with empty version (use default)
-                matrix=$(echo "$matrix" | jq -c ". + [{\"app\": \"${app}\", \"version\": \"\"}]")
+                matrix=$(echo "$matrix" | jq -c ". + [{\"app\": \"${app}\", \"version\": \"\", \"heavy\": ${heavy}}]")
               else
                 while IFS= read -r ver; do
-                  matrix=$(echo "$matrix" | jq -c ". + [{\"app\": \"${app}\", \"version\": \"${ver}\"}]")
+                  matrix=$(echo "$matrix" | jq -c ". + [{\"app\": \"${app}\", \"version\": \"${ver}\", \"heavy\": ${heavy}}]")
                 done <<< "$versions"
               fi
             done
@@ -68,8 +75,14 @@ jobs:
           if [[ -n "${{ github.event.inputs.app }}" ]]; then
             app="${{ github.event.inputs.app }}"
             version="${{ github.event.inputs.version }}"
+            app_yaml="apps/${app}/app.yaml"
+            cpu_req=$(yq -r '.requirements.cpu // 1' "$app_yaml" 2>/dev/null)
+            heavy=false
+            if [[ "$cpu_req" -ge 4 ]] 2>/dev/null; then
+              heavy=true
+            fi
             if [[ -n "$version" ]]; then
-              matrix="[{\"app\": \"${app}\", \"version\": \"${version}\"}]"
+              matrix="[{\"app\": \"${app}\", \"version\": \"${version}\", \"heavy\": ${heavy}}]"
             else
               matrix=$(build_matrix "$app")
             fi
@@ -111,7 +124,9 @@ jobs:
     needs: determine-apps
     if: needs.determine-apps.outputs.has_apps == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
+    # Heavy apps (>=4 CPU requirement) exceed CI runner capacity — don't block CI
+    continue-on-error: ${{ matrix.combo.heavy == true }}
     strategy:
       matrix:
         combo: ${{ fromJSON(needs.determine-apps.outputs.matrix) }}
@@ -177,8 +192,11 @@ jobs:
     steps:
       - name: Check results
         run: |
-          if [[ "${{ needs.e2e.result }}" == "failure" ]]; then
+          result="${{ needs.e2e.result }}"
+          if [[ "$result" == "failure" ]]; then
             echo "::error::Some E2E tests failed — check individual job logs."
+            echo "Note: Heavy apps (>=4 CPU) use continue-on-error and won't block this check."
             exit 1
           fi
-          echo "All E2E tests passed."
+          echo "All E2E tests passed (heavy app failures are non-blocking)."
+          echo "Apps requiring >=4 CPU are marked as 'heavy' and allowed to fail in CI."

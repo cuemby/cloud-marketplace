@@ -85,6 +85,34 @@ wait_for_rollout() {
     return 0
 }
 
+# Dump pod status, events, and recent logs for debugging failed deployments.
+# Called before atomic_cleanup so diagnostic data is preserved.
+# Usage: _dump_namespace_diagnostics <namespace>
+_dump_namespace_diagnostics() {
+    local namespace="$1"
+
+    log_warn "=== Diagnostic dump for namespace ${namespace} ==="
+
+    log_warn "--- Pod status ---"
+    kubectl get pods -n "$namespace" -o wide 2>/dev/null || true
+
+    log_warn "--- Pod descriptions (non-Running) ---"
+    local pods
+    pods="$(kubectl get pods -n "$namespace" --no-headers \
+        -o custom-columns=NAME:.metadata.name,STATUS:.status.phase 2>/dev/null \
+        | grep -v Running | awk '{print $1}')" || true
+    for pod in $pods; do
+        [[ -z "$pod" ]] && continue
+        log_warn "--- describe pod/${pod} ---"
+        kubectl describe pod "$pod" -n "$namespace" 2>/dev/null | tail -30 || true
+    done
+
+    log_warn "--- Recent events ---"
+    kubectl get events -n "$namespace" --sort-by='.lastTimestamp' 2>/dev/null | tail -20 || true
+
+    log_warn "=== End diagnostic dump ==="
+}
+
 # Delete all resources in a namespace on failure (atomic cleanup).
 # Equivalent of Helm's --atomic flag for non-Helm deploys.
 # Usage: atomic_cleanup <namespace> <app_name>

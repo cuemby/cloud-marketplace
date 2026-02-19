@@ -84,7 +84,8 @@ deploy_manifest() {
     # Wait for all workloads to complete rollout
     log_info "Waiting for rollout to complete (timeout: ${TIMEOUT_HELM_DEPLOY}s)..."
     if ! wait_for_rollout "$namespace" "$TIMEOUT_HELM_DEPLOY"; then
-        log_error "Rollout timed out — cleaning up namespace."
+        log_error "Rollout timed out — dumping diagnostics before cleanup."
+        _dump_namespace_diagnostics "$namespace"
         atomic_cleanup "$namespace" "$app_name"
         return 1
     fi
