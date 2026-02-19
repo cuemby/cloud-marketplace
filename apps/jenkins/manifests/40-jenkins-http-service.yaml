@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: jenkins-http
+  labels:
+    app.kubernetes.io/name: jenkins
+    app.kubernetes.io/component: app
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: jenkins
+    app.kubernetes.io/component: app
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: ${PARAM_JENKINS_HTTP_NODEPORT}
+      protocol: TCP

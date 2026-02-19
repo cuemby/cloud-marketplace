@@ -274,6 +274,191 @@
       ]
     },
     {
+      "name": "jenkins",
+      "displayName": "Jenkins",
+      "description": "Open-source CI/CD automation server for building, testing, and deploying software.",
+      "category": "devops",
+      "icon": "https://www.jenkins.io/images/logos/jenkins/jenkins.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "30Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "2.541.2",
+          "imageTag": "2.541.2-lts-jdk21",
+          "default": true
+        },
+        {
+          "appVersion": "2.541.1",
+          "imageTag": "2.541.1-lts-jdk21"
+        },
+        {
+          "appVersion": "2.528.3",
+          "imageTag": "2.528.3-lts-jdk21"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "JENKINS_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for Jenkins home directory",
+          "type": "string",
+          "required": false,
+          "default": "20Gi"
+        },
+        {
+          "name": "JENKINS_JAVA_OPTS",
+          "displayName": "JVM Options",
+          "description": "JVM heap settings for Jenkins",
+          "type": "string",
+          "required": false,
+          "default": "-Xms512m -Xmx1g"
+        }
+      ]
+    },
+    {
+      "name": "kafka",
+      "displayName": "Apache Kafka",
+      "description": "Open-source distributed streaming platform for real-time data pipelines and event-driven architectures.",
+      "category": "database",
+      "icon": "https://kafka.apache.org/logos/kafka_logo--simple.png",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 4,
+        "memory": "8Gi",
+        "disk": "50Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "4.2.0",
+          "imageTag": "4.2.0",
+          "default": true
+        },
+        {
+          "appVersion": "4.1.1",
+          "imageTag": "4.1.1"
+        },
+        {
+          "appVersion": "4.0.1",
+          "imageTag": "4.0.1"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "KAFKA_CLUSTER_ID",
+          "displayName": "Cluster ID",
+          "description": "KRaft cluster ID (auto-generated if not set)",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "KAFKA_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for Kafka data",
+          "type": "string",
+          "required": false,
+          "default": "20Gi"
+        },
+        {
+          "name": "KAFKA_HEAP_OPTS",
+          "displayName": "JVM Heap Options",
+          "description": "JVM heap settings (recommend paired Xms/Xmx, ~25% of VM RAM)",
+          "type": "string",
+          "required": false,
+          "default": "-Xms2g -Xmx2g"
+        }
+      ]
+    },
+    {
+      "name": "keycloak",
+      "displayName": "Keycloak",
+      "description": "Open-source identity and access management with SSO, social login, and user federation.",
+      "category": "devops",
+      "icon": "https://www.keycloak.org/resources/images/icon.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "30Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "26.5.3",
+          "imageTag": "26.5.3",
+          "default": true
+        },
+        {
+          "appVersion": "25.0.6",
+          "imageTag": "25.0.6"
+        },
+        {
+          "appVersion": "24.0.5",
+          "imageTag": "24.0.5"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "KEYCLOAK_ADMIN_PASSWORD",
+          "displayName": "Admin Password",
+          "description": "Keycloak admin password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "KEYCLOAK_ADMIN_USER",
+          "displayName": "Admin Username",
+          "description": "Keycloak admin username",
+          "type": "string",
+          "required": false,
+          "default": "admin"
+        },
+        {
+          "name": "KEYCLOAK_DB_PASSWORD",
+          "displayName": "Database Password",
+          "description": "PostgreSQL password for Keycloak database (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "KEYCLOAK_DB_DATA_SIZE",
+          "displayName": "Database Storage Size",
+          "description": "Size of persistent volume for PostgreSQL data",
+          "type": "string",
+          "required": false,
+          "default": "5Gi"
+        },
+        {
+          "name": "KEYCLOAK_DATA_SIZE",
+          "displayName": "Keycloak Storage Size",
+          "description": "Size of persistent volume for Keycloak data",
+          "type": "string",
+          "required": false,
+          "default": "1Gi"
+        }
+      ]
+    },
+    {
       "name": "opensearch",
       "displayName": "OpenSearch",
       "description": "Open-source search and analytics engine, Apache 2.0 fork of Elasticsearch.",
@@ -529,5 +714,5 @@
       ]
     }
   ],
-  "generated": "2026-02-18T23:39:12Z"
+  "generated": "2026-02-19T00:33:28Z"
 }
