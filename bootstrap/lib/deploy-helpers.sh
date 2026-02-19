@@ -96,15 +96,23 @@ _dump_namespace_diagnostics() {
     log_warn "--- Pod status ---"
     kubectl get pods -n "$namespace" -o wide 2>/dev/null || true
 
-    log_warn "--- Pod descriptions (non-Running) ---"
-    local pods
-    pods="$(kubectl get pods -n "$namespace" --no-headers \
-        -o custom-columns=NAME:.metadata.name,STATUS:.status.phase 2>/dev/null \
-        | grep -v Running | awk '{print $1}')" || true
-    for pod in $pods; do
+    log_warn "--- Pod descriptions ---"
+    local pod_names
+    pod_names="$(kubectl get pods -n "$namespace" --no-headers \
+        -o custom-columns=NAME:.metadata.name 2>/dev/null)" || true
+    for pod in $pod_names; do
         [[ -z "$pod" ]] && continue
         log_warn "--- describe pod/${pod} ---"
-        kubectl describe pod "$pod" -n "$namespace" 2>/dev/null | tail -30 || true
+        kubectl describe pod "$pod" -n "$namespace" 2>/dev/null | tail -40 || true
+    done
+
+    log_warn "--- Container logs (last 50 lines per pod) ---"
+    for pod in $pod_names; do
+        [[ -z "$pod" ]] && continue
+        log_warn "--- logs pod/${pod} ---"
+        kubectl logs "$pod" -n "$namespace" --tail=50 2>/dev/null || true
+        log_warn "--- previous logs pod/${pod} ---"
+        kubectl logs "$pod" -n "$namespace" --previous --tail=50 2>/dev/null || true
     done
 
     log_warn "--- Recent events ---"

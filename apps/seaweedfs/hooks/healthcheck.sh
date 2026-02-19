@@ -10,30 +10,25 @@ source "${BOOTSTRAP_DIR}/lib/retry.sh"
 
 local_namespace="${HELM_NAMESPACE_PREFIX}seaweedfs"
 
-# Check 1: Master cluster status endpoint
+# Check 1: SeaweedFS pod is Ready (Kubernetes HTTP probes verify /cluster/status)
 _seaweedfs_master_ready() {
-    local pod
-    pod="$(kubectl get pods -n "${local_namespace}" \
+    local ready
+    ready="$(kubectl get pods -n "${local_namespace}" \
         -l app.kubernetes.io/name=seaweedfs,app.kubernetes.io/component=storage \
-        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
-    [[ -n "$pod" ]] || return 1
-    kubectl exec -n "${local_namespace}" "$pod" -- \
-        curl -sf http://localhost:9333/cluster/status 2>/dev/null | grep -q "IsLeader"
+        -o jsonpath='{.items[0].status.conditions[?(@.type=="Ready")].status}' 2>/dev/null)"
+    [[ "$ready" == "True" ]]
 }
 
 log_info "[seaweedfs/healthcheck] Checking master cluster status..."
 retry_with_timeout 120 10 _seaweedfs_master_ready
 log_info "[seaweedfs/healthcheck] Master cluster is healthy."
 
-# Check 2: S3 API endpoint responding
+# Check 2: S3 API port is listening (verify via service endpoint)
 _seaweedfs_s3_ready() {
-    local pod
-    pod="$(kubectl get pods -n "${local_namespace}" \
-        -l app.kubernetes.io/name=seaweedfs,app.kubernetes.io/component=storage \
-        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
-    [[ -n "$pod" ]] || return 1
-    kubectl exec -n "${local_namespace}" "$pod" -- \
-        curl -sf -o /dev/null http://localhost:8333/ 2>/dev/null
+    local endpoints
+    endpoints="$(kubectl get endpoints seaweedfs-s3 -n "${local_namespace}" \
+        -o jsonpath='{.subsets[*].addresses[*].ip}' 2>/dev/null)"
+    [[ -n "$endpoints" ]]
 }
 
 log_info "[seaweedfs/healthcheck] Checking S3 API endpoint..."

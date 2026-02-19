@@ -54,7 +54,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD"
+                - mysqladmin ping -h 127.0.0.1
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
@@ -64,7 +64,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD"
+                - mysqladmin ping -h 127.0.0.1
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
@@ -73,7 +73,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - mysqladmin ping -u root -p"$MYSQL_ROOT_PASSWORD"
+                - mysqladmin ping -h 127.0.0.1
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
