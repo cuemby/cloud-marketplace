@@ -1,0 +1,41 @@
+name: ferretdb
+displayName: FerretDB
+description: Open-source MongoDB-compatible database using PostgreSQL as the backend engine.
+category: database
+icon: https://docs.ferretdb.io/img/logo-dark.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+
+versions:
+  - appVersion: "2.7.0"
+    imageTag: "2.7.0"
+    default: true
+  - appVersion: "2.5.0"
+    imageTag: "2.5.0"
+  - appVersion: "2.4.0"
+    imageTag: "2.4.0"
+
+parameters:
+  - name: FERRETDB_DB_PASSWORD
+    displayName: Database Password
+    description: PostgreSQL password for FerretDB (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: FERRETDB_DB_DATA_SIZE
+    displayName: Database Storage Size
+    description: Size of persistent volume for PostgreSQL data
+    type: string
+    required: false
+    default: "10Gi"
