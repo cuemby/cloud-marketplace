@@ -240,3 +240,39 @@
 [2026-02-19T07:05:00Z] [iteration:28] [task:5.4] LEARNING: Phase 5 complete summary: 3 apps with MySQL/MariaDB backends — Ghost CMS (app+MySQL), Joomla CMS (app+MariaDB), Nextcloud (app+MariaDB+Valkey). All 3 E2E fixtures already existed from prior iterations. Total project now has 33 apps in catalog. Phase 6 (multi-component infrastructure: kong, rancher, owncloud) is next.
 [2026-02-19T07:05:00Z] [iteration:28] [task:5.4] LEARNING: Validation tasks for phases where E2E fixtures were already created during app tasks are very fast — just run make validate + lint + catalog and confirm fixtures exist.
 [2026-02-19T07:05:00Z] [iteration:28] Iteration 28 complete.
+[2026-02-19T07:05:01Z] [iteration:28] Iteration 28 complete.
+[2026-02-19T07:05:01Z] [iteration:29] Starting iteration 29 of 50
+[2026-02-19T07:05:01Z] [iteration:29] Running claude...
+[2026-02-19T08:00:00Z] [iteration:29] [task:6.0] COMPLETED: Phase 6 parent marker completed.
+[2026-02-19T08:00:00Z] [iteration:29] [task:6.1] COMPLETED: Kong Gateway app created (df61165).
+[2026-02-19T08:00:00Z] [iteration:29] [task:6.1] LEARNING: Kong is the first app requiring a Kubernetes Job for database migrations (25-kong-migrations-job.yaml). The `kong migrations bootstrap` command must complete before the gateway starts. The post-install hook checks `kubectl get job kong-migrations -o jsonpath='{.status.succeeded}'` for "1" to verify migrations completed.
+[2026-02-19T08:00:00Z] [iteration:29] [task:6.1] LEARNING: Kong uses separate NodePort services for Proxy (30800, port 8000) and Admin API (30801, port 8001). The proxy service also exposes 8443 for SSL pass-through. Kong Admin API at /status returns JSON with database connectivity info — good for health checks.
+[2026-02-19T08:00:00Z] [iteration:29] [task:6.1] LEARNING: Kong Gateway env vars use KONG_PG_* prefix for PostgreSQL connection (KONG_PG_HOST, KONG_PG_USER, etc.) and KONG_DATABASE=postgres to select the database backend. The password is injected via valueFrom.secretKeyRef from the shared secret.
+[2026-02-19T08:00:00Z] [iteration:29] [task:6.1] LEARNING: Kong's init container in the deployment just waits for PostgreSQL to be reachable (nc -z). The actual migrations happen in the Job manifest (25-kong-migrations-job.yaml) which also has its own wait-for-postgres init container. Manifest ordering ensures the Job applies before the Deployment.
+[2026-02-19T08:00:00Z] [iteration:29] Iteration 29 complete.
+[2026-02-19T07:08:49Z] [iteration:29] Iteration 29 complete.
+[2026-02-19T07:08:49Z] [iteration:30] Starting iteration 30 of 50
+[2026-02-19T07:08:49Z] [iteration:30] Running claude...
+[2026-02-19T09:00:00Z] [iteration:30] [task:6.2] COMPLETED: Rancher app created (182a6eb).
+[2026-02-19T09:00:00Z] [iteration:30] [task:6.2] LEARNING: Rancher follows the Portainer pattern (single-component, no external DB) but requires `privileged: true` securityContext because it runs an embedded K3s/etcd inside the container. This is the only app in the catalog requiring privileged mode.
+[2026-02-19T09:00:00Z] [iteration:30] [task:6.2] LEARNING: Rancher uses HTTPS (port 443) with self-signed certs by default. The `--no-cacerts` flag disables CA cert generation for simpler single-node deployments. Health checks use `scheme: HTTPS` in httpGet probes. The healthcheck hook uses `curl -ksSf` to accept self-signed certs.
+[2026-02-19T09:00:00Z] [iteration:30] [task:6.2] LEARNING: Rancher bootstrap password uses `CATTLE_BOOTSTRAP_PASSWORD` env var (not RANCHER_*). This is the initial admin password; user is prompted to change it on first login. The admin username is hardcoded as "admin".
+[2026-02-19T09:00:00Z] [iteration:30] [task:6.2] LEARNING: PRD specified versions v2.12.6 and v2.11.10 which don't exist — actual latest patches are v2.12.3 and v2.11.8. Always verify image tags against Docker Hub/GitHub releases before creating app.yaml.
+[2026-02-19T09:00:00Z] [iteration:30] [task:6.2] LEARNING: Rancher startup is slow (embedded K3s + etcd init). Startup probe uses failureThreshold=60 with periodSeconds=10 = 10min max startup time. Post-install hook uses retry_with_timeout 600 (10min) with 15s intervals.
+[2026-02-19T09:00:00Z] [iteration:30] Iteration 30 complete.
+[2026-02-19T07:13:47Z] [iteration:30] Iteration 30 complete.
+[2026-02-19T07:13:47Z] [iteration:31] Starting iteration 31 of 50
+[2026-02-19T07:13:47Z] [iteration:31] Running claude...
+[2026-02-19T10:00:00Z] [iteration:31] [task:6.3] COMPLETED: ownCloud app created (f646062).
+[2026-02-19T10:00:00Z] [iteration:31] [task:6.3] LEARNING: ownCloud follows the Nextcloud pattern almost exactly — 3-component stack (ownCloud + MariaDB 11.4 + Valkey 8.1). Key differences: (1) ownCloud uses `docker.io/owncloud/server` image (not `library/nextcloud`), (2) ownCloud listens on port 8080 (not 80), (3) ownCloud uses `OWNCLOUD_*` env vars for config (OWNCLOUD_DB_TYPE=mysql, OWNCLOUD_DB_HOST, OWNCLOUD_REDIS_ENABLED=true, etc.), (4) data mounts at `/mnt/data` (not `/var/www/html`).
+[2026-02-19T10:00:00Z] [iteration:31] [task:6.3] LEARNING: ownCloud uses `OWNCLOUD_ADMIN_USERNAME` (not ADMIN_USER) and `OWNCLOUD_ADMIN_PASSWORD` env vars. Redis connection uses `OWNCLOUD_REDIS_ENABLED=true`, `OWNCLOUD_REDIS_HOST`, `OWNCLOUD_REDIS_PORT`, `OWNCLOUD_REDIS_PASSWORD` (not REDIS_HOST_PASSWORD like Nextcloud).
+[2026-02-19T10:00:00Z] [iteration:31] [task:6.3] LEARNING: ownCloud image tags are plain version numbers (10.16.0, 10.15.3, 10.14.0) — no `-apache` suffix like Nextcloud. The `/status.php` endpoint returns JSON with version info and is used for health checks on port 8080.
+[2026-02-19T10:00:00Z] [iteration:31] [task:6.3] LEARNING: All Phase 6 individual app tasks are now complete (kong, rancher, owncloud). Only the Phase 6 validation task (6.4) remains.
+[2026-02-19T10:00:00Z] [iteration:31] Iteration 31 complete.
+[2026-02-19T07:20:19Z] [iteration:31] Iteration 31 complete.
+[2026-02-19T07:20:19Z] [iteration:32] Starting iteration 32 of 50
+[2026-02-19T07:20:19Z] [iteration:32] Running claude...
+[2026-02-19T07:21:00Z] [iteration:32] [task:6.4] COMPLETED: Phase 6 validation passed, catalog confirmed at 36 apps.
+[2026-02-19T07:21:00Z] [iteration:32] [task:6.4] LEARNING: Phase 6 validation was fast — all E2E fixtures (kong.env, rancher.env, owncloud.env) were already created during their respective app tasks. Catalog was already up to date from the Phase 6.3 commit. Only needed to re-run make validate + lint + catalog to confirm.
+[2026-02-19T07:21:00Z] [iteration:32] [task:6.4] LEARNING: Phase 6 complete summary: 3 multi-component infrastructure apps — Kong Gateway (app+PostgreSQL+migrations Job), Rancher (single privileged container with embedded K3s), ownCloud (app+MariaDB+Valkey). Total project now has 36 apps in catalog. Phase 7 (complex multi-component: selenium, harbor) is next.
+[2026-02-19T07:21:00Z] [iteration:32] Iteration 32 complete.

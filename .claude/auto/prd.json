@@ -404,47 +404,50 @@
     {
       "id": "6.0",
       "title": "Phase 6 — Multi-Component Infrastructure (kong, rancher, owncloud)",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium"
     },
     {
       "id": "6.1",
       "title": "Create Kong Gateway app [~7,000 tokens — Complex]",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "6.0",
       "depends_on": [
         "6.0"
-      ]
+      ],
+      "commit_sha": "df61165"
     },
     {
       "id": "6.2",
       "title": "Create Rancher app [~5,000 tokens — Medium]",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "6.0",
       "depends_on": [
         "6.0"
-      ]
+      ],
+      "commit_sha": "182a6eb"
     },
     {
       "id": "6.3",
       "title": "Create ownCloud app [~8,000 tokens — Complex]",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "6.0",
       "depends_on": [
         "6.0"
-      ]
+      ],
+      "commit_sha": "f646062"
     },
     {
       "id": "6.4",
       "title": "Validate and commit Phase 6 [~1,000 tokens — Simple]",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "6.0",
@@ -524,9 +527,9 @@
   ],
   "progress": {
     "total_tasks": 46,
-    "completed_tasks": 34,
-    "current_iteration": 28,
-    "total_iterations_run": 28,
+    "completed_tasks": 39,
+    "current_iteration": 32,
+    "total_iterations_run": 32,
     "status": "in_progress"
   }
 }
