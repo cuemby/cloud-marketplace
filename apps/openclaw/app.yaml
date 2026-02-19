@@ -1,0 +1,48 @@
+name: openclaw
+displayName: OpenClaw
+description: Open-source personal AI assistant that connects to messaging platforms with autonomous capabilities.
+category: ai
+icon: https://openclaw.ai/favicon.ico
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 20Gi
+
+versions:
+  - appVersion: "2026.2.17"
+    imageTag: "v2026.2.17"
+    default: true
+  - appVersion: "2026.2.6"
+    imageTag: "v2026.2.6"
+  - appVersion: "2026.2.3"
+    imageTag: "v2026.2.3"
+
+parameters:
+  - name: OPENCLAW_API_KEY
+    displayName: LLM API Key
+    description: API key for the LLM provider (Anthropic, OpenAI, etc.)
+    type: password
+    required: true
+
+  - name: OPENCLAW_LLM_PROVIDER
+    displayName: LLM Provider
+    description: LLM provider to use (anthropic, openai)
+    type: string
+    required: false
+    default: "anthropic"
+
+  - name: OPENCLAW_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for OpenClaw data (SQLite, memory, transcripts)
+    type: string
+    required: false
+    default: "10Gi"

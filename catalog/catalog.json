@@ -949,8 +949,8 @@
           "default": true
         },
         {
-          "appVersion": "3.8.1",
-          "imageTag": "3.8.1"
+          "appVersion": "3.8.0",
+          "imageTag": "3.8.0"
         },
         {
           "appVersion": "3.7.1",
@@ -1382,17 +1382,17 @@
       },
       "versions": [
         {
-          "appVersion": "33.0.0",
-          "imageTag": "33.0.0-apache",
+          "appVersion": "32.0.6",
+          "imageTag": "32.0.6-apache",
           "default": true
         },
         {
-          "appVersion": "32.0.3",
-          "imageTag": "32.0.3-apache"
+          "appVersion": "31.0.14",
+          "imageTag": "31.0.14-apache"
         },
         {
-          "appVersion": "31.0.12",
-          "imageTag": "31.0.12-apache"
+          "appVersion": "30.0.17",
+          "imageTag": "30.0.17-apache"
         }
       ],
       "parameters": [
@@ -1608,6 +1608,65 @@
           "description": "Root token for OpenBao dev mode access",
           "type": "password",
           "required": false
+        }
+      ]
+    },
+    {
+      "name": "openclaw",
+      "displayName": "OpenClaw",
+      "description": "Open-source personal AI assistant that connects to messaging platforms with autonomous capabilities.",
+      "category": "ai",
+      "icon": "https://openclaw.ai/favicon.ico",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "20Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "2026.2.17",
+          "imageTag": "v2026.2.17",
+          "default": true
+        },
+        {
+          "appVersion": "2026.2.6",
+          "imageTag": "v2026.2.6"
+        },
+        {
+          "appVersion": "2026.2.3",
+          "imageTag": "v2026.2.3"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "OPENCLAW_API_KEY",
+          "displayName": "LLM API Key",
+          "description": "API key for the LLM provider (Anthropic, OpenAI, etc.)",
+          "type": "password",
+          "required": true
+        },
+        {
+          "name": "OPENCLAW_LLM_PROVIDER",
+          "displayName": "LLM Provider",
+          "description": "LLM provider to use (anthropic, openai)",
+          "type": "string",
+          "required": false,
+          "default": "anthropic"
+        },
+        {
+          "name": "OPENCLAW_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for OpenClaw data (SQLite, memory, transcripts)",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
         }
       ]
     },
@@ -2059,12 +2118,12 @@
           "default": true
         },
         {
-          "appVersion": "2.12.6",
-          "imageTag": "v2.12.6"
+          "appVersion": "2.12.3",
+          "imageTag": "v2.12.3"
         },
         {
-          "appVersion": "2.11.10",
-          "imageTag": "v2.11.10"
+          "appVersion": "2.11.3",
+          "imageTag": "v2.11.3"
         }
       ],
       "parameters": [
@@ -2464,5 +2523,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T13:14:01Z"
+  "generated": "2026-02-19T20:03:20Z"
 }

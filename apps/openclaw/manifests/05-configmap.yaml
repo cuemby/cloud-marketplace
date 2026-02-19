@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: openclaw-config
+  labels:
+    app.kubernetes.io/name: openclaw
+    app.kubernetes.io/component: gateway
+data:
+  OPENCLAW_GATEWAY_PORT: "18789"
+  OPENCLAW_LLM_PROVIDER: "${PARAM_OPENCLAW_LLM_PROVIDER}"

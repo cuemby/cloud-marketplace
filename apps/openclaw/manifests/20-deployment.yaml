@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openclaw
+  labels:
+    app.kubernetes.io/name: openclaw
+    app.kubernetes.io/component: gateway
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openclaw
+      app.kubernetes.io/component: gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openclaw
+        app.kubernetes.io/component: gateway
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: openclaw
+          image: "ghcr.io/openclaw/openclaw:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - name: gateway
+              containerPort: 18789
+              protocol: TCP
+          env:
+            - name: OPENCLAW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_API_KEY
+          envFrom:
+            - configMapRef:
+                name: openclaw-config
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+          startupProbe:
+            tcpSocket:
+              port: gateway
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            tcpSocket:
+              port: gateway
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: gateway
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_OPENCLAW_CPU_REQUEST}
+              memory: ${PARAM_OPENCLAW_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_OPENCLAW_CPU_LIMIT}
+              memory: ${PARAM_OPENCLAW_MEMORY_LIMIT}
+      volumes:
+        - name: openclaw-data
+          persistentVolumeClaim:
+            claimName: openclaw-data
