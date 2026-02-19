@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devtron-nats
+  labels:
+    app.kubernetes.io/name: devtron
+    app.kubernetes.io/component: nats
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: devtron
+      app.kubernetes.io/component: nats
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: devtron
+        app.kubernetes.io/component: nats
+    spec:
+      containers:
+        - name: nats
+          image: docker.io/library/nats:2.9.3-alpine
+          args:
+            - --config
+            - /etc/nats/nats.conf
+          ports:
+            - name: client
+              containerPort: 4222
+              protocol: TCP
+            - name: cluster
+              containerPort: 6222
+              protocol: TCP
+            - name: monitor
+              containerPort: 8222
+              protocol: TCP
+          volumeMounts:
+            - name: nats-config
+              mountPath: /etc/nats
+            - name: nats-data
+              mountPath: /data
+          startupProbe:
+            httpGet:
+              path: /
+              port: 8222
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8222
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8222
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_DEVTRON_NATS_CPU_REQUEST}
+              memory: ${PARAM_DEVTRON_NATS_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_DEVTRON_NATS_CPU_LIMIT}
+              memory: ${PARAM_DEVTRON_NATS_MEMORY_LIMIT}
+      volumes:
+        - name: nats-config
+          configMap:
+            name: devtron-nats-config
+        - name: nats-data
+          persistentVolumeClaim:
+            claimName: devtron-nats-data

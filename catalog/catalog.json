@@ -281,6 +281,56 @@
       ]
     },
     {
+      "name": "devtron",
+      "displayName": "Devtron",
+      "description": "Kubernetes-native application lifecycle management platform for CI/CD, GitOps, and deployment automation.",
+      "category": "devops",
+      "icon": "https://devtron.ai/assets/img/devtron-logo-dark.svg",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 4,
+        "memory": "8Gi",
+        "disk": "50Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "2.0.0",
+          "imageTag": "f0c18f20-280-38148",
+          "default": true
+        }
+      ],
+      "parameters": [
+        {
+          "name": "DEVTRON_DB_PASSWORD",
+          "displayName": "Database Password",
+          "description": "PostgreSQL password for Devtron (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "DEVTRON_ADMIN_PASSWORD",
+          "displayName": "Admin Password",
+          "description": "Devtron admin dashboard password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "DEVTRON_DB_DATA_SIZE",
+          "displayName": "Database Storage Size",
+          "description": "Size of persistent volume for PostgreSQL data",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        }
+      ]
+    },
+    {
       "name": "docker-registry",
       "displayName": "Docker Registry",
       "description": "Open-source container image registry for storing and distributing Docker images.",
@@ -2414,5 +2464,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T07:36:14Z"
+  "generated": "2026-02-19T07:43:44Z"
 }

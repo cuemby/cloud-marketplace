@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devtron-cm
+  labels:
+    app.kubernetes.io/name: devtron
+    app.kubernetes.io/component: orchestrator
+data:
+  APP: "orchestrator"
+  MODE: "PROD"
+  LOG_LEVEL: "0"
+  PG_ADDR: "devtron-postgres"
+  PG_PORT: "5432"
+  PG_USER: "postgres"
+  PG_DATABASE: "orchestrator"
+  PG_LOG_QUERY: "true"
+  NATS_SERVER_HOST: "nats://devtron-nats:4222"
+  DASHBOARD_PORT: "80"
+  DASHBOARD_HOST: "devtron-dashboard"
+  DEVTRON_SECRET_NAME: "devtron-secret"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devtron-dashboard-cm
+  labels:
+    app.kubernetes.io/name: devtron
+    app.kubernetes.io/component: dashboard
+data:
+  GA_ENABLED: "false"
+  HOTJAR_ENABLED: "false"
+  SENTRY_ENABLED: "false"
+  SENTRY_ENV: "PRODUCTION"
+  APPLICATION_METRICS_ENABLED: "true"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: devtron-nats-config
+  labels:
+    app.kubernetes.io/name: devtron
+    app.kubernetes.io/component: nats
+data:
+  nats.conf: |
+    pid_file: "/var/run/nats/nats.pid"
+    http: 8222
+    server_name: devtron-nats
+    max_payload: 8388608
+
+    jetstream {
+      store_dir: /data
+      max_mem: 1Gi
+      domain: devtron-jet
+    }
