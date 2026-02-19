@@ -1,0 +1,35 @@
+name: nexus3
+displayName: Sonatype Nexus Repository
+description: Universal repository manager supporting Maven, npm, Docker, and many other package formats.
+category: devops
+icon: https://help.sonatype.com/docs/files/331022/396498001/1/1680542894957/NexusRepo_Icon.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 50Gi
+
+versions:
+  - appVersion: "3.87.2"
+    imageTag: "3.87.2"
+    default: true
+  - appVersion: "3.86.2"
+    imageTag: "3.86.2"
+  - appVersion: "3.85.1"
+    imageTag: "3.85.1"
+
+parameters:
+  - name: NEXUS_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for Nexus repository data
+    type: string
+    required: false
+    default: "50Gi"

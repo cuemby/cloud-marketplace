@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nexus3
+  labels:
+    app.kubernetes.io/name: nexus3
+    app.kubernetes.io/component: nexus3
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nexus3
+      app.kubernetes.io/component: nexus3
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nexus3
+        app.kubernetes.io/component: nexus3
+    spec:
+      securityContext:
+        runAsUser: 200
+        fsGroup: 200
+      containers:
+        - name: nexus3
+          image: docker.io/sonatype/nexus3:${PARAM_APP_IMAGE_TAG}
+          ports:
+            - name: http
+              containerPort: 8081
+              protocol: TCP
+          volumeMounts:
+            - name: nexus3-data
+              mountPath: /nexus-data
+          startupProbe:
+            httpGet:
+              path: /service/rest/v1/status
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /service/rest/v1/status
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /service/rest/v1/status
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_NEXUS_CPU_REQUEST}
+              memory: ${PARAM_NEXUS_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_NEXUS_CPU_LIMIT}
+              memory: ${PARAM_NEXUS_MEMORY_LIMIT}
+      volumes:
+        - name: nexus3-data
+          persistentVolumeClaim:
+            claimName: nexus3-data
