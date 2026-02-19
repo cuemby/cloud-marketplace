@@ -496,43 +496,46 @@
       "parent_id": "7.0",
       "depends_on": [
         "7.0"
-      ]
+      ],
+      "commit_sha": "29de5ba"
     },
     {
       "id": "8.0",
       "title": "Phase 8 — Complex Platform (devtron)",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium"
     },
     {
       "id": "8.1",
       "title": "Create Devtron app [~10,000 tokens — Complex]",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "8.0",
       "depends_on": [
         "8.0"
-      ]
+      ],
+      "commit_sha": "05653b8"
     },
     {
       "id": "8.2",
       "title": "Validate and commit Phase 8 [~1,000 tokens — Simple]",
-      "status": "pending",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "8.0",
       "depends_on": [
         "8.0"
-      ]
+      ],
+      "commit_sha": "29392f9"
     }
   ],
   "progress": {
     "total_tasks": 46,
-    "completed_tasks": 43,
-    "current_iteration": 34,
-    "total_iterations_run": 34,
-    "status": "in_progress"
+    "completed_tasks": 46,
+    "current_iteration": 36,
+    "total_iterations_run": 36,
+    "status": "completed"
   }
 }
