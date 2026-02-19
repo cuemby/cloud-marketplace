@@ -254,8 +254,8 @@
           "default": true
         },
         {
-          "appVersion": "1.22.7",
-          "imageTag": "1.22.7"
+          "appVersion": "1.22.6",
+          "imageTag": "1.22.6"
         },
         {
           "appVersion": "1.21.11",
@@ -413,8 +413,8 @@
           "imageTag": "25.0.6"
         },
         {
-          "appVersion": "24.0.5",
-          "imageTag": "24.0.5"
+          "appVersion": "26.0.7",
+          "imageTag": "26.0.7"
         }
       ],
       "parameters": [
@@ -714,5 +714,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T00:33:28Z"
+  "generated": "2026-02-19T02:32:42Z"
 }

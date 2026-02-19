@@ -23,8 +23,8 @@ versions:
     default: true
   - appVersion: "25.0.6"
     imageTag: "25.0.6"
-  - appVersion: "24.0.5"
-    imageTag: "24.0.5"
+  - appVersion: "26.0.7"
+    imageTag: "26.0.7"
 
 parameters:
   - name: KEYCLOAK_ADMIN_PASSWORD
