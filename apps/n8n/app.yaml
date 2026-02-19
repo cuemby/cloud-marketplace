@@ -1,0 +1,54 @@
+name: n8n
+displayName: n8n
+description: Extendable workflow automation platform with 400+ integrations and a visual editor.
+category: automation
+icon: https://n8n.io/favicon.ico
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+
+versions:
+  - appVersion: "2.9.0"
+    imageTag: "2.9.0"
+    default: true
+  - appVersion: "2.8.3"
+    imageTag: "2.8.3"
+  - appVersion: "2.7.5"
+    imageTag: "2.7.5"
+
+parameters:
+  - name: N8N_DB_PASSWORD
+    displayName: Database Password
+    description: PostgreSQL password for n8n (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: N8N_ENCRYPTION_KEY
+    displayName: Encryption Key
+    description: Encryption key for n8n credentials storage (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: N8N_DB_DATA_SIZE
+    displayName: Database Storage Size
+    description: Size of persistent volume for PostgreSQL data
+    type: string
+    required: false
+    default: "5Gi"
+
+  - name: N8N_DATA_SIZE
+    displayName: n8n Data Size
+    description: Size of persistent volume for n8n workflow data
+    type: string
+    required: false
+    default: "5Gi"
