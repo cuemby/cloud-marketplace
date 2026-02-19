@@ -1,0 +1,31 @@
+#cloud-config
+# Cloud-init user-data for deploying Neo4j via Cuemby Cloud Marketplace.
+#
+# Auth password is auto-generated if not provided.
+#
+# VM requirements: 2 CPU, 4 GB RAM, 30 GB disk, Ubuntu 22.04+ recommended.
+# Firewall: allow inbound TCP on ports 30474 (HTTP) and 30687 (Bolt).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="neo4j"
+      export APP_VERSION="{{app-version}}"
+      # Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+      export PARAM_NEO4J_AUTH_PASSWORD="{{param-neo4j-auth-password}}"
+      # Optional parameters (defaults applied in pre-install hook)
+      export PARAM_NEO4J_DATA_SIZE="{{param-neo4j-data-size}}"
+      export PARAM_NEO4J_HEAP_SIZE="{{param-neo4j-heap-size}}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

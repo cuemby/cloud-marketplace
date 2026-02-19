@@ -819,6 +819,61 @@
       ]
     },
     {
+      "name": "neo4j",
+      "displayName": "Neo4j Community",
+      "description": "Native graph database for connected data, powering knowledge graphs, recommendations, and network analysis.",
+      "category": "database",
+      "icon": "https://neo4j.com/favicon.ico",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "30Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "2026.01.4",
+          "imageTag": "2026.01.4-community",
+          "default": true
+        },
+        {
+          "appVersion": "5.26.21",
+          "imageTag": "5.26.21-community"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "NEO4J_AUTH_PASSWORD",
+          "displayName": "Password",
+          "description": "Neo4j authentication password (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "NEO4J_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for Neo4j graph data",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        },
+        {
+          "name": "NEO4J_HEAP_SIZE",
+          "displayName": "JVM Heap Size",
+          "description": "Neo4j JVM heap size (e.g., 512m, 1G)",
+          "type": "string",
+          "required": false,
+          "default": "1G"
+        }
+      ]
+    },
+    {
       "name": "nexus3",
       "displayName": "Sonatype Nexus Repository",
       "description": "Universal repository manager supporting Maven, npm, Docker, and many other package formats.",
@@ -1465,5 +1520,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T06:04:23Z"
+  "generated": "2026-02-19T06:09:21Z"
 }
