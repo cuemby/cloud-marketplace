@@ -466,18 +466,19 @@
     {
       "id": "7.1",
       "title": "Create Selenium Grid app [~6,000 tokens — Medium]",
-      "status": "in_progress",
+      "status": "completed",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "7.0",
       "depends_on": [
         "7.0"
-      ]
+      ],
+      "commit_sha": "a09c827"
     },
     {
       "id": "7.2",
       "title": "Create Harbor app [~12,000 tokens — Complex]",
-      "status": "pending",
+      "status": "in_progress",
       "priority": "medium",
       "complexity": "medium",
       "parent_id": "7.0",
@@ -528,7 +529,7 @@
   ],
   "progress": {
     "total_tasks": 46,
-    "completed_tasks": 39,
+    "completed_tasks": 41,
     "current_iteration": 32,
     "total_iterations_run": 32,
     "status": "in_progress"

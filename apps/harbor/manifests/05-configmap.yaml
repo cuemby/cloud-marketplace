@@ -1,0 +1,241 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: harbor-core-config
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: core
+data:
+  app.conf: |
+    appname = Harbor
+    runmode = prod
+    enablegzip = true
+
+    [prod]
+    httpport = 8080
+  DATABASE_TYPE: "postgresql"
+  POSTGRESQL_HOST: "harbor-db"
+  POSTGRESQL_PORT: "5432"
+  POSTGRESQL_USERNAME: "harbor"
+  POSTGRESQL_DATABASE: "registry"
+  POSTGRESQL_SSLMODE: "disable"
+  POSTGRESQL_MAX_IDLE_CONNS: "50"
+  POSTGRESQL_MAX_OPEN_CONNS: "1000"
+  EXT_ENDPOINT: "https://${PARAM_HARBOR_EXTERNAL_URL}"
+  CORE_URL: "http://harbor-core:8080"
+  JOBSERVICE_URL: "http://harbor-jobservice:8080"
+  REGISTRY_URL: "http://harbor-registry:5000"
+  REGISTRY_CONTROLLER_URL: "http://harbor-registry:8080"
+  PORTAL_URL: "http://harbor-portal:8080"
+  TOKEN_SERVICE_URL: "http://harbor-core:8080/service/token"
+  CORE_LOCAL_URL: "http://127.0.0.1:8080"
+  WITH_TRIVY: "true"
+  TRIVY_ADAPTER_URL: "http://harbor-trivy:8080"
+  REGISTRY_STORAGE_PROVIDER_NAME: "filesystem"
+  LOG_LEVEL: "info"
+  CONFIG_PATH: "/etc/core/app.conf"
+  CHART_CACHE_DRIVER: "redis"
+  _REDIS_URL_CORE: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/0?idle_timeout_seconds=30"
+  _REDIS_URL_REG: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/2?idle_timeout_seconds=30"
+  PERMITTED_REGISTRY_TYPES_FOR_PROXY_CACHE: "docker-hub,harbor,azure-acr,aws-ecr,google-gcr,quay,docker-registry,github-ghcr,jfrog-artifactory"
+  METRIC_ENABLE: "false"
+  HTTP_PROXY: ""
+  HTTPS_PROXY: ""
+  NO_PROXY: "harbor-core,harbor-jobservice,harbor-db,harbor-portal,harbor-registry,harbor-valkey,harbor-trivy,127.0.0.1,localhost,.local,.internal"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: harbor-registry-config
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: registry
+data:
+  config.yml: |
+    version: 0.1
+    log:
+      accesslog:
+        disabled: false
+      level: info
+      formatter: text
+    storage:
+      filesystem:
+        rootdirectory: /storage
+      cache:
+        layerinfo: redis
+      maintenance:
+        uploadpurging:
+          enabled: true
+          age: 168h
+          interval: 24h
+          dryrun: false
+      delete:
+        enabled: true
+    redis:
+      addr: harbor-valkey:6379
+      password: ${PARAM_HARBOR_VALKEY_PASSWORD}
+      db: 2
+      readtimeout: 10s
+      writetimeout: 10s
+      dialtimeout: 10s
+    http:
+      addr: :5000
+      relativeurls: false
+      debug:
+        addr: :5001
+        prometheus:
+          enabled: false
+    auth:
+      token:
+        issuer: harbor-token-issuer
+        realm: https://${PARAM_HARBOR_EXTERNAL_URL}/service/token
+        rootcertbundle: /etc/registry/root.crt
+        service: harbor-registry
+    validation:
+      disabled: true
+    compatibility:
+      schema1:
+        enabled: true
+  ctl-config.yml: |
+    ---
+    protocol: "http"
+    port: 8080
+    log_level: info
+    registry_config: "/etc/registry/config.yml"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: harbor-jobservice-config
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: jobservice
+data:
+  config.yml: |
+    ---
+    protocol: "http"
+    port: 8080
+    worker_pool:
+      workers: 10
+      backend: "redis"
+      redis_pool:
+        redis_url: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/1"
+        namespace: "harbor_job_service_namespace"
+        idle_timeout_second: 3600
+    job_loggers:
+      - name: "STD_OUTPUT"
+        level: INFO
+    metric:
+      enabled: false
+      path: /metrics
+      port: 9090
+    loggers:
+      - name: "STD_OUTPUT"
+        level: INFO
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: harbor-portal-config
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: portal
+data:
+  nginx.conf: |
+    worker_processes auto;
+    pid /tmp/nginx.pid;
+    events {
+      worker_connections 1024;
+      use epoll;
+      multi_accept on;
+    }
+    http {
+      client_body_temp_path /tmp/client_body_temp;
+      proxy_temp_path /tmp/proxy_temp;
+      fastcgi_temp_path /tmp/fastcgi_temp;
+      uwsgi_temp_path /tmp/uwsgi_temp;
+      scgi_temp_path /tmp/scgi_temp;
+      tcp_nodelay on;
+      include /etc/nginx/mime.types;
+      default_type application/octet-stream;
+      log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+      access_log /dev/stdout main;
+      error_log /dev/stderr;
+      sendfile on;
+      keepalive_timeout 75;
+      server {
+        listen 8080;
+        server_name localhost;
+        location / {
+          root /usr/share/nginx/html;
+          index index.html index.htm;
+          try_files $uri /index.html;
+        }
+        location /api/ {
+          proxy_pass http://harbor-core:8080/api/;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_buffering off;
+          proxy_request_buffering off;
+        }
+        location /service/ {
+          proxy_pass http://harbor-core:8080/service/;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_buffering off;
+          proxy_request_buffering off;
+        }
+        location /v2/ {
+          proxy_pass http://harbor-core:8080/v2/;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_buffering off;
+          proxy_request_buffering off;
+        }
+        location /chartrepo/ {
+          proxy_pass http://harbor-core:8080/chartrepo/;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_buffering off;
+          proxy_request_buffering off;
+        }
+        location /c/ {
+          proxy_pass http://harbor-core:8080/c/;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+          proxy_buffering off;
+          proxy_request_buffering off;
+        }
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: harbor-trivy-config
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: trivy
+data:
+  SCANNER_LOG_LEVEL: "info"
+  SCANNER_TRIVY_CACHE_DIR: "/home/scanner/.cache/trivy"
+  SCANNER_TRIVY_REPORTS_DIR: "/home/scanner/.cache/reports"
+  SCANNER_TRIVY_VULN_TYPE: "os,library"
+  SCANNER_TRIVY_SEVERITY: "UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL"
+  SCANNER_TRIVY_TIMEOUT: "5m0s"
+  SCANNER_API_SERVER_ADDR: ":8080"
+  SCANNER_REDIS_URL: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/5?idle_timeout_seconds=30"
+  SCANNER_STORE_REDIS_URL: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/5?idle_timeout_seconds=30"
+  SCANNER_JOB_QUEUE_REDIS_URL: "redis://:${PARAM_HARBOR_VALKEY_PASSWORD}@harbor-valkey:6379/5?idle_timeout_seconds=30"

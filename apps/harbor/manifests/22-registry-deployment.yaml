@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: harbor-registry
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: registry
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: harbor
+      app.kubernetes.io/component: registry
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: harbor
+        app.kubernetes.io/component: registry
+    spec:
+      initContainers:
+        - name: wait-for-valkey
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Valkey at harbor-valkey:6379..."
+              until nc -z harbor-valkey 6379; do
+                echo "Valkey not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "Valkey is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: registry
+          image: "docker.io/goharbor/harbor-registryctl:${PARAM_APP_IMAGE_TAG}"
+          args:
+            - serve
+            - /etc/registry/config.yml
+          ports:
+            - name: registry
+              containerPort: 5000
+              protocol: TCP
+            - name: registryctl
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: REGISTRY_HTTP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: harbor-registry-secret
+                  key: REGISTRY_HTTP_SECRET
+          volumeMounts:
+            - name: registry-data
+              mountPath: /storage
+            - name: registry-config
+              mountPath: /etc/registry/config.yml
+              subPath: config.yml
+            - name: registry-config
+              mountPath: /etc/registryctl/config.yml
+              subPath: ctl-config.yml
+          startupProbe:
+            httpGet:
+              path: /
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5000
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_HARBOR_REGISTRY_CPU_REQUEST}
+              memory: ${PARAM_HARBOR_REGISTRY_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_HARBOR_REGISTRY_CPU_LIMIT}
+              memory: ${PARAM_HARBOR_REGISTRY_MEMORY_LIMIT}
+      volumes:
+        - name: registry-data
+          persistentVolumeClaim:
+            claimName: harbor-registry-data
+        - name: registry-config
+          configMap:
+            name: harbor-registry-config

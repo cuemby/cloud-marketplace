@@ -1,0 +1,37 @@
+#cloud-config
+# Cloud-init user-data for deploying Harbor via Cuemby Cloud Marketplace.
+#
+# Harbor is a cloud-native container registry with vulnerability scanning,
+# content signing, and role-based access control.
+#
+# All passwords are auto-generated if not provided.
+#
+# VM requirements: 4 CPU, 8 GB RAM, 100 GB disk, Ubuntu 22.04+ recommended.
+# Firewall: allow inbound TCP on port 30443 (HTTPS).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="harbor"
+      export APP_VERSION="{{app-version}}"
+      # Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+      export PARAM_HARBOR_ADMIN_PASSWORD="{{param-harbor-admin-password}}"
+      export PARAM_HARBOR_DB_PASSWORD="{{param-harbor-db-password}}"
+      export PARAM_HARBOR_SECRET_KEY="{{param-harbor-secret-key}}"
+      export PARAM_HARBOR_VALKEY_PASSWORD="{{param-harbor-valkey-password}}"
+      # Optional parameters (defaults applied in pre-install hook)
+      export PARAM_HARBOR_REGISTRY_DATA_SIZE="{{param-harbor-registry-data-size}}"
+      export PARAM_HARBOR_DB_DATA_SIZE="{{param-harbor-db-data-size}}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

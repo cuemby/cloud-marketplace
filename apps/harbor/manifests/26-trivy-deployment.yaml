@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: harbor-trivy
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: trivy
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: harbor
+      app.kubernetes.io/component: trivy
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: harbor
+        app.kubernetes.io/component: trivy
+    spec:
+      initContainers:
+        - name: wait-for-valkey
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Valkey at harbor-valkey:6379..."
+              until nc -z harbor-valkey 6379; do
+                echo "Valkey not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "Valkey is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: trivy-adapter
+          image: "docker.io/goharbor/trivy-adapter-photon:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: harbor-trivy-config
+          env:
+            - name: SCANNER_TRIVY_GITHUB_TOKEN
+              value: ""
+          volumeMounts:
+            - name: trivy-cache
+              mountPath: /home/scanner/.cache
+          startupProbe:
+            httpGet:
+              path: /probe/healthy
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /probe/healthy
+              port: 8080
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /probe/ready
+              port: 8080
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_HARBOR_TRIVY_CPU_REQUEST}
+              memory: ${PARAM_HARBOR_TRIVY_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_HARBOR_TRIVY_CPU_LIMIT}
+              memory: ${PARAM_HARBOR_TRIVY_MEMORY_LIMIT}
+      volumes:
+        - name: trivy-cache
+          emptyDir: {}

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: harbor-trivy
+  labels:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: trivy
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: harbor
+    app.kubernetes.io/component: trivy
+  ports:
+    - port: 8080
+      targetPort: 8080
+      protocol: TCP
