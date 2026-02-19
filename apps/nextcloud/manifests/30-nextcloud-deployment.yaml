@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextcloud
+  labels:
+    app.kubernetes.io/name: nextcloud
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nextcloud
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nextcloud
+        app.kubernetes.io/component: app
+    spec:
+      initContainers:
+        - name: wait-for-mariadb
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for MariaDB at nextcloud-mariadb:3306..."
+              until nc -z nextcloud-mariadb 3306; do
+                echo "MariaDB not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "MariaDB is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+        - name: wait-for-valkey
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Valkey at nextcloud-valkey:6379..."
+              until nc -z nextcloud-valkey 6379; do
+                echo "Valkey not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "Valkey is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: nextcloud
+          image: "docker.io/library/nextcloud:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          env:
+            - name: MYSQL_HOST
+              value: "nextcloud-mariadb"
+            - name: MYSQL_DATABASE
+              value: "nextcloud"
+            - name: MYSQL_USER
+              value: "nextcloud"
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-db-secret
+                  key: MYSQL_PASSWORD
+            - name: NEXTCLOUD_ADMIN_USER
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-app-secret
+                  key: NEXTCLOUD_ADMIN_USER
+            - name: NEXTCLOUD_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-app-secret
+                  key: NEXTCLOUD_ADMIN_PASSWORD
+            - name: REDIS_HOST
+              value: "nextcloud-valkey"
+            - name: REDIS_HOST_PORT
+              value: "6379"
+            - name: REDIS_HOST_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: nextcloud-valkey-secret
+                  key: VALKEY_PASSWORD
+            - name: NEXTCLOUD_TRUSTED_DOMAINS
+              value: "*"
+          volumeMounts:
+            - name: nextcloud-data
+              mountPath: /var/www/html
+          startupProbe:
+            httpGet:
+              path: /status.php
+              port: 80
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /status.php
+              port: 80
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /status.php
+              port: 80
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_NEXTCLOUD_CPU_REQUEST}
+              memory: ${PARAM_NEXTCLOUD_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_NEXTCLOUD_CPU_LIMIT}
+              memory: ${PARAM_NEXTCLOUD_MEMORY_LIMIT}
+      volumes:
+        - name: nextcloud-data
+          persistentVolumeClaim:
+            claimName: nextcloud-data
