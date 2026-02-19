@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openbao
+  labels:
+    app.kubernetes.io/name: openbao
+    app.kubernetes.io/component: vault
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: openbao
+      app.kubernetes.io/component: vault
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: openbao
+        app.kubernetes.io/component: vault
+    spec:
+      containers:
+        - name: openbao
+          image: quay.io/openbao/openbao:${PARAM_APP_IMAGE_TAG}
+          command: ["bao", "server", "-dev"]
+          args:
+            - -dev-listen-address=0.0.0.0:8200
+          ports:
+            - name: http
+              containerPort: 8200
+              protocol: TCP
+          env:
+            - name: BAO_DEV_ROOT_TOKEN_ID
+              valueFrom:
+                secretKeyRef:
+                  name: openbao-credentials
+                  key: DEV_ROOT_TOKEN_ID
+            - name: BAO_DEV_LISTEN_ADDRESS
+              value: "0.0.0.0:8200"
+            - name: BAO_ADDR
+              value: "http://127.0.0.1:8200"
+          volumeMounts:
+            - name: openbao-data
+              mountPath: /openbao/data
+            - name: openbao-config
+              mountPath: /openbao/config/openbao.hcl
+              subPath: openbao.hcl
+              readOnly: true
+          startupProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true&uninitcode=200&sealedcode=200
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true&uninitcode=200&sealedcode=200
+              port: http
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /v1/sys/health?standbyok=true
+              port: http
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_OPENBAO_CPU_REQUEST}
+              memory: ${PARAM_OPENBAO_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_OPENBAO_CPU_LIMIT}
+              memory: ${PARAM_OPENBAO_MEMORY_LIMIT}
+          securityContext:
+            capabilities:
+              add:
+                - IPC_LOCK
+      volumes:
+        - name: openbao-data
+          persistentVolumeClaim:
+            claimName: openbao-data
+        - name: openbao-config
+          configMap:
+            name: openbao-config
