@@ -1,0 +1,42 @@
+name: seaweedfs
+displayName: SeaweedFS
+description: S3-compatible distributed object storage with built-in filer and high throughput.
+category: infrastructure
+icon: https://raw.githubusercontent.com/seaweedfs/seaweedfs/master/note/seaweedfs.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 50Gi
+
+versions:
+  - appVersion: "3.54"
+    imageTag: "3.54"
+    default: true
+  - appVersion: "3.45"
+    imageTag: "3.45"
+  - appVersion: "3.37"
+    imageTag: "3.37"
+
+parameters:
+  - name: SEAWEEDFS_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for SeaweedFS data
+    type: string
+    required: false
+    default: "50Gi"
+
+  - name: SEAWEEDFS_VOLUME_SIZE_LIMIT
+    displayName: Volume Size Limit (MB)
+    description: Maximum size of each volume file in megabytes
+    type: string
+    required: false
+    default: "1000"

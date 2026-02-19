@@ -1,0 +1,21 @@
+#cloud-config
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="seaweedfs"
+      export APP_VERSION="{{app-version}}"
+      export PARAM_SEAWEEDFS_DATA_SIZE="{{param-seaweedfs-data-size}}"
+      export PARAM_SEAWEEDFS_VOLUME_SIZE_LIMIT="{{param-seaweedfs-volume-size-limit}}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]
