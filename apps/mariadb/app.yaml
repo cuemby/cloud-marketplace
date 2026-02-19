@@ -1,0 +1,61 @@
+name: mariadb
+displayName: MariaDB
+description: MySQL-compatible relational database with enhanced performance and open-source commitment.
+category: database
+icon: https://mariadb.com/wp-content/uploads/2019/11/mariadb-logo-vert_blue-transparent.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+
+versions:
+  - appVersion: "11.4.10"
+    imageTag: "11.4.10"
+    default: true
+  - appVersion: "10.11.16"
+    imageTag: "10.11.16"
+  - appVersion: "10.6.25"
+    imageTag: "10.6.25"
+
+parameters:
+  - name: MARIADB_ROOT_PASSWORD
+    displayName: Root Password
+    description: MariaDB root password (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: MARIADB_USER
+    displayName: Database User
+    description: Name of the default non-root user
+    type: string
+    required: false
+    default: "mariadb"
+
+  - name: MARIADB_PASSWORD
+    displayName: User Password
+    description: Password for the default non-root user (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: MARIADB_DATABASE
+    displayName: Default Database
+    description: Name of the default database created on first start
+    type: string
+    required: false
+    default: "mariadb"
+
+  - name: MARIADB_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for MariaDB data
+    type: string
+    required: false
+    default: "10Gi"
