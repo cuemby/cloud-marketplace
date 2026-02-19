@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gitea
+  labels:
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: gitea
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: gitea
+        app.kubernetes.io/component: app
+    spec:
+      containers:
+        - name: gitea
+          image: docker.io/gitea/gitea:${PARAM_APP_IMAGE_TAG}
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+            - name: ssh
+              containerPort: 22
+              protocol: TCP
+          envFrom:
+            - configMapRef:
+                name: gitea-config
+          volumeMounts:
+            - name: gitea-data
+              mountPath: /data
+          startupProbe:
+            httpGet:
+              path: /api/healthz
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /api/healthz
+              port: 3000
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/healthz
+              port: 3000
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_GITEA_CPU_REQUEST}
+              memory: ${PARAM_GITEA_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_GITEA_CPU_LIMIT}
+              memory: ${PARAM_GITEA_MEMORY_LIMIT}
+      volumes:
+        - name: gitea-data
+          persistentVolumeClaim:
+            claimName: gitea-data

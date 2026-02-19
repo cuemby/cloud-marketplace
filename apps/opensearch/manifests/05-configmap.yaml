@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: opensearch-config
+  labels:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/component: database
+data:
+  cluster.name: "${PARAM_OPENSEARCH_CLUSTER_NAME}"
+  discovery.type: "single-node"
+  DISABLE_SECURITY_PLUGIN: "true"
+  DISABLE_INSTALL_DEMO_CONFIG: "true"
+  OPENSEARCH_JAVA_OPTS: "${PARAM_OPENSEARCH_JAVA_OPTS}"

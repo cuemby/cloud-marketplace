@@ -1,0 +1,35 @@
+name: gitea
+displayName: Gitea
+description: Lightweight, self-hosted Git service with web UI, issue tracking, and CI/CD.
+category: devops
+icon: https://gitea.io/images/gitea.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+
+versions:
+  - appVersion: "1.23.7"
+    imageTag: "1.23.7"
+    default: true
+  - appVersion: "1.22.7"
+    imageTag: "1.22.7"
+  - appVersion: "1.21.11"
+    imageTag: "1.21.11"
+
+parameters:
+  - name: GITEA_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for Gitea data (repos, SQLite DB, config)
+    type: string
+    required: false
+    default: "20Gi"

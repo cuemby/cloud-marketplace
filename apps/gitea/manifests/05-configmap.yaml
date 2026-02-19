@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: gitea-config
+  labels:
+    app.kubernetes.io/name: gitea
+    app.kubernetes.io/component: app
+data:
+  GITEA__database__DB_TYPE: "sqlite3"
+  GITEA__server__HTTP_PORT: "3000"
+  GITEA__server__SSH_PORT: "22"
+  GITEA__server__DOMAIN: "localhost"
+  GITEA__server__ROOT_URL: "http://localhost:3000"
+  USER_UID: "1000"
+  USER_GID: "1000"

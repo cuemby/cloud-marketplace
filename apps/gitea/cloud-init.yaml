@@ -1,0 +1,28 @@
+#cloud-config
+# Cloud-init user-data for deploying Gitea via Cuemby Cloud Marketplace.
+#
+# Admin account is created via Gitea's first-visit install wizard.
+#
+# VM requirements: 2 CPU, 4 GB RAM, 30 GB disk, Ubuntu 22.04+ recommended.
+# Firewall: allow inbound TCP on ports 30300 (HTTP) and 30022 (SSH).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="gitea"
+      export APP_VERSION="{{app-version}}"
+      # Optional parameters (defaults applied in pre-install hook)
+      export PARAM_GITEA_DATA_SIZE="{{param-gitea-data-size}}"
+
+runcmd:
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

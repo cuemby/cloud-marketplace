@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: opensearch
+  labels:
+    app.kubernetes.io/name: opensearch
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: opensearch
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: opensearch
+        app.kubernetes.io/component: database
+    spec:
+      initContainers:
+        - name: sysctl
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - sysctl -w vm.max_map_count=262144
+          securityContext:
+            privileged: true
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: opensearch
+          image: docker.io/opensearchproject/opensearch:${PARAM_APP_IMAGE_TAG}
+          ports:
+            - containerPort: 9200
+              protocol: TCP
+            - containerPort: 9300
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: opensearch-credentials
+            - configMapRef:
+                name: opensearch-config
+          volumeMounts:
+            - name: opensearch-data
+              mountPath: /usr/share/opensearch/data
+          startupProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /_cluster/health
+              port: 9200
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_OPENSEARCH_CPU_REQUEST}
+              memory: ${PARAM_OPENSEARCH_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_OPENSEARCH_CPU_LIMIT}
+              memory: ${PARAM_OPENSEARCH_MEMORY_LIMIT}
+      volumes:
+        - name: opensearch-data
+          persistentVolumeClaim:
+            claimName: opensearch-data

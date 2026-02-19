@@ -1,0 +1,48 @@
+name: couchdb
+displayName: Apache CouchDB
+description: Open-source NoSQL document database with HTTP API and multi-version concurrency control.
+category: database
+icon: https://couchdb.apache.org/image/couch@2x.png
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+
+versions:
+  - appVersion: "3.5.1"
+    imageTag: "3.5.1"
+    default: true
+  - appVersion: "3.4.3"
+    imageTag: "3.4.3"
+  - appVersion: "3.3.3"
+    imageTag: "3.3.3"
+
+parameters:
+  - name: COUCHDB_PASSWORD
+    displayName: Admin Password
+    description: CouchDB admin password (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: COUCHDB_USER
+    displayName: Admin Username
+    description: CouchDB admin username
+    type: string
+    required: false
+    default: "admin"
+
+  - name: COUCHDB_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for CouchDB data
+    type: string
+    required: false
+    default: "10Gi"

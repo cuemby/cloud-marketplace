@@ -1,0 +1,55 @@
+name: opensearch
+displayName: OpenSearch
+description: Open-source search and analytics engine, Apache 2.0 fork of Elasticsearch.
+category: database
+icon: https://opensearch.org/assets/brand/SVG/Mark/opensearch_mark_default.svg
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 4
+  memory: 8Gi
+  disk: 50Gi
+
+versions:
+  - appVersion: "3.0.0"
+    imageTag: "3.0.0"
+    default: true
+  - appVersion: "2.19.1"
+    imageTag: "2.19.1"
+  - appVersion: "1.3.20"
+    imageTag: "1.3.20"
+
+parameters:
+  - name: OPENSEARCH_PASSWORD
+    displayName: Admin Password
+    description: OpenSearch admin password (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: OPENSEARCH_CLUSTER_NAME
+    displayName: Cluster Name
+    description: Name of the OpenSearch cluster
+    type: string
+    required: false
+    default: "opensearch-cluster"
+
+  - name: OPENSEARCH_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for OpenSearch data
+    type: string
+    required: false
+    default: "20Gi"
+
+  - name: OPENSEARCH_JAVA_OPTS
+    displayName: JVM Options
+    description: "JVM heap settings (recommend paired Xms/Xmx, ~25% of VM RAM)"
+    type: string
+    required: false
+    default: "-Xms2g -Xmx2g"
