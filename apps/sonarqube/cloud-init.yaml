@@ -1,0 +1,39 @@
+#cloud-config
+# Cloud-init user-data for deploying SonarQube via Cuemby Cloud Marketplace.
+#
+# Passwords are auto-generated if not provided.
+# SonarQube requires vm.max_map_count=524288 and fs.file-max=131072.
+#
+# VM requirements: 4 CPU, 8 GB RAM, 50 GB disk, Ubuntu 22.04+ recommended.
+# Firewall: allow inbound TCP on port 30900 (SonarQube web UI).
+
+package_update: true
+
+packages:
+  - curl
+  - git
+  - jq
+
+write_files:
+  - path: /etc/sysctl.d/99-sonarqube.conf
+    permissions: "0644"
+    content: |
+      vm.max_map_count=524288
+      fs.file-max=131072
+
+  - path: /opt/cuemby/marketplace-env.sh
+    permissions: "0600"
+    content: |
+      #!/usr/bin/env bash
+      export APP_NAME="sonarqube"
+      export APP_VERSION="{{app-version}}"
+      # Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+      export PARAM_SONARQUBE_DB_PASSWORD="{{param-sonarqube-db-password}}"
+      # Optional parameters (defaults applied in pre-install hook)
+      export PARAM_SONARQUBE_DB_DATA_SIZE="{{param-sonarqube-db-data-size}}"
+      export PARAM_SONARQUBE_DATA_SIZE="{{param-sonarqube-data-size}}"
+
+runcmd:
+  - sysctl --system
+  - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
+  - [bash, -c, "source /opt/cuemby/marketplace-env.sh && /opt/cuemby/marketplace/bootstrap/entrypoint.sh 2>&1 | tee /var/log/cuemby/bootstrap.log"]

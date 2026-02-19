@@ -1407,6 +1407,65 @@
       ]
     },
     {
+      "name": "sonarqube",
+      "displayName": "SonarQube Community",
+      "description": "Code quality and security analysis platform supporting 30+ programming languages.",
+      "category": "devops",
+      "icon": "https://assets-eu-01.kc-usercontent.com/6a1b1e1b-2a6c-006f-0993-29fd0e14fc2a/c9eadf26-e18f-4195-8a2e-b8df90b0ce0a/SonarQube-icon.png",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 4,
+        "memory": "8Gi",
+        "disk": "50Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "26.2.0.119303",
+          "imageTag": "26.2.0.119303-community",
+          "default": true
+        },
+        {
+          "appVersion": "26.1.0.118079",
+          "imageTag": "26.1.0.118079-community"
+        },
+        {
+          "appVersion": "25.12.0.117093",
+          "imageTag": "25.12.0.117093-community"
+        }
+      ],
+      "parameters": [
+        {
+          "name": "SONARQUBE_DB_PASSWORD",
+          "displayName": "Database Password",
+          "description": "PostgreSQL password for SonarQube (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "SONARQUBE_DB_DATA_SIZE",
+          "displayName": "Database Storage Size",
+          "description": "Size of persistent volume for PostgreSQL data",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        },
+        {
+          "name": "SONARQUBE_DATA_SIZE",
+          "displayName": "SonarQube Data Size",
+          "description": "Size of persistent volume for SonarQube data and extensions",
+          "type": "string",
+          "required": false,
+          "default": "20Gi"
+        }
+      ]
+    },
+    {
       "name": "valkey",
       "displayName": "Valkey",
       "description": "High-performance in-memory data store for caching, messaging, and real-time applications.",
@@ -1622,5 +1681,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T06:21:12Z"
+  "generated": "2026-02-19T06:24:58Z"
 }
