@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rancher
+  labels:
+    app.kubernetes.io/name: rancher
+    app.kubernetes.io/component: rancher
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: rancher
+      app.kubernetes.io/component: rancher
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: rancher
+        app.kubernetes.io/component: rancher
+    spec:
+      containers:
+        - name: rancher
+          image: "docker.io/rancher/rancher:${PARAM_APP_IMAGE_TAG}"
+          args:
+            - "--no-cacerts"
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          env:
+            - name: CATTLE_BOOTSTRAP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rancher-secret
+                  key: CATTLE_BOOTSTRAP_PASSWORD
+          volumeMounts:
+            - name: rancher-data
+              mountPath: /var/lib/rancher
+          securityContext:
+            privileged: true
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: https
+              scheme: HTTPS
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_RANCHER_CPU_REQUEST}
+              memory: ${PARAM_RANCHER_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_RANCHER_CPU_LIMIT}
+              memory: ${PARAM_RANCHER_MEMORY_LIMIT}
+      volumes:
+        - name: rancher-data
+          persistentVolumeClaim:
+            claimName: rancher-data

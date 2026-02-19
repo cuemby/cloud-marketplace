@@ -1,0 +1,41 @@
+name: rancher
+displayName: Rancher
+description: Complete Kubernetes management platform for deploying and managing clusters across any infrastructure.
+category: devops
+icon: https://www.rancher.com/assets/img/brand-guidelines/project-logos/rancher-logo-horiz-color.svg
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 4
+  memory: 8Gi
+  disk: 50Gi
+
+versions:
+  - appVersion: "2.13.2"
+    imageTag: "v2.13.2"
+    default: true
+  - appVersion: "2.12.3"
+    imageTag: "v2.12.3"
+  - appVersion: "2.11.8"
+    imageTag: "v2.11.8"
+
+parameters:
+  - name: RANCHER_BOOTSTRAP_PASSWORD
+    displayName: Bootstrap Password
+    description: Initial admin password for Rancher (auto-generated if not set)
+    type: password
+    required: false
+
+  - name: RANCHER_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for Rancher data
+    type: string
+    required: false
+    default: "20Gi"
