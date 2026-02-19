@@ -26,11 +26,24 @@ spec:
       containers:
         - name: openclaw
           image: "ghcr.io/openclaw/openclaw:${PARAM_APP_IMAGE_TAG}"
+          command:
+            - node
+            - dist/index.js
+            - gateway
+            - --bind
+            - "0.0.0.0"
+            - --port
+            - "18789"
           ports:
             - name: gateway
               containerPort: 18789
               protocol: TCP
           env:
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_GATEWAY_TOKEN
             - name: OPENCLAW_API_KEY
               valueFrom:
                 secretKeyRef:

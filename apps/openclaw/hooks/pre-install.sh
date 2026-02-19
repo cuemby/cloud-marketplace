@@ -16,6 +16,11 @@ source "${BOOTSTRAP_DIR}/lib/constants.sh"
 
 log_info "[openclaw/pre-install] Setting defaults and validating parameters..."
 
+# --- Token generation (64-char hex, matches openclaw docker-setup.sh) ---
+_generate_token() {
+    openssl rand -hex 32
+}
+
 # Check if a value is empty or an uninterpolated {{placeholder}}
 _needs_value() {
     local val="${1:-}"
@@ -33,6 +38,13 @@ if _needs_value "${PARAM_OPENCLAW_API_KEY:-}"; then
     log_fatal "[openclaw/pre-install] PARAM_OPENCLAW_API_KEY is required but not set. Provide an Anthropic or OpenAI API key."
 fi
 export PARAM_OPENCLAW_API_KEY
+
+# --- Gateway token (auto-generated, required for gateway to start) ---
+if _needs_value "${PARAM_OPENCLAW_GATEWAY_TOKEN:-}"; then
+    PARAM_OPENCLAW_GATEWAY_TOKEN="$(_generate_token)"
+    export PARAM_OPENCLAW_GATEWAY_TOKEN
+    log_info "[openclaw/pre-install] Generated gateway authentication token."
+fi
 
 # --- Non-secret parameter defaults ---
 _needs_value "${PARAM_OPENCLAW_LLM_PROVIDER:-}" && PARAM_OPENCLAW_LLM_PROVIDER="anthropic"
