@@ -1,0 +1,35 @@
+name: portainer
+displayName: Portainer CE
+description: Lightweight container management UI for Docker, Swarm, and Kubernetes environments.
+category: devops
+icon: https://www.portainer.io/hubfs/portainer-logo-black.svg
+
+deployMethod: manifest
+
+manifests:
+  path: manifests/
+
+ssl:
+  enabled: false
+
+requirements:
+  cpu: 2
+  memory: 2Gi
+  disk: 20Gi
+
+versions:
+  - appVersion: "2.33.7"
+    imageTag: "2.33.7"
+    default: true
+  - appVersion: "2.33.6"
+    imageTag: "2.33.6"
+  - appVersion: "2.33.5"
+    imageTag: "2.33.5"
+
+parameters:
+  - name: PORTAINER_DATA_SIZE
+    displayName: Data Storage Size
+    description: Size of persistent volume for Portainer data
+    type: string
+    required: false
+    default: "5Gi"
