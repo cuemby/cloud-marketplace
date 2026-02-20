@@ -37,15 +37,33 @@ _mysql_status_ok() {
         -l app.kubernetes.io/name=mysql,app.kubernetes.io/component=database \
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
-    local output
-    output="$(kubectl exec -n "${local_namespace}" "$pod" -- \
-        /bin/sh -c 'mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" status 2>&1')" || true
-    log_info "[mysql/healthcheck] mysqladmin output: ${output}"
-    echo "$output" | grep -q "Uptime"
+    kubectl exec -n "${local_namespace}" "$pod" -- \
+        /bin/sh -c 'mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" status 2>/dev/null' \
+        | grep -q "Uptime"
+}
+
+_mysql_debug_auth() {
+    local pod
+    pod="$(kubectl get pods -n "${local_namespace}" \
+        -l app.kubernetes.io/name=mysql,app.kubernetes.io/component=database \
+        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
+    log_warn "[mysql/healthcheck] Debug — checking env vars in container:"
+    kubectl exec -n "${local_namespace}" "$pod" -- \
+        /bin/sh -c 'echo "MYSQL_ROOT_PASSWORD set: ${MYSQL_ROOT_PASSWORD:+yes}"; echo "length: ${#MYSQL_ROOT_PASSWORD}"' 2>&1 || true
+    log_warn "[mysql/healthcheck] Debug — mysqladmin status output:"
+    kubectl exec -n "${local_namespace}" "$pod" -- \
+        /bin/sh -c 'mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" status 2>&1; echo "EXIT_CODE=$?"' 2>&1 || true
+    log_warn "[mysql/healthcheck] Debug — mysqladmin ping with auth:"
+    kubectl exec -n "${local_namespace}" "$pod" -- \
+        /bin/sh -c 'mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" ping 2>&1; echo "EXIT_CODE=$?"' 2>&1 || true
 }
 
 log_info "[mysql/healthcheck] Verifying MySQL authenticated status..."
-retry_with_timeout 120 10 _mysql_status_ok
+if ! retry_with_timeout 30 10 _mysql_status_ok; then
+    _mysql_debug_auth
+    log_error "[mysql/healthcheck] Authenticated status check failed."
+    exit 1
+fi
 log_info "[mysql/healthcheck] MySQL authenticated status verified."
 
 # --- Check 3: PVCs are bound ---
