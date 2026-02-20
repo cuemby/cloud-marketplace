@@ -38,12 +38,12 @@ _mysql_query_works() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        mysql --user=root --password="${PARAM_MYSQL_ROOT_PASSWORD}" \
-        --execute="SELECT 1" 2>/dev/null | grep -q "1"
+        mysql -u root -p"${PARAM_MYSQL_ROOT_PASSWORD}" \
+        -e "SELECT 1" 2>/dev/null | grep -q "1"
 }
 
 log_info "[mysql/healthcheck] Verifying SQL query execution..."
-retry_with_timeout 120 10 _mysql_query_works
+retry_with_timeout 180 10 _mysql_query_works
 log_info "[mysql/healthcheck] MySQL query execution verified."
 
 # --- Check 3: PVCs are bound ---
