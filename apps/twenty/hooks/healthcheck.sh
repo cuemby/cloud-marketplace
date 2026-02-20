@@ -23,7 +23,7 @@ _postgres_responds() {
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        pg_isready -U twenty 2>/dev/null
+        pg_isready -U twenty -d default 2>/dev/null
 }
 
 log_info "[twenty/healthcheck] Checking PostgreSQL connectivity..."

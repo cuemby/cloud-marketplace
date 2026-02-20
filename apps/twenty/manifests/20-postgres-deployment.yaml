@@ -37,7 +37,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pg_isready -U twenty
+                - pg_isready -U twenty -d default
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5
@@ -47,7 +47,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pg_isready -U twenty
+                - pg_isready -U twenty -d default
             periodSeconds: 30
             timeoutSeconds: 5
             failureThreshold: 3
@@ -56,7 +56,7 @@ spec:
               command:
                 - /bin/sh
                 - -c
-                - pg_isready -U twenty
+                - pg_isready -U twenty -d default
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3

@@ -2094,8 +2094,8 @@
       },
       "versions": [
         {
-          "appVersion": "1.18.0",
-          "imageTag": "v1.18.0",
+          "appVersion": "1.18.1",
+          "imageTag": "v1.18.1",
           "default": true
         }
       ],
@@ -2324,5 +2324,5 @@
       ]
     }
   ],
-  "generated": "2026-02-20T15:52:09Z"
+  "generated": "2026-02-20T16:07:48Z"
 }

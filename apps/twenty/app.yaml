@@ -13,8 +13,8 @@ requirements:
   memory: 4Gi
   disk: 30Gi
 versions:
-  - appVersion: "1.18.0"
-    imageTag: "v1.18.0"
+  - appVersion: "1.18.1"
+    imageTag: "v1.18.1"
     default: true
 parameters:
   - name: TWENTY_APP_SECRET
