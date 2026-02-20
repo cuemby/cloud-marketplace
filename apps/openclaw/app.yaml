@@ -61,4 +61,4 @@ parameters:
     description: Email address for Let's Encrypt SSL certificate notifications (required when SSL is enabled)
     type: string
     required: false
-    default: ""
+    default: "me@cuemby.com"
