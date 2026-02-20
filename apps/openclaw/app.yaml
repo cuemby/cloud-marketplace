@@ -55,3 +55,10 @@ parameters:
     description: Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)
     type: string
     required: false
+
+  - name: OPENCLAW_ACME_EMAIL
+    displayName: Let's Encrypt Email
+    description: Email address for Let's Encrypt SSL certificate notifications (required when SSL is enabled)
+    type: string
+    required: false
+    default: ""
