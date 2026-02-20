@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nats-jetstream-config
+  labels:
+    app.kubernetes.io/name: nats-jetstream
+    app.kubernetes.io/component: database
+data:
+  nats-server.conf: |
+    listen: 0.0.0.0:4222
+    http: 0.0.0.0:8222
+
+    authorization {
+      token: $NATS_AUTH_TOKEN
+    }
+
+    jetstream {
+      store_dir: /data/jetstream
+    }

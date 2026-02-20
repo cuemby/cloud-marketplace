@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nats-jetstream-monitoring
+  labels:
+    app.kubernetes.io/name: nats-jetstream
+    app.kubernetes.io/component: database
+spec:
+  type: NodePort
+  selector:
+    app.kubernetes.io/name: nats-jetstream
+    app.kubernetes.io/component: database
+  ports:
+    - port: 8222
+      targetPort: 8222
+      nodePort: ${PARAM_NATS_MONITORING_NODEPORT}
+      protocol: TCP

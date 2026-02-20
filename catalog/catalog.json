@@ -1156,6 +1156,49 @@
       ]
     },
     {
+      "name": "nats-jetstream",
+      "displayName": "NATS JetStream",
+      "description": "High-performance cloud-native messaging system with built-in JetStream persistence for streaming and at-least-once delivery.",
+      "category": "database",
+      "icon": "https://nats.io/img/logos/nats-icon-color.png",
+      "deployMethod": "manifest",
+      "manifests": {
+        "path": "manifests/"
+      },
+      "ssl": {
+        "enabled": false
+      },
+      "requirements": {
+        "cpu": 2,
+        "memory": "4Gi",
+        "disk": "20Gi"
+      },
+      "versions": [
+        {
+          "appVersion": "2.12.4",
+          "imageTag": "2.12.4",
+          "default": true
+        }
+      ],
+      "parameters": [
+        {
+          "name": "NATS_AUTH_TOKEN",
+          "displayName": "Auth Token",
+          "description": "NATS authentication token (auto-generated if not set)",
+          "type": "password",
+          "required": false
+        },
+        {
+          "name": "NATS_DATA_SIZE",
+          "displayName": "Data Storage Size",
+          "description": "Size of persistent volume for JetStream data",
+          "type": "string",
+          "required": false,
+          "default": "10Gi"
+        }
+      ]
+    },
+    {
       "name": "neo4j",
       "displayName": "Neo4j Community",
       "description": "Native graph database for connected data, powering knowledge graphs, recommendations, and network analysis.",
@@ -2223,5 +2266,5 @@
       ]
     }
   ],
-  "generated": "2026-02-20T10:25:42Z"
+  "generated": "2026-02-20T15:32:13Z"
 }

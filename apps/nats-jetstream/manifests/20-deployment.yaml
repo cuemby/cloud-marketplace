@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nats-jetstream
+  labels:
+    app.kubernetes.io/name: nats-jetstream
+    app.kubernetes.io/component: database
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: nats-jetstream
+      app.kubernetes.io/component: database
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: nats-jetstream
+        app.kubernetes.io/component: database
+    spec:
+      containers:
+        - name: nats
+          image: docker.io/library/nats:${PARAM_APP_IMAGE_TAG}
+          args:
+            - "--config"
+            - "/etc/nats/nats-server.conf"
+          ports:
+            - containerPort: 4222
+              protocol: TCP
+            - containerPort: 8222
+              protocol: TCP
+          envFrom:
+            - secretRef:
+                name: nats-jetstream-credentials
+          volumeMounts:
+            - name: nats-jetstream-data
+              mountPath: /data/jetstream
+            - name: nats-jetstream-config
+              mountPath: /etc/nats/nats-server.conf
+              subPath: nats-server.conf
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 8222
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 5
+            failureThreshold: 30
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8222
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8222
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_NATS_CPU_REQUEST}
+              memory: ${PARAM_NATS_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_NATS_CPU_LIMIT}
+              memory: ${PARAM_NATS_MEMORY_LIMIT}
+      volumes:
+        - name: nats-jetstream-data
+          persistentVolumeClaim:
+            claimName: nats-jetstream-data
+        - name: nats-jetstream-config
+          configMap:
+            name: nats-jetstream-config
