@@ -30,21 +30,21 @@ log_info "[mysql/healthcheck] Checking MySQL connectivity..."
 retry_with_timeout 120 10 _mysql_is_ready
 log_info "[mysql/healthcheck] MySQL is accepting connections."
 
-# --- Check 2: SQL query succeeds ---
-_mysql_query_works() {
+# --- Check 2: Authenticated status check ---
+_mysql_status_ok() {
     local pod
     pod="$(kubectl get pods -n "${local_namespace}" \
         -l app.kubernetes.io/name=mysql,app.kubernetes.io/component=database \
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
     kubectl exec -n "${local_namespace}" "$pod" -- \
-        sh -c 'mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SELECT 1" 2>/dev/null' \
-        | grep -q "1"
+        bash -c 'mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" status' 2>/dev/null \
+        | grep -q "Uptime"
 }
 
-log_info "[mysql/healthcheck] Verifying SQL query execution..."
-retry_with_timeout 120 10 _mysql_query_works
-log_info "[mysql/healthcheck] MySQL query execution verified."
+log_info "[mysql/healthcheck] Verifying MySQL authenticated status..."
+retry_with_timeout 120 10 _mysql_status_ok
+log_info "[mysql/healthcheck] MySQL authenticated status verified."
 
 # --- Check 3: PVCs are bound ---
 log_info "[mysql/healthcheck] Checking PVC status..."
