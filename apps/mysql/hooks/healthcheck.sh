@@ -37,9 +37,11 @@ _mysql_status_ok() {
         -l app.kubernetes.io/name=mysql,app.kubernetes.io/component=database \
         -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
     [[ -n "$pod" ]] || return 1
-    kubectl exec -n "${local_namespace}" "$pod" -- \
-        bash -c 'mysqladmin -u root -p"$MYSQL_ROOT_PASSWORD" status' 2>/dev/null \
-        | grep -q "Uptime"
+    local output
+    output="$(kubectl exec -n "${local_namespace}" "$pod" -- \
+        /bin/sh -c 'mysqladmin -u root -p"${MYSQL_ROOT_PASSWORD}" status 2>&1')" || true
+    log_info "[mysql/healthcheck] mysqladmin output: ${output}"
+    echo "$output" | grep -q "Uptime"
 }
 
 log_info "[mysql/healthcheck] Verifying MySQL authenticated status..."
