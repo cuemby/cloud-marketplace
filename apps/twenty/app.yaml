@@ -1,0 +1,41 @@
+name: twenty
+displayName: Twenty CRM
+description: Open-source CRM alternative to Salesforce with modern UX, contact management, pipeline tracking, and workflow automation.
+category: collaboration
+icon: https://twenty.com/images/core/twenty-logo.svg
+deployMethod: manifest
+manifests:
+  path: manifests/
+ssl:
+  enabled: false
+requirements:
+  cpu: 2
+  memory: 4Gi
+  disk: 30Gi
+versions:
+  - appVersion: "1.18.0"
+    imageTag: "v1.18.0"
+    default: true
+parameters:
+  - name: TWENTY_APP_SECRET
+    displayName: App Secret
+    description: Encryption key for the application (auto-generated if not set)
+    type: password
+    required: false
+  - name: TWENTY_DB_PASSWORD
+    displayName: Database Password
+    description: PostgreSQL password (auto-generated if not set)
+    type: password
+    required: false
+  - name: TWENTY_DB_DATA_SIZE
+    displayName: Database Storage Size
+    description: Size of persistent volume for PostgreSQL data
+    type: string
+    required: false
+    default: "10Gi"
+  - name: TWENTY_DATA_SIZE
+    displayName: App Storage Size
+    description: Size of persistent volume for Twenty app data (file uploads)
+    type: string
+    required: false
+    default: "10Gi"

@@ -1,0 +1,118 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twenty
+  labels:
+    app.kubernetes.io/name: twenty
+    app.kubernetes.io/component: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: twenty
+      app.kubernetes.io/component: app
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: twenty
+        app.kubernetes.io/component: app
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for PostgreSQL at twenty-postgres:5432..."
+              until nc -z twenty-postgres 5432; do
+                echo "PostgreSQL not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "PostgreSQL is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+        - name: wait-for-redis
+          image: docker.io/library/busybox:1.37
+          command:
+            - sh
+            - -c
+            - |
+              echo "Waiting for Redis at twenty-redis:6379..."
+              until nc -z twenty-redis 6379; do
+                echo "Redis not ready, retrying in 3s..."
+                sleep 3
+              done
+              echo "Redis is reachable."
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 50m
+              memory: 32Mi
+      containers:
+        - name: twenty
+          image: "twentycrm/twenty:${PARAM_APP_IMAGE_TAG}"
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+          env:
+            - name: PG_DATABASE_URL
+              value: "postgres://twenty:${PARAM_TWENTY_DB_PASSWORD}@twenty-postgres:5432/default"
+            - name: REDIS_URL
+              value: "redis://twenty-redis:6379"
+            - name: SERVER_URL
+              value: "http://localhost:3000"
+            - name: APP_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: twenty-app-secret
+                  key: APP_SECRET
+            - name: CACHE_STORAGE_TYPE
+              value: "redis"
+            - name: STORAGE_TYPE
+              value: "local"
+          volumeMounts:
+            - name: twenty-data
+              mountPath: /app/packages/twenty-server/.local-storage
+          startupProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 3000
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: ${PARAM_TWENTY_CPU_REQUEST}
+              memory: ${PARAM_TWENTY_MEMORY_REQUEST}
+            limits:
+              cpu: ${PARAM_TWENTY_CPU_LIMIT}
+              memory: ${PARAM_TWENTY_MEMORY_LIMIT}
+      volumes:
+        - name: twenty-data
+          persistentVolumeClaim:
+            claimName: twenty-data
