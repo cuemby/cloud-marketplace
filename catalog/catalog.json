@@ -23,14 +23,6 @@
           "appVersion": "5.0.6",
           "imageTag": "5.0.6",
           "default": true
-        },
-        {
-          "appVersion": "4.1.10",
-          "imageTag": "4.1.10"
-        },
-        {
-          "appVersion": "4.0.19",
-          "imageTag": "4.0.19"
         }
       ],
       "parameters": [
@@ -106,14 +98,6 @@
           "appVersion": "4.109.2",
           "imageTag": "4.109.2",
           "default": true
-        },
-        {
-          "appVersion": "4.108.2",
-          "imageTag": "4.108.2"
-        },
-        {
-          "appVersion": "4.107.1",
-          "imageTag": "4.107.1"
         }
       ],
       "parameters": [
@@ -244,14 +228,6 @@
           "appVersion": "3.5.1",
           "imageTag": "3.5.1",
           "default": true
-        },
-        {
-          "appVersion": "3.4.3",
-          "imageTag": "3.4.3"
-        },
-        {
-          "appVersion": "3.3.3",
-          "imageTag": "3.3.3"
         }
       ],
       "parameters": [
@@ -353,14 +329,6 @@
           "appVersion": "3.0.0",
           "imageTag": "3.0.0",
           "default": true
-        },
-        {
-          "appVersion": "2.8.3",
-          "imageTag": "2.8.3"
-        },
-        {
-          "appVersion": "2.8.1",
-          "imageTag": "2.8.1"
         }
       ],
       "parameters": [
@@ -404,14 +372,6 @@
           "appVersion": "2.7.0",
           "imageTag": "2.7.0",
           "default": true
-        },
-        {
-          "appVersion": "2.5.0",
-          "imageTag": "2.5.0"
-        },
-        {
-          "appVersion": "2.4.0",
-          "imageTag": "2.4.0"
         }
       ],
       "parameters": [
@@ -455,14 +415,6 @@
           "appVersion": "6.19.1",
           "imageTag": "6.19.1",
           "default": true
-        },
-        {
-          "appVersion": "5.130.6",
-          "imageTag": "5.130.6"
-        },
-        {
-          "appVersion": "4.48.9",
-          "imageTag": "4.48.9"
         }
       ],
       "parameters": [
@@ -521,14 +473,6 @@
           "appVersion": "1.23.7",
           "imageTag": "1.23.7",
           "default": true
-        },
-        {
-          "appVersion": "1.22.6",
-          "imageTag": "1.22.6"
-        },
-        {
-          "appVersion": "1.21.11",
-          "imageTag": "1.21.11"
         }
       ],
       "parameters": [
@@ -565,14 +509,6 @@
           "appVersion": "3.2.12",
           "imageTag": "3.2.12-alpine",
           "default": true
-        },
-        {
-          "appVersion": "3.0.16",
-          "imageTag": "3.0.16-alpine"
-        },
-        {
-          "appVersion": "3.3.3",
-          "imageTag": "3.3.3-alpine"
         }
       ],
       "parameters": [
@@ -616,14 +552,6 @@
           "appVersion": "2.14.2",
           "imageTag": "v2.14.2",
           "default": true
-        },
-        {
-          "appVersion": "2.13.4",
-          "imageTag": "v2.13.4"
-        },
-        {
-          "appVersion": "2.12.3",
-          "imageTag": "v2.12.3"
         }
       ],
       "parameters": [
@@ -696,14 +624,6 @@
           "appVersion": "2.541.2",
           "imageTag": "2.541.2-lts-jdk21",
           "default": true
-        },
-        {
-          "appVersion": "2.541.1",
-          "imageTag": "2.541.1-lts-jdk21"
-        },
-        {
-          "appVersion": "2.528.3",
-          "imageTag": "2.528.3-lts-jdk21"
         }
       ],
       "parameters": [
@@ -748,14 +668,6 @@
           "appVersion": "6.0.3",
           "imageTag": "6.0.3-apache",
           "default": true
-        },
-        {
-          "appVersion": "5.4.3",
-          "imageTag": "5.4.3-apache"
-        },
-        {
-          "appVersion": "5.3.4",
-          "imageTag": "5.3.4-apache"
         }
       ],
       "parameters": [
@@ -814,14 +726,6 @@
           "appVersion": "4.2.0",
           "imageTag": "4.2.0",
           "default": true
-        },
-        {
-          "appVersion": "4.1.1",
-          "imageTag": "4.1.1"
-        },
-        {
-          "appVersion": "4.0.1",
-          "imageTag": "4.0.1"
         }
       ],
       "parameters": [
@@ -873,14 +777,6 @@
           "appVersion": "26.5.3",
           "imageTag": "26.5.3",
           "default": true
-        },
-        {
-          "appVersion": "25.0.6",
-          "imageTag": "25.0.6"
-        },
-        {
-          "appVersion": "26.0.7",
-          "imageTag": "26.0.7"
         }
       ],
       "parameters": [
@@ -947,14 +843,6 @@
           "appVersion": "3.9.1",
           "imageTag": "3.9.1",
           "default": true
-        },
-        {
-          "appVersion": "3.8.0",
-          "imageTag": "3.8.0"
-        },
-        {
-          "appVersion": "3.7.1",
-          "imageTag": "3.7.1"
         }
       ],
       "parameters": [
@@ -998,14 +886,6 @@
           "appVersion": "11.4.10",
           "imageTag": "11.4.10",
           "default": true
-        },
-        {
-          "appVersion": "10.11.16",
-          "imageTag": "10.11.16"
-        },
-        {
-          "appVersion": "10.6.25",
-          "imageTag": "10.6.25"
         }
       ],
       "parameters": [
@@ -1072,14 +952,6 @@
           "appVersion": "3.9.0",
           "imageTag": "v3.9.0",
           "default": true
-        },
-        {
-          "appVersion": "3.8.1",
-          "imageTag": "v3.8.1"
-        },
-        {
-          "appVersion": "3.7.0",
-          "imageTag": "v3.7.0"
         }
       ],
       "parameters": [
@@ -1131,14 +1003,6 @@
           "appVersion": "8.0.19",
           "imageTag": "8.0.19",
           "default": true
-        },
-        {
-          "appVersion": "7.0.30",
-          "imageTag": "7.0.30"
-        },
-        {
-          "appVersion": "6.0.27",
-          "imageTag": "6.0.27"
         }
       ],
       "parameters": [
@@ -1190,14 +1054,6 @@
           "appVersion": "8.4.8",
           "imageTag": "8.4.8",
           "default": true
-        },
-        {
-          "appVersion": "9.6.0",
-          "imageTag": "9.6.0"
-        },
-        {
-          "appVersion": "8.0.45",
-          "imageTag": "8.0.45"
         }
       ],
       "parameters": [
@@ -1264,14 +1120,6 @@
           "appVersion": "2.9.0",
           "imageTag": "2.9.0",
           "default": true
-        },
-        {
-          "appVersion": "2.8.3",
-          "imageTag": "2.8.3"
-        },
-        {
-          "appVersion": "2.7.5",
-          "imageTag": "2.7.5"
         }
       ],
       "parameters": [
@@ -1330,10 +1178,6 @@
           "appVersion": "2026.01.4",
           "imageTag": "2026.01.4-community",
           "default": true
-        },
-        {
-          "appVersion": "5.26.21",
-          "imageTag": "5.26.21-community"
         }
       ],
       "parameters": [
@@ -1385,14 +1229,6 @@
           "appVersion": "32.0.6",
           "imageTag": "32.0.6-apache",
           "default": true
-        },
-        {
-          "appVersion": "31.0.14",
-          "imageTag": "31.0.14-apache"
-        },
-        {
-          "appVersion": "30.0.17",
-          "imageTag": "30.0.17-apache"
         }
       ],
       "parameters": [
@@ -1473,14 +1309,6 @@
           "appVersion": "3.87.2",
           "imageTag": "3.87.2",
           "default": true
-        },
-        {
-          "appVersion": "3.86.2",
-          "imageTag": "3.86.2"
-        },
-        {
-          "appVersion": "3.85.1",
-          "imageTag": "3.85.1"
         }
       ],
       "parameters": [
@@ -1517,14 +1345,6 @@
           "appVersion": "19.0",
           "imageTag": "19",
           "default": true
-        },
-        {
-          "appVersion": "18.0",
-          "imageTag": "18"
-        },
-        {
-          "appVersion": "17.0",
-          "imageTag": "17"
         }
       ],
       "parameters": [
@@ -1583,14 +1403,6 @@
           "appVersion": "2.5.0",
           "imageTag": "2.5.0",
           "default": true
-        },
-        {
-          "appVersion": "2.4.4",
-          "imageTag": "2.4.4"
-        },
-        {
-          "appVersion": "2.3.2",
-          "imageTag": "2.3.2"
         }
       ],
       "parameters": [
@@ -1685,14 +1497,6 @@
           "appVersion": "3.0.0",
           "imageTag": "3.0.0",
           "default": true
-        },
-        {
-          "appVersion": "2.19.1",
-          "imageTag": "2.19.1"
-        },
-        {
-          "appVersion": "1.3.20",
-          "imageTag": "1.3.20"
         }
       ],
       "parameters": [
@@ -1752,14 +1556,6 @@
           "appVersion": "10.16.0",
           "imageTag": "10.16.0",
           "default": true
-        },
-        {
-          "appVersion": "10.15.3",
-          "imageTag": "10.15.3"
-        },
-        {
-          "appVersion": "10.14.0",
-          "imageTag": "10.14.0"
         }
       ],
       "parameters": [
@@ -1840,14 +1636,6 @@
           "appVersion": "8.4.7",
           "imageTag": "8.4.7",
           "default": true
-        },
-        {
-          "appVersion": "8.0.45",
-          "imageTag": "8.0.45"
-        },
-        {
-          "appVersion": "8.0.44",
-          "imageTag": "8.0.44"
         }
       ],
       "parameters": [
@@ -1914,14 +1702,6 @@
           "appVersion": "2.33.7",
           "imageTag": "2.33.7",
           "default": true
-        },
-        {
-          "appVersion": "2.33.6",
-          "imageTag": "2.33.6"
-        },
-        {
-          "appVersion": "2.33.5",
-          "imageTag": "2.33.5"
         }
       ],
       "parameters": [
@@ -1958,14 +1738,6 @@
           "appVersion": "17.8",
           "imageTag": "17.8-alpine",
           "default": true
-        },
-        {
-          "appVersion": "16.12",
-          "imageTag": "16.12-alpine"
-        },
-        {
-          "appVersion": "15.16",
-          "imageTag": "15.16-alpine"
         }
       ],
       "parameters": [
@@ -2049,14 +1821,6 @@
           "appVersion": "4.2.4",
           "imageTag": "4.2.4-management",
           "default": true
-        },
-        {
-          "appVersion": "4.1.8",
-          "imageTag": "4.1.8-management"
-        },
-        {
-          "appVersion": "4.0.9",
-          "imageTag": "4.0.9-management"
         }
       ],
       "parameters": [
@@ -2108,14 +1872,6 @@
           "appVersion": "2.13.2",
           "imageTag": "v2.13.2",
           "default": true
-        },
-        {
-          "appVersion": "2.12.3",
-          "imageTag": "v2.12.3"
-        },
-        {
-          "appVersion": "2.11.3",
-          "imageTag": "v2.11.3"
         }
       ],
       "parameters": [
@@ -2159,14 +1915,6 @@
           "appVersion": "3.54",
           "imageTag": "3.54",
           "default": true
-        },
-        {
-          "appVersion": "3.45",
-          "imageTag": "3.45"
-        },
-        {
-          "appVersion": "3.37",
-          "imageTag": "3.37"
         }
       ],
       "parameters": [
@@ -2211,14 +1959,6 @@
           "appVersion": "4.40.0",
           "imageTag": "4.40.0-20260202",
           "default": true
-        },
-        {
-          "appVersion": "4.39.0",
-          "imageTag": "4.39.0-20251212"
-        },
-        {
-          "appVersion": "4.38.0",
-          "imageTag": "4.38.0-20251101"
         }
       ],
       "parameters": [
@@ -2263,14 +2003,6 @@
           "appVersion": "26.2.0.119303",
           "imageTag": "26.2.0.119303-community",
           "default": true
-        },
-        {
-          "appVersion": "26.1.0.118079",
-          "imageTag": "26.1.0.118079-community"
-        },
-        {
-          "appVersion": "25.12.0.117093",
-          "imageTag": "25.12.0.117093-community"
         }
       ],
       "parameters": [
@@ -2322,14 +2054,6 @@
           "appVersion": "8.1.5",
           "imageTag": "8.1.5-alpine",
           "default": true
-        },
-        {
-          "appVersion": "9.0.2",
-          "imageTag": "9.0.2-alpine"
-        },
-        {
-          "appVersion": "8.0.3",
-          "imageTag": "8.0.3-alpine"
         }
       ],
       "parameters": [
@@ -2389,14 +2113,6 @@
           "appVersion": "1.35.3",
           "imageTag": "1.35.3",
           "default": true
-        },
-        {
-          "appVersion": "1.34.3",
-          "imageTag": "1.34.3"
-        },
-        {
-          "appVersion": "1.33.2",
-          "imageTag": "1.33.2"
         }
       ],
       "parameters": [
@@ -2440,14 +2156,6 @@
           "appVersion": "6.9.1",
           "imageTag": "6.9.1-apache",
           "default": true
-        },
-        {
-          "appVersion": "6.8.3",
-          "imageTag": "6.8.3-apache"
-        },
-        {
-          "appVersion": "6.7.2",
-          "imageTag": "6.7.2-apache"
         }
       ],
       "parameters": [
@@ -2515,5 +2223,5 @@
       ]
     }
   ],
-  "generated": "2026-02-19T21:56:54Z"
+  "generated": "2026-02-20T10:25:42Z"
 }

@@ -3,36 +3,25 @@ displayName: Kong Gateway
 description: Cloud-native API gateway for managing, securing, and observing APIs and microservices.
 category: infrastructure
 icon: https://konghq.com/wp-content/uploads/2018/08/kong-logomark-color-64px.png
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 20Gi
-
 versions:
   - appVersion: "3.9.1"
     imageTag: "3.9.1"
     default: true
-  - appVersion: "3.8.0"
-    imageTag: "3.8.0"
-  - appVersion: "3.7.1"
-    imageTag: "3.7.1"
-
 parameters:
   - name: KONG_DB_PASSWORD
     displayName: Database Password
     description: PostgreSQL password for Kong (auto-generated if not set)
     type: password
     required: false
-
   - name: KONG_DB_DATA_SIZE
     displayName: Database Storage Size
     description: Size of persistent volume for PostgreSQL data

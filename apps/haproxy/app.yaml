@@ -3,36 +3,25 @@ displayName: HAProxy
 description: Reliable, high-performance TCP/HTTP load balancer and proxy server.
 category: infrastructure
 icon: https://www.haproxy.com/favicon.ico
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 2Gi
   disk: 20Gi
-
 versions:
   - appVersion: "3.2.12"
     imageTag: "3.2.12-alpine"
     default: true
-  - appVersion: "3.0.16"
-    imageTag: "3.0.16-alpine"
-  - appVersion: "3.3.3"
-    imageTag: "3.3.3-alpine"
-
 parameters:
   - name: HAPROXY_STATS_PASSWORD
     displayName: Stats Password
     description: Password for the HAProxy stats web interface
     type: password
     required: false
-
   - name: HAPROXY_STATS_USER
     displayName: Stats Username
     description: Username for the HAProxy stats web interface

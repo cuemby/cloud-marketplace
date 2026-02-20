@@ -3,29 +3,19 @@ displayName: OpenBao
 description: Open-source secrets management, identity, and encryption platform (community fork of Vault).
 category: security
 icon: https://openbao.org/img/logo-openbao.svg
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 20Gi
-
 versions:
   - appVersion: "2.5.0"
     imageTag: "2.5.0"
     default: true
-  - appVersion: "2.4.4"
-    imageTag: "2.4.4"
-  - appVersion: "2.3.2"
-    imageTag: "2.3.2"
-
 parameters:
   - name: OPENBAO_DATA_SIZE
     displayName: Data Storage Size
@@ -33,7 +23,6 @@ parameters:
     type: string
     required: false
     default: "10Gi"
-
   - name: OPENBAO_DEV_ROOT_TOKEN
     displayName: Dev Root Token
     description: Root token for OpenBao dev mode access

@@ -3,29 +3,19 @@ displayName: Jenkins
 description: Open-source CI/CD automation server for building, testing, and deploying software.
 category: devops
 icon: https://www.jenkins.io/images/logos/jenkins/jenkins.svg
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 30Gi
-
 versions:
   - appVersion: "2.541.2"
     imageTag: "2.541.2-lts-jdk21"
     default: true
-  - appVersion: "2.541.1"
-    imageTag: "2.541.1-lts-jdk21"
-  - appVersion: "2.528.3"
-    imageTag: "2.528.3-lts-jdk21"
-
 parameters:
   - name: JENKINS_DATA_SIZE
     displayName: Data Storage Size
@@ -33,7 +23,6 @@ parameters:
     type: string
     required: false
     default: "20Gi"
-
   - name: JENKINS_JAVA_OPTS
     displayName: JVM Options
     description: "JVM heap settings for Jenkins"

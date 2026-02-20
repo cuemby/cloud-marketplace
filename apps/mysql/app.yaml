@@ -3,56 +3,42 @@ displayName: MySQL
 description: World's most popular open-source relational database for web and enterprise applications.
 category: database
 icon: https://labs.mysql.com/common/logos/mysql-logo.svg
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 30Gi
-
 versions:
   - appVersion: "8.4.8"
     imageTag: "8.4.8"
     default: true
-  - appVersion: "9.6.0"
-    imageTag: "9.6.0"
-  - appVersion: "8.0.45"
-    imageTag: "8.0.45"
-
 parameters:
   - name: MYSQL_ROOT_PASSWORD
     displayName: Root Password
     description: MySQL root password (auto-generated if not set)
     type: password
     required: false
-
   - name: MYSQL_USER
     displayName: Database User
     description: Name of the default non-root user
     type: string
     required: false
     default: "mysql"
-
   - name: MYSQL_PASSWORD
     displayName: User Password
     description: Password for the default non-root user (auto-generated if not set)
     type: password
     required: false
-
   - name: MYSQL_DATABASE
     displayName: Default Database
     description: Name of the default database created on first start
     type: string
     required: false
     default: "mysql"
-
   - name: MYSQL_DATA_SIZE
     displayName: Data Storage Size
     description: Size of persistent volume for MySQL data

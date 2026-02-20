@@ -3,56 +3,42 @@ displayName: Keycloak
 description: Open-source identity and access management with SSO, social login, and user federation.
 category: devops
 icon: https://www.keycloak.org/resources/images/icon.svg
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 30Gi
-
 versions:
   - appVersion: "26.5.3"
     imageTag: "26.5.3"
     default: true
-  - appVersion: "25.0.6"
-    imageTag: "25.0.6"
-  - appVersion: "26.0.7"
-    imageTag: "26.0.7"
-
 parameters:
   - name: KEYCLOAK_ADMIN_PASSWORD
     displayName: Admin Password
     description: Keycloak admin password (auto-generated if not set)
     type: password
     required: false
-
   - name: KEYCLOAK_ADMIN_USER
     displayName: Admin Username
     description: Keycloak admin username
     type: string
     required: false
     default: "admin"
-
   - name: KEYCLOAK_DB_PASSWORD
     displayName: Database Password
     description: PostgreSQL password for Keycloak database (auto-generated if not set)
     type: password
     required: false
-
   - name: KEYCLOAK_DB_DATA_SIZE
     displayName: Database Storage Size
     description: Size of persistent volume for PostgreSQL data
     type: string
     required: false
     default: "5Gi"
-
   - name: KEYCLOAK_DATA_SIZE
     displayName: Keycloak Storage Size
     description: Size of persistent volume for Keycloak data

@@ -3,29 +3,19 @@ displayName: Nextcloud
 description: Self-hosted file sharing, collaboration, and productivity platform with apps for documents, calendar, and video calls.
 category: collaboration
 icon: https://nextcloud.com/wp-content/uploads/2022/11/nextcloud-logo-blue-transparent.svg
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 50Gi
-
 versions:
   - appVersion: "32.0.6"
     imageTag: "32.0.6-apache"
     default: true
-  - appVersion: "31.0.14"
-    imageTag: "31.0.14-apache"
-  - appVersion: "30.0.17"
-    imageTag: "30.0.17-apache"
-
 parameters:
   - name: NEXTCLOUD_ADMIN_USER
     displayName: Admin Username
@@ -33,38 +23,32 @@ parameters:
     type: string
     required: false
     default: "admin"
-
   - name: NEXTCLOUD_ADMIN_PASSWORD
     displayName: Admin Password
     description: Nextcloud administrator password (auto-generated if not set)
     type: password
     required: false
-
   - name: NEXTCLOUD_DB_PASSWORD
     displayName: Database Password
     description: MariaDB password for Nextcloud (auto-generated if not set)
     type: password
     required: false
-
   - name: NEXTCLOUD_DB_ROOT_PASSWORD
     displayName: MariaDB Root Password
     description: MariaDB root password (auto-generated if not set)
     type: password
     required: false
-
   - name: NEXTCLOUD_VALKEY_PASSWORD
     displayName: Valkey Password
     description: Valkey password for Nextcloud session/cache (auto-generated if not set)
     type: password
     required: false
-
   - name: NEXTCLOUD_DB_DATA_SIZE
     displayName: Database Storage Size
     description: Size of persistent volume for MariaDB data
     type: string
     required: false
     default: "10Gi"
-
   - name: NEXTCLOUD_DATA_SIZE
     displayName: Nextcloud Data Size
     description: Size of persistent volume for Nextcloud data (files, apps, config)

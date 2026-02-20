@@ -3,29 +3,19 @@ displayName: WordPress
 description: Open-source content management system for building websites, blogs, and applications.
 category: cms
 icon: https://s.w.org/style/images/about/WordPress-logotype-wmark.png
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 30Gi
-
 versions:
   - appVersion: "6.9.1"
     imageTag: "6.9.1-apache"
     default: true
-  - appVersion: "6.8.3"
-    imageTag: "6.8.3-apache"
-  - appVersion: "6.7.2"
-    imageTag: "6.7.2-apache"
-
 parameters:
   - name: WORDPRESS_ADMIN_USER
     displayName: Admin Username
@@ -33,46 +23,39 @@ parameters:
     type: string
     required: false
     default: "admin"
-
   - name: WORDPRESS_ADMIN_PASSWORD
     displayName: Admin Password
     description: WordPress administrator password (auto-generated if not set)
     type: password
     required: false
-
   - name: WORDPRESS_ADMIN_EMAIL
     displayName: Admin Email
     description: WordPress administrator email address
     type: string
     required: false
     default: "admin@example.com"
-
   - name: WORDPRESS_SITE_TITLE
     displayName: Site Title
     description: WordPress site title
     type: string
     required: false
     default: "My WordPress Site"
-
   - name: MARIADB_ROOT_PASSWORD
     displayName: Database Root Password
     description: MariaDB root password (auto-generated if not set)
     type: password
     required: false
-
   - name: MARIADB_PASSWORD
     displayName: Database Password
     description: MariaDB user password for WordPress (auto-generated if not set)
     type: password
     required: false
-
   - name: WORDPRESS_DATA_SIZE
     displayName: WordPress Storage Size
     description: Size of persistent volume for WordPress files
     type: string
     required: false
     default: "10Gi"
-
   - name: MARIADB_DATA_SIZE
     displayName: Database Storage Size
     description: Size of persistent volume for MariaDB data

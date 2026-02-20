@@ -3,49 +3,36 @@ displayName: Odoo Community
 description: All-in-one open-source ERP and business application suite covering CRM, accounting, inventory, and more.
 category: business
 icon: https://www.odoo.com/web/image/website/1/favicon
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 30Gi
-
 versions:
   - appVersion: "19.0"
     imageTag: "19"
     default: true
-  - appVersion: "18.0"
-    imageTag: "18"
-  - appVersion: "17.0"
-    imageTag: "17"
-
 parameters:
   - name: ODOO_DB_PASSWORD
     displayName: Database Password
     description: PostgreSQL password for Odoo (auto-generated if not set)
     type: password
     required: false
-
   - name: ODOO_ADMIN_PASSWORD
     displayName: Admin Master Password
     description: Odoo admin master password for database management (auto-generated if not set)
     type: password
     required: false
-
   - name: ODOO_DB_DATA_SIZE
     displayName: Database Storage Size
     description: Size of persistent volume for PostgreSQL data
     type: string
     required: false
     default: "10Gi"
-
   - name: ODOO_DATA_SIZE
     displayName: Odoo Data Size
     description: Size of persistent volume for Odoo filestore and addons

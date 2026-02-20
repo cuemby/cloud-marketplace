@@ -3,49 +3,36 @@ displayName: Joomla
 description: Flexible and powerful open-source content management system for building websites and online applications.
 category: cms
 icon: https://www.joomla.org/images/joomla-logo.svg
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 30Gi
-
 versions:
   - appVersion: "6.0.3"
     imageTag: "6.0.3-apache"
     default: true
-  - appVersion: "5.4.3"
-    imageTag: "5.4.3-apache"
-  - appVersion: "5.3.4"
-    imageTag: "5.3.4-apache"
-
 parameters:
   - name: JOOMLA_DB_PASSWORD
     displayName: Database Password
     description: MariaDB password for Joomla (auto-generated if not set)
     type: password
     required: false
-
   - name: JOOMLA_DB_ROOT_PASSWORD
     displayName: MariaDB Root Password
     description: MariaDB root password (auto-generated if not set)
     type: password
     required: false
-
   - name: JOOMLA_DB_DATA_SIZE
     displayName: Database Storage Size
     description: Size of persistent volume for MariaDB data
     type: string
     required: false
     default: "5Gi"
-
   - name: JOOMLA_DATA_SIZE
     displayName: Joomla Data Size
     description: Size of persistent volume for Joomla files (themes, uploads, extensions)

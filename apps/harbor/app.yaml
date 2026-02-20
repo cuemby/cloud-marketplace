@@ -3,61 +3,46 @@ displayName: Harbor
 description: Cloud-native container registry with vulnerability scanning, content signing, and role-based access control.
 category: devops
 icon: https://goharbor.io/img/logos/harbor-icon-color.svg
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 4
   memory: 8Gi
   disk: 100Gi
-
 versions:
   - appVersion: "2.14.2"
     imageTag: "v2.14.2"
     default: true
-  - appVersion: "2.13.4"
-    imageTag: "v2.13.4"
-  - appVersion: "2.12.3"
-    imageTag: "v2.12.3"
-
 parameters:
   - name: HARBOR_ADMIN_PASSWORD
     displayName: Admin Password
     description: Harbor admin password (auto-generated if not set)
     type: password
     required: false
-
   - name: HARBOR_DB_PASSWORD
     displayName: Database Password
     description: PostgreSQL password for Harbor (auto-generated if not set)
     type: password
     required: false
-
   - name: HARBOR_SECRET_KEY
     displayName: Secret Key
     description: 16-character key used for encrypting Harbor secrets (auto-generated if not set)
     type: password
     required: false
-
   - name: HARBOR_VALKEY_PASSWORD
     displayName: Valkey Password
     description: Valkey cache password (auto-generated if not set)
     type: password
     required: false
-
   - name: HARBOR_REGISTRY_DATA_SIZE
     displayName: Registry Storage Size
     description: Size of persistent volume for registry blob storage
     type: string
     required: false
     default: "50Gi"
-
   - name: HARBOR_DB_DATA_SIZE
     displayName: Database Storage Size
     description: Size of persistent volume for PostgreSQL data

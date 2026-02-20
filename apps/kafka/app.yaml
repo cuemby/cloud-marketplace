@@ -3,43 +3,31 @@ displayName: Apache Kafka
 description: Open-source distributed streaming platform for real-time data pipelines and event-driven architectures.
 category: database
 icon: https://kafka.apache.org/logos/kafka_logo--simple.png
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 4
   memory: 8Gi
   disk: 50Gi
-
 versions:
   - appVersion: "4.2.0"
     imageTag: "4.2.0"
     default: true
-  - appVersion: "4.1.1"
-    imageTag: "4.1.1"
-  - appVersion: "4.0.1"
-    imageTag: "4.0.1"
-
 parameters:
   - name: KAFKA_CLUSTER_ID
     displayName: Cluster ID
     description: KRaft cluster ID (auto-generated if not set)
     type: string
     required: false
-
   - name: KAFKA_DATA_SIZE
     displayName: Data Storage Size
     description: Size of persistent volume for Kafka data
     type: string
     required: false
     default: "20Gi"
-
   - name: KAFKA_HEAP_OPTS
     displayName: JVM Heap Options
     description: "JVM heap settings (recommend paired Xms/Xmx, ~25% of VM RAM)"

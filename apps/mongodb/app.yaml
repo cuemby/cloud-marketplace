@@ -3,29 +3,19 @@ displayName: MongoDB
 description: Document-oriented NoSQL database for modern applications with flexible schemas.
 category: database
 icon: https://www.mongodb.com/assets/images/global/favicon.ico
-
 deployMethod: manifest
-
 manifests:
   path: manifests/
-
 ssl:
   enabled: false
-
 requirements:
   cpu: 2
   memory: 4Gi
   disk: 30Gi
-
 versions:
   - appVersion: "8.0.19"
     imageTag: "8.0.19"
     default: true
-  - appVersion: "7.0.30"
-    imageTag: "7.0.30"
-  - appVersion: "6.0.27"
-    imageTag: "6.0.27"
-
 parameters:
   - name: MONGO_INITDB_ROOT_USERNAME
     displayName: Root Username
@@ -33,13 +23,11 @@ parameters:
     type: string
     required: false
     default: "admin"
-
   - name: MONGO_INITDB_ROOT_PASSWORD
     displayName: Root Password
     description: MongoDB admin password (auto-generated if not set)
     type: password
     required: false
-
   - name: MONGODB_DATA_SIZE
     displayName: Data Storage Size
     description: Size of persistent volume for MongoDB data
