@@ -24,9 +24,9 @@ export PARAM_OPENCLAW_API_KEY="{{param-openclaw-api-key}}"
 # Optional parameters (defaults applied in pre-install hook)
 export PARAM_OPENCLAW_LLM_PROVIDER="{{param-openclaw-llm-provider}}"
 export PARAM_OPENCLAW_DATA_SIZE="{{param-openclaw-data-size}}"
-export PARAM_OPENCLAW_SSL_ENABLED="{{param-openclaw-ssl-enabled}}"
+export PARAM_OPENCLAW_SSL_ENABLED="${PARAM_OPENCLAW_SSL_ENABLED:-true}"
 export PARAM_OPENCLAW_HOSTNAME="{{param-openclaw-hostname}}"
-export ACME_EMAIL="{{param-openclaw-acme-email}}"
+export ACME_EMAIL="${ACME_EMAIL:-me@cuemby.com}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace
