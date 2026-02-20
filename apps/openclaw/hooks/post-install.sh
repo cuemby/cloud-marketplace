@@ -39,6 +39,12 @@ openclaw_pod="$(_get_openclaw_pod)"
 log_info "[openclaw/post-install] OpenClaw pod ready: ${openclaw_pod}"
 
 local_port="${PARAM_OPENCLAW_NODEPORT:-30789}"
-log_info "[openclaw/post-install] Gateway: ws://<VM-IP>:${local_port}"
-log_info "[openclaw/post-install] Port: ${local_port} (NodePort)"
 log_info "[openclaw/post-install] LLM Provider: ${PARAM_OPENCLAW_LLM_PROVIDER:-anthropic}"
+
+if [[ "${PARAM_OPENCLAW_SSL_ENABLED:-false}" == "true" && -n "${PARAM_OPENCLAW_HOSTNAME:-}" ]]; then
+    log_info "[openclaw/post-install] Web UI (HTTPS): https://${PARAM_OPENCLAW_HOSTNAME}"
+    log_info "[openclaw/post-install] Firewall: open ports 80 (HTTP redirect) and 443 (HTTPS)"
+fi
+
+log_info "[openclaw/post-install] WebSocket (direct): ws://<VM-IP>:${local_port}"
+log_info "[openclaw/post-install] Firewall: open port ${local_port} (NodePort) for direct access"
