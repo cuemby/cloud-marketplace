@@ -44,6 +44,16 @@ Requires `vm.max_map_count=262144` sysctl — set via privileged initContainer.
 - `GET /_cluster/health` returns cluster status
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | REST API via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30920** | TCP | REST API (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://github.com/opensearch-project/OpenSearch/releases

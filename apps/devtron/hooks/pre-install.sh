@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[devtron/pre-install] Setting defaults and generating credentials..."
 
@@ -93,6 +95,23 @@ kubectl create secret generic devtron-secret \
     --from-literal=POSTGRES_USER=postgres \
     --from-literal=POSTGRES_DB=orchestrator \
     --dry-run=client -o yaml | kubectl apply -f -
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_DEVTRON_SSL_ENABLED:-}" && PARAM_DEVTRON_SSL_ENABLED="true"
+export PARAM_DEVTRON_SSL_ENABLED
+
+if [[ "${PARAM_DEVTRON_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_DEVTRON_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_DEVTRON_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "devtron" "PARAM_HOSTNAME" "devtron-dashboard-http" 80
+    PARAM_DEVTRON_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_DEVTRON_HOSTNAME
+    log_info "[devtron/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[devtron/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[devtron/pre-install] Pre-install complete."
 readonly _DEVTRON_PRE_INSTALL_DONE=1

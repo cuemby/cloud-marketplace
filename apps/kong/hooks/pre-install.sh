@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[kong/pre-install] Setting defaults and generating credentials..."
 
@@ -63,6 +65,23 @@ export PARAM_KONG_CPU_REQUEST="${PARAM_KONG_CPU_REQUEST:-500m}"
 export PARAM_KONG_CPU_LIMIT="${PARAM_KONG_CPU_LIMIT:-1500m}"
 export PARAM_KONG_MEMORY_REQUEST="${PARAM_KONG_MEMORY_REQUEST:-512Mi}"
 export PARAM_KONG_MEMORY_LIMIT="${PARAM_KONG_MEMORY_LIMIT:-2Gi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_KONG_SSL_ENABLED:-}" && PARAM_KONG_SSL_ENABLED="true"
+export PARAM_KONG_SSL_ENABLED
+
+if [[ "${PARAM_KONG_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_KONG_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_KONG_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "kong" "PARAM_HOSTNAME" "kong-proxy-http" 80
+    PARAM_KONG_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_KONG_HOSTNAME
+    log_info "[kong/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[kong/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[kong/pre-install] Pre-install complete."
 readonly _KONG_PRE_INSTALL_DONE=1

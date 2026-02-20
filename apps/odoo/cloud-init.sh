@@ -24,6 +24,8 @@ export PARAM_ODOO_ADMIN_PASSWORD="{{param-odoo-admin-password}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_ODOO_DB_DATA_SIZE="{{param-odoo-db-data-size}}"
 export PARAM_ODOO_DATA_SIZE="{{param-odoo-data-size}}"
+export PARAM_ODOO_SSL_ENABLED="{{param-odoo-ssl-enabled}}"
+export PARAM_ODOO_HOSTNAME="{{param-odoo-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

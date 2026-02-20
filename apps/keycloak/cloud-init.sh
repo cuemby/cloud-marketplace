@@ -25,6 +25,8 @@ export PARAM_KEYCLOAK_DB_PASSWORD="{{param-keycloak-db-password}}"
 export PARAM_KEYCLOAK_ADMIN_USER="{{param-keycloak-admin-user}}"
 export PARAM_KEYCLOAK_DB_DATA_SIZE="{{param-keycloak-db-data-size}}"
 export PARAM_KEYCLOAK_DATA_SIZE="{{param-keycloak-data-size}}"
+export PARAM_KEYCLOAK_SSL_ENABLED="{{param-keycloak-ssl-enabled}}"
+export PARAM_KEYCLOAK_HOSTNAME="{{param-keycloak-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

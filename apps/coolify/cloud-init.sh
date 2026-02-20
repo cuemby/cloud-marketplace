@@ -28,6 +28,8 @@ export PARAM_COOLIFY_PUSHER_APP_SECRET="{{param-coolify-pusher-app-secret}}"
 export PARAM_COOLIFY_PUSHER_APP_ID="{{param-coolify-pusher-app-id}}"
 export PARAM_COOLIFY_DB_DATA_SIZE="{{param-coolify-db-data-size}}"
 export PARAM_COOLIFY_DATA_SIZE="{{param-coolify-data-size}}"
+export PARAM_COOLIFY_SSL_ENABLED="{{param-coolify-ssl-enabled}}"
+export PARAM_COOLIFY_HOSTNAME="{{param-coolify-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

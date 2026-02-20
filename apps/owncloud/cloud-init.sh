@@ -27,6 +27,8 @@ export PARAM_OWNCLOUD_VALKEY_PASSWORD="{{param-owncloud-valkey-password}}"
 export PARAM_OWNCLOUD_ADMIN_USERNAME="{{param-owncloud-admin-username}}"
 export PARAM_OWNCLOUD_DB_DATA_SIZE="{{param-owncloud-db-data-size}}"
 export PARAM_OWNCLOUD_DATA_SIZE="{{param-owncloud-data-size}}"
+export PARAM_OWNCLOUD_SSL_ENABLED="{{param-owncloud-ssl-enabled}}"
+export PARAM_OWNCLOUD_HOSTNAME="{{param-owncloud-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

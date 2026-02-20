@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[opensearch/pre-install] Setting defaults and generating credentials..."
 
@@ -56,6 +58,23 @@ export PARAM_OPENSEARCH_CPU_REQUEST="${PARAM_OPENSEARCH_CPU_REQUEST:-1000m}"
 export PARAM_OPENSEARCH_CPU_LIMIT="${PARAM_OPENSEARCH_CPU_LIMIT:-4000m}"
 export PARAM_OPENSEARCH_MEMORY_REQUEST="${PARAM_OPENSEARCH_MEMORY_REQUEST:-2Gi}"
 export PARAM_OPENSEARCH_MEMORY_LIMIT="${PARAM_OPENSEARCH_MEMORY_LIMIT:-6Gi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_OPENSEARCH_SSL_ENABLED:-}" && PARAM_OPENSEARCH_SSL_ENABLED="true"
+export PARAM_OPENSEARCH_SSL_ENABLED
+
+if [[ "${PARAM_OPENSEARCH_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_OPENSEARCH_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_OPENSEARCH_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "opensearch" "PARAM_HOSTNAME" "opensearch-http" 80
+    PARAM_OPENSEARCH_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_OPENSEARCH_HOSTNAME
+    log_info "[opensearch/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[opensearch/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[opensearch/pre-install] Pre-install complete."
 readonly _OPENSEARCH_PRE_INSTALL_DONE=1

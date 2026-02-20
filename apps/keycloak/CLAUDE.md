@@ -35,6 +35,16 @@ Keycloak supports automated admin creation via `KC_BOOTSTRAP_ADMIN_USERNAME` and
 41-keycloak-service.yaml     -> NodePort 30808 for UI
 ```
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30808** | TCP | Keycloak web UI (NodePort) | Always |
+
 ## Health Checks
 
 - PostgreSQL: `pg_isready -U keycloak`

@@ -24,6 +24,8 @@ export PARAM_N8N_ENCRYPTION_KEY="{{param-n8n-encryption-key}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_N8N_DB_DATA_SIZE="{{param-n8n-db-data-size}}"
 export PARAM_N8N_DATA_SIZE="{{param-n8n-data-size}}"
+export PARAM_N8N_SSL_ENABLED="{{param-n8n-ssl-enabled}}"
+export PARAM_N8N_HOSTNAME="{{param-n8n-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

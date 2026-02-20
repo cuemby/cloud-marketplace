@@ -27,6 +27,16 @@
 2. GET `/v1/sys/mounts` with root token — secrets engine accessible
 3. PVC bound status verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30820** | TCP | OpenBao API / Web UI (NodePort) | Always |
+
 ## Access
 
 | Endpoint | Port | Protocol |

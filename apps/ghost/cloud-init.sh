@@ -24,6 +24,8 @@ export PARAM_GHOST_DB_ROOT_PASSWORD="{{param-ghost-db-root-password}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_GHOST_DB_DATA_SIZE="{{param-ghost-db-data-size}}"
 export PARAM_GHOST_DATA_SIZE="{{param-ghost-data-size}}"
+export PARAM_GHOST_SSL_ENABLED="{{param-ghost-ssl-enabled}}"
+export PARAM_GHOST_HOSTNAME="{{param-ghost-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

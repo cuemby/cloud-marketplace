@@ -23,6 +23,8 @@ export PARAM_RABBITMQ_DEFAULT_PASS="{{param-rabbitmq-default-pass}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_RABBITMQ_DEFAULT_USER="{{param-rabbitmq-default-user}}"
 export PARAM_RABBITMQ_DATA_SIZE="{{param-rabbitmq-data-size}}"
+export PARAM_RABBITMQ_SSL_ENABLED="{{param-rabbitmq-ssl-enabled}}"
+export PARAM_RABBITMQ_HOSTNAME="{{param-rabbitmq-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

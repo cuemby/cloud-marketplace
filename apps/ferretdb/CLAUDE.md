@@ -34,6 +34,14 @@ All parameters use `PARAM_*` prefix at runtime. Database password is auto-genera
 - FerretDB: `mongosh --port 27017 --eval "db.adminCommand('ping')"`
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30017** | TCP | MongoDB wire protocol access (NodePort) | Always |
+
 ## Access
 
 ```bash

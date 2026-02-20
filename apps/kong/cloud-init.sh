@@ -22,6 +22,8 @@ export PARAM_KONG_DB_PASSWORD="{{param-kong-db-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_KONG_DB_DATA_SIZE="{{param-kong-db-data-size}}"
+export PARAM_KONG_SSL_ENABLED="{{param-kong-ssl-enabled}}"
+export PARAM_KONG_HOSTNAME="{{param-kong-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

@@ -38,6 +38,14 @@ Kafka runs in KRaft mode (no ZooKeeper dependency). Single node acts as both bro
 - TCP socket check on port 9092 (Kafka has no HTTP health endpoint)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30909** | TCP | Kafka broker access (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://kafka.apache.org/downloads

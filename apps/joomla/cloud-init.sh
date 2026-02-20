@@ -24,6 +24,8 @@ export PARAM_JOOMLA_DB_ROOT_PASSWORD="{{param-joomla-db-root-password}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_JOOMLA_DB_DATA_SIZE="{{param-joomla-db-data-size}}"
 export PARAM_JOOMLA_DATA_SIZE="{{param-joomla-data-size}}"
+export PARAM_JOOMLA_SSL_ENABLED="{{param-joomla-ssl-enabled}}"
+export PARAM_JOOMLA_HOSTNAME="{{param-joomla-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

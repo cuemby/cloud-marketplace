@@ -34,6 +34,16 @@ All parameters use `PARAM_*` prefix at runtime. No credentials needed — Seleni
 - Chrome Node: TCP check on port 5555
 - Firefox Node: TCP check on port 5555
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30444** | TCP | Selenium Hub API / Grid UI (NodePort) | Always |
+
 ## Access
 
 ```bash

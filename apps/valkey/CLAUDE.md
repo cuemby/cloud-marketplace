@@ -40,6 +40,14 @@ All parameters use `PARAM_*` prefix at runtime. Password is auto-generated in `h
 - `SET healthcheck_test "ok"` via kubectl exec (write operation)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30379** | TCP | Valkey/RESP protocol access (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest releases at https://github.com/valkey-io/valkey/releases

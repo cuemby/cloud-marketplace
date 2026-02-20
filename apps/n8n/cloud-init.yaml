@@ -26,6 +26,8 @@ write_files:
       # Optional parameters (defaults applied in pre-install hook)
       export PARAM_N8N_DB_DATA_SIZE="{{param-n8n-db-data-size}}"
       export PARAM_N8N_DATA_SIZE="{{param-n8n-data-size}}"
+      export PARAM_N8N_SSL_ENABLED="{{param-n8n-ssl-enabled}}"
+      export PARAM_N8N_HOSTNAME="{{param-n8n-hostname}}"
 
 runcmd:
   - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

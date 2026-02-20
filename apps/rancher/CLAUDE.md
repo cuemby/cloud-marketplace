@@ -22,6 +22,17 @@ Three versions supported: 2.13.2 (default), 2.12.3, 2.11.3.
 40-service.yaml     -> NodePort 30443 (HTTPS) + 30080 (HTTP)
 ```
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30443** | TCP | HTTPS self-signed (NodePort) | Always |
+| **30080** | TCP | HTTP redirect (NodePort) | Always |
+
 ## Access
 
 ```bash

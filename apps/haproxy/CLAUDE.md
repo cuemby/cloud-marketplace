@@ -26,6 +26,17 @@
 2. Stats interface accessible at `http://localhost:8936/stats`
 3. Pod running status verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | HTTP proxy via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30080** | TCP | HTTP frontend (NodePort) | Always |
+| **30936** | TCP | Stats dashboard (NodePort) | Always |
+
 ## Access
 
 | Endpoint | Port | Protocol |

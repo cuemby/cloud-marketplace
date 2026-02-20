@@ -43,6 +43,18 @@ The `weed server -s3` command runs all components in a single process, suitable 
 - **8888**: Filer (POSIX-like file interface)
 - **8333**: S3 gateway (S3-compatible API)
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Filer via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30833** | TCP | S3 API (NodePort) | Always |
+| **30888** | TCP | Filer (NodePort) | Always |
+| **30933** | TCP | Master (NodePort) | Always |
+
 ## Version Update
 
 1. Check available tags at Docker Hub: `chrislusf/seaweedfs`

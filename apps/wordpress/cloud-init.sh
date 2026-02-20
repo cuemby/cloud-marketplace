@@ -28,6 +28,8 @@ export PARAM_WORDPRESS_ADMIN_EMAIL="{{param-wordpress-admin-email}}"
 export PARAM_WORDPRESS_SITE_TITLE="{{param-wordpress-site-title}}"
 export PARAM_WORDPRESS_DATA_SIZE="{{param-wordpress-data-size}}"
 export PARAM_MARIADB_DATA_SIZE="{{param-mariadb-data-size}}"
+export PARAM_WORDPRESS_SSL_ENABLED="{{param-wordpress-ssl-enabled}}"
+export PARAM_WORDPRESS_HOSTNAME="{{param-wordpress-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

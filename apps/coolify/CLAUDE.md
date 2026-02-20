@@ -51,6 +51,16 @@ Coolify does NOT support automated admin account creation. The admin account is 
 - Coolify HTTP: `curl http://localhost:8080` returns 200/301/302 (container listens on 8080 internally)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30800** | TCP | Web UI (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://github.com/coollabsio/coolify/releases

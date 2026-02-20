@@ -27,6 +27,8 @@ export PARAM_NEXTCLOUD_VALKEY_PASSWORD="{{param-nextcloud-valkey-password}}"
 export PARAM_NEXTCLOUD_ADMIN_USER="{{param-nextcloud-admin-user}}"
 export PARAM_NEXTCLOUD_DB_DATA_SIZE="{{param-nextcloud-db-data-size}}"
 export PARAM_NEXTCLOUD_DATA_SIZE="{{param-nextcloud-data-size}}"
+export PARAM_NEXTCLOUD_SSL_ENABLED="{{param-nextcloud-ssl-enabled}}"
+export PARAM_NEXTCLOUD_HOSTNAME="{{param-nextcloud-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

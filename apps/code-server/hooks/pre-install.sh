@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[code-server/pre-install] Setting defaults and generating credentials..."
 
@@ -53,6 +55,23 @@ export PARAM_CODE_SERVER_CPU_REQUEST="${PARAM_CODE_SERVER_CPU_REQUEST:-250m}"
 export PARAM_CODE_SERVER_CPU_LIMIT="${PARAM_CODE_SERVER_CPU_LIMIT:-2000m}"
 export PARAM_CODE_SERVER_MEMORY_REQUEST="${PARAM_CODE_SERVER_MEMORY_REQUEST:-512Mi}"
 export PARAM_CODE_SERVER_MEMORY_LIMIT="${PARAM_CODE_SERVER_MEMORY_LIMIT:-2048Mi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_CODE_SERVER_SSL_ENABLED:-}" && PARAM_CODE_SERVER_SSL_ENABLED="true"
+export PARAM_CODE_SERVER_SSL_ENABLED
+
+if [[ "${PARAM_CODE_SERVER_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_CODE_SERVER_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_CODE_SERVER_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "code-server" "PARAM_HOSTNAME" "code-server-http" 80
+    PARAM_CODE_SERVER_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_CODE_SERVER_HOSTNAME
+    log_info "[code-server/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[code-server/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[code-server/pre-install] Pre-install complete."
 readonly _CODE_SERVER_PRE_INSTALL_DONE=1

@@ -14,6 +14,8 @@ write_files:
       export APP_NAME="nexus3"
       export APP_VERSION="{{app-version}}"
       export PARAM_NEXUS_DATA_SIZE="{{param-nexus-data-size}}"
+      export PARAM_NEXUS3_SSL_ENABLED="{{param-nexus3-ssl-enabled}}"
+      export PARAM_NEXUS3_HOSTNAME="{{param-nexus3-hostname}}"
 
 runcmd:
   - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

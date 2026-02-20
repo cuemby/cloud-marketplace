@@ -7,7 +7,7 @@ deployMethod: manifest
 manifests:
   path: manifests/
 ssl:
-  enabled: false
+  enabled: true
 requirements:
   cpu: 2
   memory: 4Gi
@@ -27,4 +27,15 @@ parameters:
     displayName: Dev Root Token
     description: Root token for OpenBao dev mode access
     type: password
+    required: false
+  - name: OPENBAO_SSL_ENABLED
+    displayName: Enable SSL (HTTPS)
+    description: Enable HTTPS access via Let's Encrypt certificate and sslip.io domain
+    type: string
+    required: false
+    default: "true"
+  - name: OPENBAO_HOSTNAME
+    displayName: Hostname
+    description: Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)
+    type: string
     required: false

@@ -29,6 +29,8 @@ export PARAM_HARBOR_VALKEY_PASSWORD="{{param-harbor-valkey-password}}"
 # Optional parameters (defaults applied in pre-install hook)
 export PARAM_HARBOR_REGISTRY_DATA_SIZE="{{param-harbor-registry-data-size}}"
 export PARAM_HARBOR_DB_DATA_SIZE="{{param-harbor-db-data-size}}"
+export PARAM_HARBOR_SSL_ENABLED="{{param-harbor-ssl-enabled}}"
+export PARAM_HARBOR_HOSTNAME="{{param-harbor-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

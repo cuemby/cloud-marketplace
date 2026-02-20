@@ -26,6 +26,8 @@ write_files:
       export PARAM_OPENSEARCH_CLUSTER_NAME="{{param-opensearch-cluster-name}}"
       export PARAM_OPENSEARCH_DATA_SIZE="{{param-opensearch-data-size}}"
       export PARAM_OPENSEARCH_JAVA_OPTS="{{param-opensearch-java-opts}}"
+      export PARAM_OPENSEARCH_SSL_ENABLED="{{param-opensearch-ssl-enabled}}"
+      export PARAM_OPENSEARCH_HOSTNAME="{{param-opensearch-hostname}}"
 
 runcmd:
   - git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

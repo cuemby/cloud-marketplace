@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[odoo/pre-install] Setting defaults and generating credentials..."
 
@@ -69,6 +71,23 @@ export PARAM_ODOO_CPU_REQUEST="${PARAM_ODOO_CPU_REQUEST:-500m}"
 export PARAM_ODOO_CPU_LIMIT="${PARAM_ODOO_CPU_LIMIT:-1500m}"
 export PARAM_ODOO_MEMORY_REQUEST="${PARAM_ODOO_MEMORY_REQUEST:-512Mi}"
 export PARAM_ODOO_MEMORY_LIMIT="${PARAM_ODOO_MEMORY_LIMIT:-2Gi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_ODOO_SSL_ENABLED:-}" && PARAM_ODOO_SSL_ENABLED="true"
+export PARAM_ODOO_SSL_ENABLED
+
+if [[ "${PARAM_ODOO_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_ODOO_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_ODOO_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "odoo" "PARAM_HOSTNAME" "odoo-http" 80
+    PARAM_ODOO_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_ODOO_HOSTNAME
+    log_info "[odoo/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[odoo/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[odoo/pre-install] Pre-install complete."
 readonly _ODOO_PRE_INSTALL_DONE=1

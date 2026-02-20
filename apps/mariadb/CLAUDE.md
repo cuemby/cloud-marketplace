@@ -32,6 +32,14 @@ All parameters use `PARAM_*` prefix at runtime. Credentials (root password, user
 - `SELECT 1` via kubectl exec (query execution)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30306** | TCP | MySQL protocol access (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest patch at https://mariadb.org/download/

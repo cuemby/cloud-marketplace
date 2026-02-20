@@ -32,6 +32,8 @@ write_files:
       # Optional parameters (defaults applied in pre-install hook)
       export PARAM_SONARQUBE_DB_DATA_SIZE="{{param-sonarqube-db-data-size}}"
       export PARAM_SONARQUBE_DATA_SIZE="{{param-sonarqube-data-size}}"
+      export PARAM_SONARQUBE_SSL_ENABLED="{{param-sonarqube-ssl-enabled}}"
+      export PARAM_SONARQUBE_HOSTNAME="{{param-sonarqube-hostname}}"
 
 runcmd:
   - sysctl --system

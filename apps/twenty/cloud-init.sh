@@ -24,6 +24,8 @@ export PARAM_TWENTY_DB_PASSWORD="{{param-twenty-db-password}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_TWENTY_DB_DATA_SIZE="{{param-twenty-db-data-size}}"
 export PARAM_TWENTY_DATA_SIZE="{{param-twenty-data-size}}"
+export PARAM_TWENTY_SSL_ENABLED="{{param-twenty-ssl-enabled}}"
+export PARAM_TWENTY_HOSTNAME="{{param-twenty-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

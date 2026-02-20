@@ -35,6 +35,16 @@ All parameters use `PARAM_*` prefix at runtime. Database password is auto-genera
 - MLflow: HTTP GET `http://127.0.0.1:5000/health`
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30500** | TCP | MLflow web UI (NodePort) | Always |
+
 ## Access
 
 ```bash

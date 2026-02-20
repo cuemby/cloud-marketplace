@@ -37,6 +37,17 @@ Jenkins creates an initial admin password at `/var/jenkins_home/secrets/initialA
 - HTTP GET `/login` returns 200 (works before setup wizard completion)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30080** | TCP | Web UI (NodePort) | Always |
+| **30500** | TCP | JNLP agents (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest LTS at https://www.jenkins.io/changelog-stable/

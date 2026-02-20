@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[sonarqube/pre-install] Setting defaults and generating credentials..."
 
@@ -63,6 +65,23 @@ export PARAM_SONARQUBE_CPU_REQUEST="${PARAM_SONARQUBE_CPU_REQUEST:-1000m}"
 export PARAM_SONARQUBE_CPU_LIMIT="${PARAM_SONARQUBE_CPU_LIMIT:-3000m}"
 export PARAM_SONARQUBE_MEMORY_REQUEST="${PARAM_SONARQUBE_MEMORY_REQUEST:-2Gi}"
 export PARAM_SONARQUBE_MEMORY_LIMIT="${PARAM_SONARQUBE_MEMORY_LIMIT:-6Gi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_SONARQUBE_SSL_ENABLED:-}" && PARAM_SONARQUBE_SSL_ENABLED="true"
+export PARAM_SONARQUBE_SSL_ENABLED
+
+if [[ "${PARAM_SONARQUBE_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_SONARQUBE_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_SONARQUBE_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "sonarqube" "PARAM_HOSTNAME" "sonarqube-http" 80
+    PARAM_SONARQUBE_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_SONARQUBE_HOSTNAME
+    log_info "[sonarqube/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[sonarqube/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[sonarqube/pre-install] Pre-install complete."
 readonly _SONARQUBE_PRE_INSTALL_DONE=1

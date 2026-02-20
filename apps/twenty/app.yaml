@@ -7,7 +7,7 @@ deployMethod: manifest
 manifests:
   path: manifests/
 ssl:
-  enabled: false
+  enabled: true
 requirements:
   cpu: 2
   memory: 4Gi
@@ -39,3 +39,14 @@ parameters:
     type: string
     required: false
     default: "10Gi"
+  - name: TWENTY_SSL_ENABLED
+    displayName: Enable SSL (HTTPS)
+    description: Enable HTTPS access via Let's Encrypt certificate and sslip.io domain
+    type: string
+    required: false
+    default: "true"
+  - name: TWENTY_HOSTNAME
+    displayName: Hostname
+    description: Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)
+    type: string
+    required: false

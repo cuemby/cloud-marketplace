@@ -49,6 +49,16 @@ http://<VM-IP>:30080/status.php
 
 Admin credentials are configured during deployment via env vars (no setup wizard).
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30080** | TCP | Nextcloud web UI (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://github.com/nextcloud/server/releases

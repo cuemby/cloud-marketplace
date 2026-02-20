@@ -19,6 +19,8 @@ export APP_VERSION="{{app-version}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_GITEA_DATA_SIZE="{{param-gitea-data-size}}"
+export PARAM_GITEA_SSL_ENABLED="{{param-gitea-ssl-enabled}}"
+export PARAM_GITEA_HOSTNAME="{{param-gitea-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

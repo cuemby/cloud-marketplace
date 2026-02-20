@@ -43,6 +43,14 @@ Percona Server is a drop-in replacement for MySQL with additional features:
 
 Uses the same MySQL CLI tools (`mysqladmin`, `mysql`) and is wire-compatible.
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30306** | TCP | MySQL protocol access (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://www.percona.com/software/mysql-database

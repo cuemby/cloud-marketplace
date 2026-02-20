@@ -86,7 +86,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -115,6 +115,21 @@
           "type": "string",
           "required": false,
           "default": "20Gi"
+        },
+        {
+          "name": "CODE_SERVER_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "CODE_SERVER_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -129,7 +144,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -202,6 +217,21 @@
           "type": "string",
           "required": false,
           "default": "20Gi"
+        },
+        {
+          "name": "COOLIFY_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "COOLIFY_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -267,7 +297,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 4,
@@ -303,6 +333,21 @@
           "type": "string",
           "required": false,
           "default": "10Gi"
+        },
+        {
+          "name": "DEVTRON_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "DEVTRON_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -403,7 +448,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -447,6 +492,21 @@
           "type": "string",
           "required": false,
           "default": "10Gi"
+        },
+        {
+          "name": "GHOST_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "GHOST_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -461,7 +521,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -483,6 +543,21 @@
           "type": "string",
           "required": false,
           "default": "20Gi"
+        },
+        {
+          "name": "GITEA_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "GITEA_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -497,7 +572,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -526,6 +601,21 @@
           "type": "string",
           "required": false,
           "default": "admin"
+        },
+        {
+          "name": "HAPROXY_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "HAPROXY_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -540,7 +630,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 4,
@@ -598,6 +688,21 @@
           "type": "string",
           "required": false,
           "default": "10Gi"
+        },
+        {
+          "name": "HARBOR_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "HARBOR_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -612,7 +717,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -642,6 +747,21 @@
           "type": "string",
           "required": false,
           "default": "-Xms512m -Xmx1g"
+        },
+        {
+          "name": "JENKINS_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "JENKINS_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -656,7 +776,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -700,6 +820,21 @@
           "type": "string",
           "required": false,
           "default": "5Gi"
+        },
+        {
+          "name": "JOOMLA_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "JOOMLA_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -765,7 +900,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -817,6 +952,21 @@
           "type": "string",
           "required": false,
           "default": "1Gi"
+        },
+        {
+          "name": "KEYCLOAK_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "KEYCLOAK_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -831,7 +981,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -860,6 +1010,21 @@
           "type": "string",
           "required": false,
           "default": "5Gi"
+        },
+        {
+          "name": "KONG_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "KONG_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -940,7 +1105,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -977,6 +1142,21 @@
           "type": "string",
           "required": false,
           "default": "20Gi"
+        },
+        {
+          "name": "MLFLOW_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "MLFLOW_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1108,7 +1288,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1152,6 +1332,21 @@
           "type": "string",
           "required": false,
           "default": "5Gi"
+        },
+        {
+          "name": "N8N_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "N8N_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1209,7 +1404,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1246,6 +1441,21 @@
           "type": "string",
           "required": false,
           "default": "1G"
+        },
+        {
+          "name": "NEO4J_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "NEO4J_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1260,7 +1470,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1326,6 +1536,21 @@
           "type": "string",
           "required": false,
           "default": "30Gi"
+        },
+        {
+          "name": "NEXTCLOUD_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "NEXTCLOUD_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1340,7 +1565,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1362,6 +1587,21 @@
           "type": "string",
           "required": false,
           "default": "50Gi"
+        },
+        {
+          "name": "NEXUS3_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "NEXUS3_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1376,7 +1616,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1420,6 +1660,21 @@
           "type": "string",
           "required": false,
           "default": "10Gi"
+        },
+        {
+          "name": "ODOO_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "ODOO_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1434,7 +1689,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1462,6 +1717,21 @@
           "displayName": "Dev Root Token",
           "description": "Root token for OpenBao dev mode access",
           "type": "password",
+          "required": false
+        },
+        {
+          "name": "OPENBAO_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "OPENBAO_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
           "required": false
         }
       ]
@@ -1543,7 +1813,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 4,
@@ -1588,6 +1858,21 @@
           "type": "string",
           "required": false,
           "default": "-Xms2g -Xmx2g"
+        },
+        {
+          "name": "OPENSEARCH_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "OPENSEARCH_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1602,7 +1887,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1668,6 +1953,21 @@
           "type": "string",
           "required": false,
           "default": "30Gi"
+        },
+        {
+          "name": "OWNCLOUD_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "OWNCLOUD_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1748,7 +2048,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1770,6 +2070,21 @@
           "type": "string",
           "required": false,
           "default": "5Gi"
+        },
+        {
+          "name": "PORTAINER_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "PORTAINER_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1867,7 +2182,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1904,6 +2219,21 @@
           "type": "string",
           "required": false,
           "default": "10Gi"
+        },
+        {
+          "name": "RABBITMQ_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "RABBITMQ_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1918,7 +2248,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 4,
@@ -1947,6 +2277,21 @@
           "type": "string",
           "required": false,
           "default": "20Gi"
+        },
+        {
+          "name": "RANCHER_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "RANCHER_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -1961,7 +2306,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -1991,6 +2336,21 @@
           "type": "string",
           "required": false,
           "default": "1000"
+        },
+        {
+          "name": "SEAWEEDFS_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "SEAWEEDFS_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -2005,7 +2365,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 4,
@@ -2035,6 +2395,21 @@
           "type": "string",
           "required": false,
           "default": "1"
+        },
+        {
+          "name": "SELENIUM_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "SELENIUM_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -2049,7 +2424,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 4,
@@ -2086,6 +2461,21 @@
           "type": "string",
           "required": false,
           "default": "20Gi"
+        },
+        {
+          "name": "SONARQUBE_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "SONARQUBE_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -2100,7 +2490,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -2144,6 +2534,21 @@
           "type": "string",
           "required": false,
           "default": "10Gi"
+        },
+        {
+          "name": "TWENTY_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "TWENTY_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -2217,7 +2622,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -2246,6 +2651,21 @@
           "type": "string",
           "required": false,
           "default": "5Gi"
+        },
+        {
+          "name": "VAULTWARDEN_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "VAULTWARDEN_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     },
@@ -2260,7 +2680,7 @@
         "path": "manifests/"
       },
       "ssl": {
-        "enabled": false
+        "enabled": true
       },
       "requirements": {
         "cpu": 2,
@@ -2335,9 +2755,24 @@
           "type": "string",
           "required": false,
           "default": "5Gi"
+        },
+        {
+          "name": "WORDPRESS_SSL_ENABLED",
+          "displayName": "Enable SSL (HTTPS)",
+          "description": "Enable HTTPS access via Let's Encrypt certificate and sslip.io domain",
+          "type": "string",
+          "required": false,
+          "default": "true"
+        },
+        {
+          "name": "WORDPRESS_HOSTNAME",
+          "displayName": "Hostname",
+          "description": "Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)",
+          "type": "string",
+          "required": false
         }
       ]
     }
   ],
-  "generated": "2026-02-20T20:43:32Z"
+  "generated": "2026-02-20T21:58:27Z"
 }

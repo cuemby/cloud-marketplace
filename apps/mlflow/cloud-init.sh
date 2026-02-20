@@ -23,6 +23,8 @@ export PARAM_MLFLOW_DB_PASSWORD="{{param-mlflow-db-password}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_MLFLOW_DB_DATA_SIZE="{{param-mlflow-db-data-size}}"
 export PARAM_MLFLOW_ARTIFACT_SIZE="{{param-mlflow-artifact-size}}"
+export PARAM_MLFLOW_SSL_ENABLED="{{param-mlflow-ssl-enabled}}"
+export PARAM_MLFLOW_HOSTNAME="{{param-mlflow-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

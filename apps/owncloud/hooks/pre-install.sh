@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[owncloud/pre-install] Setting defaults and generating credentials..."
 
@@ -83,6 +85,23 @@ export PARAM_OWNCLOUD_CPU_REQUEST="${PARAM_OWNCLOUD_CPU_REQUEST:-250m}"
 export PARAM_OWNCLOUD_CPU_LIMIT="${PARAM_OWNCLOUD_CPU_LIMIT:-1500m}"
 export PARAM_OWNCLOUD_MEMORY_REQUEST="${PARAM_OWNCLOUD_MEMORY_REQUEST:-512Mi}"
 export PARAM_OWNCLOUD_MEMORY_LIMIT="${PARAM_OWNCLOUD_MEMORY_LIMIT:-2Gi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_OWNCLOUD_SSL_ENABLED:-}" && PARAM_OWNCLOUD_SSL_ENABLED="true"
+export PARAM_OWNCLOUD_SSL_ENABLED
+
+if [[ "${PARAM_OWNCLOUD_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_OWNCLOUD_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_OWNCLOUD_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "owncloud" "PARAM_HOSTNAME" "owncloud-http" 80
+    PARAM_OWNCLOUD_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_OWNCLOUD_HOSTNAME
+    log_info "[owncloud/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[owncloud/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[owncloud/pre-install] Pre-install complete."
 readonly _OWNCLOUD_PRE_INSTALL_DONE=1

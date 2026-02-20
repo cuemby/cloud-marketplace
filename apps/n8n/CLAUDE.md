@@ -44,6 +44,16 @@ http://<VM-IP>:30080
 
 Owner account is created on first login via the web UI.
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30080** | TCP | n8n web UI (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://github.com/n8n-io/n8n/releases

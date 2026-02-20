@@ -45,6 +45,14 @@ Heap is configured via `MAX_HEAP_SIZE` and `HEAP_NEWSIZE` env vars (read by `cas
 - `cqlsh -e "SELECT cluster_name FROM system.local"` (CQL query)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30942** | TCP | CQL access (NodePort) | Always |
+
 ## Authentication
 
 The official image starts with `AllowAllAuthenticator` by default. The post-install hook sets the superuser password via `ALTER USER cassandra WITH PASSWORD '...'`. For production, users should enable `PasswordAuthenticator` in `cassandra.yaml`.

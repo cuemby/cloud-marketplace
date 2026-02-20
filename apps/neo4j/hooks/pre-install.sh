@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[neo4j/pre-install] Setting defaults and generating credentials..."
 
@@ -57,6 +59,23 @@ export PARAM_NEO4J_CPU_REQUEST="${PARAM_NEO4J_CPU_REQUEST:-250m}"
 export PARAM_NEO4J_CPU_LIMIT="${PARAM_NEO4J_CPU_LIMIT:-2000m}"
 export PARAM_NEO4J_MEMORY_REQUEST="${PARAM_NEO4J_MEMORY_REQUEST:-512Mi}"
 export PARAM_NEO4J_MEMORY_LIMIT="${PARAM_NEO4J_MEMORY_LIMIT:-3072Mi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_NEO4J_SSL_ENABLED:-}" && PARAM_NEO4J_SSL_ENABLED="true"
+export PARAM_NEO4J_SSL_ENABLED
+
+if [[ "${PARAM_NEO4J_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_NEO4J_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_NEO4J_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "neo4j" "PARAM_HOSTNAME" "neo4j-http" 80
+    PARAM_NEO4J_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_NEO4J_HOSTNAME
+    log_info "[neo4j/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[neo4j/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[neo4j/pre-install] Pre-install complete."
 readonly _NEO4J_PRE_INSTALL_DONE=1

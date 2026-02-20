@@ -20,6 +20,8 @@ export APP_VERSION="{{app-version}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_JENKINS_DATA_SIZE="{{param-jenkins-data-size}}"
 export PARAM_JENKINS_JAVA_OPTS="{{param-jenkins-java-opts}}"
+export PARAM_JENKINS_SSL_ENABLED="{{param-jenkins-ssl-enabled}}"
+export PARAM_JENKINS_HOSTNAME="{{param-jenkins-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

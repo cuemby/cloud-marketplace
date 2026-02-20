@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[nextcloud/pre-install] Setting defaults and generating credentials..."
 
@@ -83,6 +85,23 @@ export PARAM_NEXTCLOUD_CPU_REQUEST="${PARAM_NEXTCLOUD_CPU_REQUEST:-250m}"
 export PARAM_NEXTCLOUD_CPU_LIMIT="${PARAM_NEXTCLOUD_CPU_LIMIT:-1500m}"
 export PARAM_NEXTCLOUD_MEMORY_REQUEST="${PARAM_NEXTCLOUD_MEMORY_REQUEST:-512Mi}"
 export PARAM_NEXTCLOUD_MEMORY_LIMIT="${PARAM_NEXTCLOUD_MEMORY_LIMIT:-2Gi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_NEXTCLOUD_SSL_ENABLED:-}" && PARAM_NEXTCLOUD_SSL_ENABLED="true"
+export PARAM_NEXTCLOUD_SSL_ENABLED
+
+if [[ "${PARAM_NEXTCLOUD_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_NEXTCLOUD_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_NEXTCLOUD_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "nextcloud" "PARAM_HOSTNAME" "nextcloud-http" 80
+    PARAM_NEXTCLOUD_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_NEXTCLOUD_HOSTNAME
+    log_info "[nextcloud/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[nextcloud/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[nextcloud/pre-install] Pre-install complete."
 readonly _NEXTCLOUD_PRE_INSTALL_DONE=1

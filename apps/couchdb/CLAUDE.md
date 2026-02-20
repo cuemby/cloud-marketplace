@@ -35,6 +35,14 @@ Post-install calls `PUT /_cluster_setup` with `{"action":"enable_single_node"}` 
 - `GET /_up` returns 200 when healthy
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30594** | TCP | HTTP API + Fauxton UI (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://couchdb.apache.org/

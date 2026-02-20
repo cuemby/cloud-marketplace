@@ -56,6 +56,16 @@ curl http://<VM-IP>:30443/api/v2.0/health
 docker login <VM-IP>:30443 -u admin -p <password>
 ```
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Portal via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30443** | TCP | Portal (NodePort) | Always |
+
 ## Version Updates
 1. Check [Harbor Releases](https://github.com/goharbor/harbor/releases)
 2. All Harbor images share the same tag (e.g., `v2.14.2`)

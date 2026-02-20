@@ -31,6 +31,8 @@ export PARAM_SONARQUBE_DB_PASSWORD="{{param-sonarqube-db-password}}"
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)
 export PARAM_SONARQUBE_DB_DATA_SIZE="{{param-sonarqube-db-data-size}}"
 export PARAM_SONARQUBE_DATA_SIZE="{{param-sonarqube-data-size}}"
+export PARAM_SONARQUBE_SSL_ENABLED="{{param-sonarqube-ssl-enabled}}"
+export PARAM_SONARQUBE_HOSTNAME="{{param-sonarqube-hostname}}"
 
 # -- Deploy --
 git clone https://github.com/cuemby/cloud-marketplace.git /opt/cuemby/marketplace

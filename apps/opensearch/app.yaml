@@ -7,7 +7,7 @@ deployMethod: manifest
 manifests:
   path: manifests/
 ssl:
-  enabled: false
+  enabled: true
 requirements:
   cpu: 4
   memory: 8Gi
@@ -40,3 +40,16 @@ parameters:
     type: string
     required: false
     default: "-Xms2g -Xmx2g"
+
+  - name: OPENSEARCH_SSL_ENABLED
+    displayName: Enable SSL (HTTPS)
+    description: Enable HTTPS access via Let's Encrypt certificate and sslip.io domain
+    type: string
+    required: false
+    default: "true"
+
+  - name: OPENSEARCH_HOSTNAME
+    displayName: Hostname
+    description: Custom hostname for HTTPS access (auto-detected as <IP>.sslip.io if empty)
+    type: string
+    required: false

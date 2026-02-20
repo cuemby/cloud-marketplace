@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[haproxy/pre-install] Setting defaults and generating credentials..."
 
@@ -56,6 +58,23 @@ export PARAM_HAPROXY_CPU_REQUEST="${PARAM_HAPROXY_CPU_REQUEST:-250m}"
 export PARAM_HAPROXY_CPU_LIMIT="${PARAM_HAPROXY_CPU_LIMIT:-2000m}"
 export PARAM_HAPROXY_MEMORY_REQUEST="${PARAM_HAPROXY_MEMORY_REQUEST:-256Mi}"
 export PARAM_HAPROXY_MEMORY_LIMIT="${PARAM_HAPROXY_MEMORY_LIMIT:-1536Mi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_HAPROXY_SSL_ENABLED:-}" && PARAM_HAPROXY_SSL_ENABLED="true"
+export PARAM_HAPROXY_SSL_ENABLED
+
+if [[ "${PARAM_HAPROXY_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_HAPROXY_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_HAPROXY_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "haproxy" "PARAM_HOSTNAME" "haproxy-http" 80
+    PARAM_HAPROXY_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_HAPROXY_HOSTNAME
+    log_info "[haproxy/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[haproxy/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[haproxy/pre-install] Pre-install complete."
 readonly _HAPROXY_PRE_INSTALL_DONE=1

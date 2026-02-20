@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[rancher/pre-install] Setting defaults and generating credentials..."
 
@@ -56,6 +58,23 @@ export PARAM_RANCHER_CPU_REQUEST="${PARAM_RANCHER_CPU_REQUEST:-1000m}"
 export PARAM_RANCHER_CPU_LIMIT="${PARAM_RANCHER_CPU_LIMIT:-4000m}"
 export PARAM_RANCHER_MEMORY_REQUEST="${PARAM_RANCHER_MEMORY_REQUEST:-2Gi}"
 export PARAM_RANCHER_MEMORY_LIMIT="${PARAM_RANCHER_MEMORY_LIMIT:-6Gi}"
+
+# --- SSL / HTTPS ---
+_needs_value "${PARAM_RANCHER_SSL_ENABLED:-}" && PARAM_RANCHER_SSL_ENABLED="true"
+export PARAM_RANCHER_SSL_ENABLED
+
+if [[ "${PARAM_RANCHER_SSL_ENABLED}" == "true" ]]; then
+    if ! _needs_value "${PARAM_RANCHER_HOSTNAME:-}"; then
+        PARAM_HOSTNAME="${PARAM_RANCHER_HOSTNAME}"
+        export PARAM_HOSTNAME
+    fi
+    ssl_full_setup "rancher" "PARAM_HOSTNAME" "rancher-http" 80
+    PARAM_RANCHER_HOSTNAME="${SSL_HOSTNAME}"
+    export PARAM_RANCHER_HOSTNAME
+    log_info "[rancher/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+else
+    log_info "[rancher/pre-install] SSL disabled — access via NodePort only."
+fi
 
 log_info "[rancher/pre-install] Pre-install complete."
 readonly _RANCHER_PRE_INSTALL_DONE=1

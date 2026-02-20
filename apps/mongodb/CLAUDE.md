@@ -32,6 +32,14 @@ All parameters use `PARAM_*` prefix at runtime. Root password is auto-generated 
 - `db.getSiblingDB('test').healthcheck.insertOne(...)` via kubectl exec (write operation)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30017** | TCP | MongoDB protocol access (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest patch at https://www.mongodb.com/try/download/community

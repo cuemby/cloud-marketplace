@@ -36,6 +36,17 @@ All parameters use `PARAM_*` prefix at runtime. Admin password is auto-generated
 - `rabbitmqctl list_queues` via kubectl exec (broker functionality)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Management UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30672** | TCP | AMQP protocol (NodePort) | Always |
+| **31672** | TCP | Management UI (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest patch at https://www.rabbitmq.com/release-information

@@ -38,6 +38,17 @@ The password is injected via `valueFrom.secretKeyRef` (not `envFrom`).
 - Cypher query via `cypher-shell` (healthcheck hook)
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | HTTP browser via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30474** | TCP | HTTP browser (NodePort) | Always |
+| **30687** | TCP | Bolt protocol (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest patch on Docker Hub (`neo4j` official image)

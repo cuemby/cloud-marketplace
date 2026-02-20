@@ -37,6 +37,17 @@ Gitea does NOT support automated admin account creation in this configuration. T
 - `GET /api/healthz` returns 200 when healthy
 - PVC binding verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30300** | TCP | Web UI + Git HTTP (NodePort) | Always |
+| **30022** | TCP | Git SSH (NodePort) | Always |
+
 ## Version Update Procedure
 
 1. Check latest release at https://github.com/go-gitea/gitea/releases

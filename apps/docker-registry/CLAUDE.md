@@ -26,6 +26,14 @@
 2. HTTP GET `http://localhost:5000/v2/_catalog` — catalog endpoint accessible
 3. PVC bound status verification
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **30500** | TCP | Docker Registry v2 API (NodePort) | Always |
+
 ## Access
 
 | Endpoint | Port | Protocol |

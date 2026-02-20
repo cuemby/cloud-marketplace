@@ -31,6 +31,16 @@
 |----------|------|----------|
 | Web IDE | 30080 (NodePort) | HTTP |
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30080** | TCP | code-server web IDE (NodePort) | Always |
+
 ## Version Update
 
 1. Check available tags at Docker Hub: `codercom/code-server`

@@ -28,6 +28,16 @@
 - **Odoo**: HTTP GET `http://127.0.0.1:8069/web/database/selector` (startup/liveness/readiness)
 - **PVC binding**: All PVCs must be in `Bound` phase
 
+## Networking / Firewall
+
+The following ports must be opened at the firewall or load balancer level:
+
+| Port | Protocol | Purpose | When |
+|------|----------|---------|------|
+| **443** | HTTPS | Web UI via Traefik Gateway | SSL enabled |
+| **80** | HTTP | Redirects to HTTPS (301) | SSL enabled |
+| **30069** | TCP | Odoo web UI (NodePort) | Always |
+
 ## Access
 
 - **Web UI**: `http://<VM-IP>:30069`
