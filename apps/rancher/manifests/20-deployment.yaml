@@ -19,6 +19,7 @@ spec:
         app.kubernetes.io/name: rancher
         app.kubernetes.io/component: rancher
     spec:
+      serviceAccountName: rancher
       containers:
         - name: rancher
           image: "docker.io/rancher/rancher:${PARAM_APP_IMAGE_TAG}"

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: rancher
+  labels:
+    app.kubernetes.io/name: rancher
+    app.kubernetes.io/component: rancher
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: rancher-cluster-admin
+  labels:
+    app.kubernetes.io/name: rancher
+    app.kubernetes.io/component: rancher
+subjects:
+  - kind: ServiceAccount
+    name: rancher
+    namespace: ${PARAM_RANCHER_NAMESPACE}
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io

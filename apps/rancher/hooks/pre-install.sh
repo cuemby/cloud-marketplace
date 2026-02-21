@@ -18,6 +18,9 @@ source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[rancher/pre-install] Setting defaults and generating credentials..."
 
+# --- Namespace (needed for RBAC ClusterRoleBinding) ---
+export PARAM_RANCHER_NAMESPACE="${HELM_NAMESPACE_PREFIX}rancher"
+
 # --- Password generation (alphanumeric only to avoid YAML escaping issues) ---
 _generate_password() {
     openssl rand -base64 24 | tr -d '/+=' | head -c 32

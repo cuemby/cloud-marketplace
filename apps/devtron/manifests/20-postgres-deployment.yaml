@@ -32,6 +32,8 @@ spec:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
               subPath: pgdata
+            - name: initdb
+              mountPath: /docker-entrypoint-initdb.d
           startupProbe:
             exec:
               command:
@@ -71,3 +73,6 @@ spec:
         - name: postgres-data
           persistentVolumeClaim:
             claimName: devtron-postgres-data
+        - name: initdb
+          configMap:
+            name: devtron-postgres-initdb

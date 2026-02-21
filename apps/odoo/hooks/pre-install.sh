@@ -81,7 +81,7 @@ if [[ "${PARAM_ODOO_SSL_ENABLED}" == "true" ]]; then
         PARAM_HOSTNAME="${PARAM_ODOO_HOSTNAME}"
         export PARAM_HOSTNAME
     fi
-    ssl_full_setup "odoo" "PARAM_HOSTNAME" "odoo-http" 80
+    ssl_full_setup "odoo" "PARAM_HOSTNAME" "odoo-web" 80
     PARAM_ODOO_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_ODOO_HOSTNAME
     log_info "[odoo/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
