@@ -26,8 +26,8 @@ spec:
             - sh
             - -c
             - |
-              echo "Waiting for Devtron orchestrator at devtron-orchestrator:8080..."
-              until nc -z devtron-orchestrator 8080; do
+              echo "Waiting for Devtron orchestrator at devtron-orchestrator:80..."
+              until nc -z devtron-orchestrator 80; do
                 echo "Orchestrator not ready, retrying in 5s..."
                 sleep 5
               done
