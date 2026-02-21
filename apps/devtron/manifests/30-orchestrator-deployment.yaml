@@ -40,6 +40,78 @@ spec:
             limits:
               cpu: 50m
               memory: 32Mi
+        - name: copy-migration-scripts
+          image: "quay.io/devtron/hyperion:${PARAM_APP_IMAGE_TAG}"
+          command:
+            - /bin/sh
+            - -c
+            - cp -r /scripts/. /shared/
+          volumeMounts:
+            - name: migration-scripts
+              mountPath: /shared
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 128Mi
+        - name: migrate-orchestrator
+          image: docker.io/migrate/migrate:v4.18.3
+          command:
+            - /bin/sh
+            - -c
+            - |
+              migrate -path /shared/sql/ \
+                -database "postgres://${PG_USER}:${PG_PASSWORD}@${PG_ADDR}:${PG_PORT}/${PG_DATABASE}?sslmode=disable" \
+                up
+          envFrom:
+            - configMapRef:
+                name: devtron-cm
+          env:
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: devtron-secret
+                  key: PG_PASSWORD
+          volumeMounts:
+            - name: migration-scripts
+              mountPath: /shared
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
+        - name: migrate-casbin
+          image: docker.io/migrate/migrate:v4.18.3
+          command:
+            - /bin/sh
+            - -c
+            - |
+              migrate -path /shared/casbin/ \
+                -database "postgres://${PG_USER}:${PG_PASSWORD}@${PG_ADDR}:${PG_PORT}/casbin?sslmode=disable" \
+                up
+          envFrom:
+            - configMapRef:
+                name: devtron-cm
+          env:
+            - name: PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: devtron-secret
+                  key: PG_PASSWORD
+          volumeMounts:
+            - name: migration-scripts
+              mountPath: /shared
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
         - name: wait-for-nats
           image: docker.io/library/busybox:1.37
           command:
@@ -104,3 +176,6 @@ spec:
             limits:
               cpu: ${PARAM_DEVTRON_ORCHESTRATOR_CPU_LIMIT}
               memory: ${PARAM_DEVTRON_ORCHESTRATOR_MEMORY_LIMIT}
+      volumes:
+        - name: migration-scripts
+          emptyDir: {}
