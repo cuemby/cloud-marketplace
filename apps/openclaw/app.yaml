@@ -18,9 +18,11 @@ requirements:
   disk: 20Gi
 
 versions:
+  - appVersion: "2026.2.23"
+    imageTag: "2026.2.23"
+    default: true
   - appVersion: "2026.2.19"
     imageTag: "2026.2.19"
-    default: true
 
 parameters:
   - name: OPENCLAW_API_KEY
