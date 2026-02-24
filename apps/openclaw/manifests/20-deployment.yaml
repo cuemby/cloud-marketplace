@@ -31,7 +31,7 @@ spec:
             - -c
             - |
               if [ ! -f /data/openclaw.json ]; then
-                printf '{"gateway":{"mode":"local","auth":{"mode":"token"},"controlUi":{"dangerouslyDisableDeviceAuth":true},"trustedProxies":["10.42.0.0/16"]},"commands":{"restart":false},"channels":{"whatsapp":{},"telegram":{},"discord":{},"slack":{}}}\n' > /data/openclaw.json
+                printf '{"gateway":{"mode":"local","auth":{"mode":"token"},"controlUi":{"dangerouslyDisableDeviceAuth":true,"dangerouslyAllowHostHeaderOriginFallback":true},"trustedProxies":["10.42.0.0/16"]},"commands":{"restart":false},"channels":{"whatsapp":{},"telegram":{},"discord":{},"slack":{}}}\n' > /data/openclaw.json
               fi
           volumeMounts:
             - name: openclaw-data
