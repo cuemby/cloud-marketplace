@@ -40,17 +40,12 @@ spec:
         - name: openclaw
           image: "ghcr.io/openclaw/openclaw:${PARAM_APP_IMAGE_TAG}"
           command:
-            - node
-            - dist/index.js
-            - gateway
-            - --bind
-            - lan
-            - --port
-            - "18789"
-            - --auth
-            - token
-            - --token
-            - $(OPENCLAW_GATEWAY_TOKEN)
+            - sh
+            - -c
+            - |
+              ln -sf /app/openclaw.mjs /tmp/openclaw
+              export PATH=/tmp:$PATH
+              exec node dist/index.js gateway --bind lan --port 18789 --auth token --token "$OPENCLAW_GATEWAY_TOKEN"
           ports:
             - name: gateway
               containerPort: 18789
@@ -97,6 +92,9 @@ spec:
                   name: openclaw-credentials
                   key: OPENCLAW_SLACK_APP_TOKEN
                   optional: true
+            # Allow exec-sandbox to invoke `openclaw` CLI against the local gateway
+            - name: OPENCLAW_GATEWAY_URL
+              value: "ws://localhost:18789"
             # Persist Playwright browser cache on PVC so Chromium survives pod restarts
             - name: PLAYWRIGHT_BROWSERS_PATH
               value: /home/node/.openclaw/.playwright
