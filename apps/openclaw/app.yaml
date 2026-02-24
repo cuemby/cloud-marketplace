@@ -64,3 +64,27 @@ parameters:
     type: string
     required: false
     default: "me@cuemby.com"
+
+  - name: OPENCLAW_TELEGRAM_TOKEN
+    displayName: Telegram Bot Token
+    description: Telegram bot token from @BotFather (optional, configure later from dashboard)
+    type: password
+    required: false
+
+  - name: OPENCLAW_DISCORD_TOKEN
+    displayName: Discord Bot Token
+    description: Discord bot token from Discord Developer Portal (optional, configure later from dashboard)
+    type: password
+    required: false
+
+  - name: OPENCLAW_SLACK_BOT_TOKEN
+    displayName: Slack Bot Token
+    description: Slack bot token (xoxb-...) from Slack App config (optional, configure later from dashboard)
+    type: password
+    required: false
+
+  - name: OPENCLAW_SLACK_APP_TOKEN
+    displayName: Slack App Token
+    description: Slack app-level token (xapp-...) for socket mode (optional, configure later from dashboard)
+    type: password
+    required: false

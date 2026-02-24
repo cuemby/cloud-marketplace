@@ -85,6 +85,12 @@ else
     log_info "[openclaw/pre-install] SSL disabled — WebSocket access via NodePort only."
 fi
 
+# --- Optional channel tokens (empty string if not provided) ---
+export PARAM_OPENCLAW_TELEGRAM_TOKEN="${PARAM_OPENCLAW_TELEGRAM_TOKEN:-}"
+export PARAM_OPENCLAW_DISCORD_TOKEN="${PARAM_OPENCLAW_DISCORD_TOKEN:-}"
+export PARAM_OPENCLAW_SLACK_BOT_TOKEN="${PARAM_OPENCLAW_SLACK_BOT_TOKEN:-}"
+export PARAM_OPENCLAW_SLACK_APP_TOKEN="${PARAM_OPENCLAW_SLACK_APP_TOKEN:-}"
+
 log_info "[openclaw/pre-install] Pre-install complete."
 readonly _OPENCLAW_PRE_INSTALL_DONE=1
 export _OPENCLAW_PRE_INSTALL_DONE

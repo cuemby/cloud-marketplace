@@ -31,14 +31,8 @@ spec:
             - -c
             - |
               if [ ! -f /data/openclaw.json ]; then
-                printf '{"gateway":{"mode":"local","auth":{"mode":"token","token":"%s"},"controlUi":{"dangerouslyDisableDeviceAuth":true},"trustedProxies":["10.42.0.0/16"]},"channels":{"whatsapp":{}}}\n' "$OPENCLAW_GATEWAY_TOKEN" > /data/openclaw.json
+                printf '{"gateway":{"mode":"local","auth":{"mode":"token"},"controlUi":{"dangerouslyDisableDeviceAuth":true},"trustedProxies":["10.42.0.0/16"]},"commands":{"restart":false},"channels":{"whatsapp":{},"telegram":{},"discord":{},"slack":{}}}\n' > /data/openclaw.json
               fi
-          env:
-            - name: OPENCLAW_GATEWAY_TOKEN
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-credentials
-                  key: OPENCLAW_GATEWAY_TOKEN
           volumeMounts:
             - name: openclaw-data
               mountPath: /data
@@ -82,6 +76,33 @@ spec:
                 secretKeyRef:
                   name: openclaw-credentials
                   key: OPENCLAW_API_KEY
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_TELEGRAM_TOKEN
+                  optional: true
+            - name: DISCORD_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_DISCORD_TOKEN
+                  optional: true
+            - name: SLACK_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_SLACK_BOT_TOKEN
+                  optional: true
+            - name: SLACK_APP_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_SLACK_APP_TOKEN
+                  optional: true
+            # Persist Playwright browser cache on PVC so Chromium survives pod restarts
+            - name: PLAYWRIGHT_BROWSERS_PATH
+              value: /home/node/.openclaw/.playwright
           envFrom:
             - configMapRef:
                 name: openclaw-config
@@ -114,6 +135,34 @@ spec:
             limits:
               cpu: ${PARAM_OPENCLAW_CPU_LIMIT}
               memory: ${PARAM_OPENCLAW_MEMORY_LIMIT}
+
+        # CLI sidecar: same image, connects to gateway via localhost:18789.
+        # Use: kubectl exec -it <pod> -c openclaw-cli -- openclaw <command>
+        - name: openclaw-cli
+          image: "ghcr.io/openclaw/openclaw:${PARAM_APP_IMAGE_TAG}"
+          command:
+            - sleep
+            - infinity
+          env:
+            - name: OPENCLAW_GATEWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_GATEWAY_TOKEN
+            - name: OPENCLAW_GATEWAY_URL
+              value: "ws://localhost:18789"
+            - name: PLAYWRIGHT_BROWSERS_PATH
+              value: /home/node/.openclaw/.playwright
+          volumeMounts:
+            - name: openclaw-data
+              mountPath: /home/node/.openclaw
+          resources:
+            requests:
+              cpu: 10m
+              memory: 32Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
       volumes:
         - name: openclaw-data
           persistentVolumeClaim:
