@@ -35,11 +35,24 @@ if _needs_value "${APP_VERSION:-}"; then
     log_info "[openclaw/pre-install] APP_VERSION not set — will use default from app.yaml."
 fi
 
-# --- Required parameter: LLM API key ---
-if _needs_value "${PARAM_OPENCLAW_API_KEY:-}"; then
-    log_fatal "[openclaw/pre-install] PARAM_OPENCLAW_API_KEY is required but not set. Provide an Anthropic or OpenAI API key."
+# --- LLM provider and API keys ---
+_needs_value "${PARAM_OPENCLAW_LLM_PROVIDER:-}" && PARAM_OPENCLAW_LLM_PROVIDER="anthropic"
+export PARAM_OPENCLAW_LLM_PROVIDER
+
+export PARAM_OPENCLAW_ANTHROPIC_API_KEY="${PARAM_OPENCLAW_ANTHROPIC_API_KEY:-}"
+export PARAM_OPENCLAW_OPENAI_API_KEY="${PARAM_OPENCLAW_OPENAI_API_KEY:-}"
+
+if [[ "${PARAM_OPENCLAW_LLM_PROVIDER}" == "anthropic" ]]; then
+    if _needs_value "${PARAM_OPENCLAW_ANTHROPIC_API_KEY:-}"; then
+        log_fatal "[openclaw/pre-install] PARAM_OPENCLAW_ANTHROPIC_API_KEY is required when LLM provider is anthropic."
+    fi
+elif [[ "${PARAM_OPENCLAW_LLM_PROVIDER}" == "openai" ]]; then
+    if _needs_value "${PARAM_OPENCLAW_OPENAI_API_KEY:-}"; then
+        log_fatal "[openclaw/pre-install] PARAM_OPENCLAW_OPENAI_API_KEY is required when LLM provider is openai."
+    fi
+else
+    log_fatal "[openclaw/pre-install] Unknown LLM provider '${PARAM_OPENCLAW_LLM_PROVIDER}'. Use 'anthropic' or 'openai'."
 fi
-export PARAM_OPENCLAW_API_KEY
 
 # --- Gateway token (auto-generated, required for gateway to start) ---
 if _needs_value "${PARAM_OPENCLAW_GATEWAY_TOKEN:-}"; then
@@ -49,9 +62,7 @@ if _needs_value "${PARAM_OPENCLAW_GATEWAY_TOKEN:-}"; then
 fi
 
 # --- Non-secret parameter defaults ---
-_needs_value "${PARAM_OPENCLAW_LLM_PROVIDER:-}" && PARAM_OPENCLAW_LLM_PROVIDER="anthropic"
 _needs_value "${PARAM_OPENCLAW_DATA_SIZE:-}" && PARAM_OPENCLAW_DATA_SIZE="10Gi"
-export PARAM_OPENCLAW_LLM_PROVIDER
 export PARAM_OPENCLAW_DATA_SIZE
 
 # --- NodePort ---

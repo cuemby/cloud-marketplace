@@ -61,21 +61,18 @@ spec:
                 secretKeyRef:
                   name: openclaw-credentials
                   key: OPENCLAW_GATEWAY_TOKEN
-            - name: OPENCLAW_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: openclaw-credentials
-                  key: OPENCLAW_API_KEY
             - name: ANTHROPIC_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: openclaw-credentials
-                  key: OPENCLAW_API_KEY
+                  key: OPENCLAW_ANTHROPIC_API_KEY
+                  optional: true
             - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: openclaw-credentials
-                  key: OPENCLAW_API_KEY
+                  key: OPENCLAW_OPENAI_API_KEY
+                  optional: true
             - name: TELEGRAM_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
