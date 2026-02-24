@@ -25,13 +25,6 @@ versions:
     imageTag: "2026.2.19"
 
 parameters:
-  - name: OPENCLAW_LLM_PROVIDER
-    displayName: LLM Provider
-    description: LLM provider to use (anthropic or openai)
-    type: string
-    required: false
-    default: "anthropic"
-
   - name: OPENCLAW_ANTHROPIC_API_KEY
     displayName: Anthropic API Key
     description: Anthropic API key (sk-ant-...). Required when LLM provider is anthropic.
