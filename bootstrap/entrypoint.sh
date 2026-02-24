@@ -33,6 +33,9 @@ mkdir -p "$LOG_DIR"
 mkdir -p "$STATE_DIR"
 
 main() {
+    # Save bootstrap directory (SCRIPT_DIR is overwritten by sourced hooks)
+    local bootstrap_dir="$SCRIPT_DIR"
+
     log_section "Cuemby Cloud Marketplace Bootstrap"
     log_info "App: ${APP_NAME:-<not set>}"
     log_info "Version: ${APP_VERSION:-<default>}"
@@ -56,14 +59,14 @@ main() {
     # Phase 3: Install K3s
     write_state "$STATE_INSTALLING_K3S"
     log_section "Phase 3: Installing K3s"
-    source "${SCRIPT_DIR}/install-k3s.sh"
+    source "${bootstrap_dir}/install-k3s.sh"
     install_k3s
     export KUBECONFIG="$KUBECONFIG_PATH"
 
     # Phase 4: Install Helm
     write_state "$STATE_INSTALLING_HELM"
     log_section "Phase 4: Installing Helm"
-    source "${SCRIPT_DIR}/install-helm.sh"
+    source "${bootstrap_dir}/install-helm.sh"
     install_helm
 
     # Phase 4.5: Install SSL infrastructure (requires Helm from Phase 4)
@@ -84,20 +87,20 @@ main() {
     if [[ "${ssl_enabled}" == "true" ]]; then
         write_state "$STATE_INSTALLING_SSL"
         log_section "Phase 4.5: Installing SSL infrastructure"
-        source "${SCRIPT_DIR}/install-ssl.sh"
+        source "${bootstrap_dir}/install-ssl.sh"
         install_ssl
     fi
 
     # Phase 5: Deploy application
     write_state "$STATE_DEPLOYING"
     log_section "Phase 5: Deploying ${APP_NAME}"
-    source "${SCRIPT_DIR}/deploy-app.sh"
+    source "${bootstrap_dir}/deploy-app.sh"
     deploy_app
 
     # Phase 6: Health check
     write_state "$STATE_HEALTHCHECK"
     log_section "Phase 6: Running health checks"
-    source "${SCRIPT_DIR}/healthcheck.sh"
+    source "${bootstrap_dir}/healthcheck.sh"
     run_healthcheck
 
     # Done
