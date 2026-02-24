@@ -37,13 +37,6 @@ parameters:
     type: password
     required: false
 
-  - name: OPENCLAW_DATA_SIZE
-    displayName: Data Storage Size
-    description: Size of persistent volume for OpenClaw data (SQLite, memory, transcripts)
-    type: string
-    required: false
-    default: "10Gi"
-
   - name: OPENCLAW_SSL_ENABLED
     displayName: Enable SSL (HTTPS)
     description: Enable HTTPS access via Let's Encrypt certificate and sslip.io domain

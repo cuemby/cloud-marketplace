@@ -56,10 +56,6 @@ if _needs_value "${PARAM_OPENCLAW_GATEWAY_TOKEN:-}"; then
     log_info "[openclaw/pre-install] Generated gateway authentication token."
 fi
 
-# --- Non-secret parameter defaults ---
-_needs_value "${PARAM_OPENCLAW_DATA_SIZE:-}" && PARAM_OPENCLAW_DATA_SIZE="10Gi"
-export PARAM_OPENCLAW_DATA_SIZE
-
 # --- NodePort ---
 _needs_value "${PARAM_OPENCLAW_NODEPORT:-}" && PARAM_OPENCLAW_NODEPORT="30789"
 export PARAM_OPENCLAW_NODEPORT

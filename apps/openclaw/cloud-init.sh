@@ -11,8 +11,7 @@ export APP_VERSION="{{app-version}}"
 export PARAM_OPENCLAW_ANTHROPIC_API_KEY="{{param-openclaw-anthropic-api-key}}"
 export PARAM_OPENCLAW_OPENAI_API_KEY="{{param-openclaw-openai-api-key}}"
 
-# Storage and SSL
-export PARAM_OPENCLAW_DATA_SIZE="{{param-openclaw-data-size}}"
+# SSL
 export PARAM_OPENCLAW_SSL_ENABLED="{{param-openclaw-ssl-enabled}}"
 export PARAM_OPENCLAW_HOSTNAME="{{param-openclaw-hostname}}"
 export PARAM_OPENCLAW_ACME_EMAIL="{{param-openclaw-acme-email}}"

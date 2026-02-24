@@ -11,4 +11,4 @@ spec:
   storageClassName: local-path
   resources:
     requests:
-      storage: ${PARAM_OPENCLAW_DATA_SIZE}
+      storage: 10Gi
