@@ -11,10 +11,10 @@ export APP_VERSION="{{app-version}}"
 export PARAM_OPENCLAW_ANTHROPIC_API_KEY="{{param-openclaw-anthropic-api-key}}"
 export PARAM_OPENCLAW_OPENAI_API_KEY="{{param-openclaw-openai-api-key}}"
 
-# SSL
-export PARAM_OPENCLAW_SSL_ENABLED="{{param-openclaw-ssl-enabled}}"
-export PARAM_OPENCLAW_HOSTNAME="{{param-openclaw-hostname}}"
-export PARAM_OPENCLAW_ACME_EMAIL="{{param-openclaw-acme-email}}"
+# SSL — all optional: SSL enabled by default, hostname auto-detected via sslip.io
+export PARAM_OPENCLAW_SSL_ENABLED="{{param-openclaw-ssl-enabled}}"   # default: true
+export PARAM_OPENCLAW_HOSTNAME="{{param-openclaw-hostname}}"         # default: <IP>.sslip.io
+export PARAM_OPENCLAW_ACME_EMAIL="{{param-openclaw-acme-email}}"     # default: me@cuemby.com
 
 # Optional channel tokens (leave empty to configure later from the dashboard)
 export PARAM_OPENCLAW_TELEGRAM_TOKEN="{{param-openclaw-telegram-token}}"
