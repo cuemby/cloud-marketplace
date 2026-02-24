@@ -44,6 +44,8 @@ spec:
             - -c
             - |
               ln -sf /app/openclaw.mjs /tmp/openclaw
+              printf '%s\n' '#!/bin/sh' 'case "$*" in *restart*) kill -TERM 1 ;; *) exit 0 ;; esac' > /tmp/systemctl
+              chmod +x /tmp/systemctl
               export PATH=/tmp:$PATH
               exec node dist/index.js gateway --bind lan --port 18789 --auth token --token "$OPENCLAW_GATEWAY_TOKEN"
           ports:
