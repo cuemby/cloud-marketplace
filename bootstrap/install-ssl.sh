@@ -70,9 +70,9 @@ _create_cluster_issuer() {
         log_warn "Using Let's Encrypt STAGING server (certs will not be trusted)."
     fi
 
-    local acme_email="${ACME_EMAIL:-}"
-    if [[ -z "$acme_email" ]] || [[ "$acme_email" == *"@example.com" ]]; then
-        log_fatal "ACME_EMAIL is required for Let's Encrypt (example.com is not accepted). Set ACME_EMAIL in your cloud-init."
+    local acme_email="${ACME_EMAIL:-me@cuemby.com}"
+    if [[ "$acme_email" == *"@example.com" ]]; then
+        log_fatal "ACME_EMAIL must not use example.com. Set ACME_EMAIL or PARAM_${APP_NAME^^}_ACME_EMAIL in your cloud-init."
     fi
 
     local app_namespace="${HELM_NAMESPACE_PREFIX}${APP_NAME}"

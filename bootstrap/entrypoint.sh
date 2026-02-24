@@ -69,6 +69,18 @@ main() {
     # Phase 4.5: Install SSL infrastructure (requires Helm from Phase 4)
     local ssl_enabled
     ssl_enabled="$(yq -r '.ssl.enabled // false' "${APPS_DIR}/${APP_NAME}/app.yaml")"
+
+    # Resolve ACME_EMAIL from app-specific param before install-ssl.sh runs (pre-install.sh is too late)
+    if [[ "${ssl_enabled}" == "true" ]] && [[ -z "${ACME_EMAIL:-}" ]]; then
+        local _app_name_upper
+        _app_name_upper="$(printf '%s' "${APP_NAME}" | tr '[:lower:]-' '[:upper:]_')"
+        local _acme_param="PARAM_${_app_name_upper}_ACME_EMAIL"
+        if [[ -n "${!_acme_param:-}" ]]; then
+            export ACME_EMAIL="${!_acme_param}"
+            log_info "Resolved ACME_EMAIL from ${_acme_param}."
+        fi
+    fi
+
     if [[ "${ssl_enabled}" == "true" ]]; then
         write_state "$STATE_INSTALLING_SSL"
         log_section "Phase 4.5: Installing SSL infrastructure"
