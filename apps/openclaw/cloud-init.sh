@@ -11,6 +11,9 @@ export APP_VERSION="{{app-version}}"
 export PARAM_OPENCLAW_ANTHROPIC_API_KEY="{{param-openclaw-anthropic-api-key}}"
 export PARAM_OPENCLAW_OPENAI_API_KEY="{{param-openclaw-openai-api-key}}"
 
+# Optional: gateway token (auto-generated if not set; set this to keep the same token across redeployments)
+# export PARAM_OPENCLAW_GATEWAY_TOKEN="your-token-here"
+
 # Optional channel tokens (leave empty to configure later from the dashboard)
 export PARAM_OPENCLAW_TELEGRAM_TOKEN="{{param-openclaw-telegram-token}}"
 export PARAM_OPENCLAW_DISCORD_TOKEN="{{param-openclaw-discord-token}}"
