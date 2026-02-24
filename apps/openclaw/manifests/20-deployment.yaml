@@ -31,7 +31,7 @@ spec:
             - -c
             - |
               if [ ! -f /data/openclaw.json ]; then
-                printf '{"gateway":{"mode":"local","auth":{"mode":"token","token":"%s"},"controlUi":{"dangerouslyDisableDeviceAuth":true},"trustedProxies":["10.42.0.0/16"]}}\n' "$OPENCLAW_GATEWAY_TOKEN" > /data/openclaw.json
+                printf '{"gateway":{"mode":"local","auth":{"mode":"token","token":"%s"},"controlUi":{"dangerouslyDisableDeviceAuth":true},"trustedProxies":["10.42.0.0/16"]},"channels":{"whatsapp":{}}}\n' "$OPENCLAW_GATEWAY_TOKEN" > /data/openclaw.json
               fi
           env:
             - name: OPENCLAW_GATEWAY_TOKEN
@@ -68,6 +68,16 @@ spec:
                   name: openclaw-credentials
                   key: OPENCLAW_GATEWAY_TOKEN
             - name: OPENCLAW_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_API_KEY
+            - name: ANTHROPIC_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openclaw-credentials
+                  key: OPENCLAW_API_KEY
+            - name: OPENAI_API_KEY
               valueFrom:
                 secretKeyRef:
                   name: openclaw-credentials
