@@ -97,6 +97,14 @@ main() {
     source "${bootstrap_dir}/deploy-app.sh"
     deploy_app
 
+    # Phase 5.5: Verify SSL certificate (fallback if rate-limited)
+    if [[ "${ssl_enabled}" == "true" ]]; then
+        log_section "Phase 5.5: Verifying SSL certificate"
+        source "${bootstrap_dir}/lib/ssl-hooks.sh"
+        ssl_wait_for_cert_with_fallback "$APP_NAME" || \
+            log_warn "SSL certificate not ready; HTTPS may not work yet."
+    fi
+
     # Phase 6: Health check
     write_state "$STATE_HEALTHCHECK"
     log_section "Phase 6: Running health checks"

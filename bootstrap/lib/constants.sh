@@ -52,6 +52,20 @@ readonly ACME_SERVER_PROD="https://acme-v02.api.letsencrypt.org/directory"
 readonly ACME_SERVER_STAGING="https://acme-staging-v02.api.letsencrypt.org/directory"
 readonly DEFAULT_ACME_SERVER="${ACME_SERVER_PROD}"
 
+# ZeroSSL (fallback CA)
+readonly ZEROSSL_ACME_SERVER="https://acme.zerossl.com/v2/DV90"
+readonly ZEROSSL_EAB_API="https://api.zerossl.com/acme/eab-credentials-email"
+
+# ACME provider selection
+readonly ACME_PROVIDER_AUTO="auto"
+readonly ACME_PROVIDER_LETSENCRYPT="letsencrypt"
+readonly ACME_PROVIDER_ZEROSSL="zerossl"
+readonly DEFAULT_ACME_PROVIDER="${ACME_PROVIDER_AUTO}"
+
+# Certificate readiness polling
+readonly TIMEOUT_CERT_READY=180
+readonly CERT_CHECK_INTERVAL=15
+
 # State machine phases
 readonly STATE_VALIDATING="validating"
 readonly STATE_PREPARING="preparing"

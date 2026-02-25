@@ -84,17 +84,18 @@ ssl_setup_hostname() {
 
 # ── Gateway Resource ─────────────────────────────────────────────────────────
 
-# ssl_apply_gateway <app_name> <hostname> <tls_secret_name>
+# ssl_apply_gateway <app_name> <hostname> [tls_secret] [issuer_name]
 ssl_apply_gateway() {
     local app_name="$1"
     local hostname="$2"
     local tls_secret="${3:-${app_name}-tls}"
+    local issuer_name="${4:-letsencrypt}"
     local namespace="${HELM_NAMESPACE_PREFIX}${app_name}"
 
     # Ensure namespace exists
     kubectl create namespace "$namespace" --dry-run=client -o yaml | kubectl apply -f -
 
-    log_info "[ssl-hooks] Applying Gateway for ${app_name}..."
+    log_info "[ssl-hooks] Applying Gateway for ${app_name} (issuer: ${issuer_name})..."
     kubectl apply -f - <<EOF
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
@@ -102,7 +103,7 @@ metadata:
   name: app-gateway
   namespace: ${namespace}
   annotations:
-    cert-manager.io/cluster-issuer: letsencrypt
+    cert-manager.io/cluster-issuer: ${issuer_name}
 spec:
   gatewayClassName: traefik
   listeners:
@@ -199,11 +200,147 @@ ssl_full_setup() {
         return 0
     fi
 
+    local issuer_name
+    issuer_name="$(_ssl_get_active_issuer)"
+
     ssl_setup_hostname "$hostname_var"
-    ssl_apply_gateway "$app_name" "$SSL_HOSTNAME" "$tls_secret"
+    ssl_apply_gateway "$app_name" "$SSL_HOSTNAME" "$tls_secret" "$issuer_name"
     ssl_apply_httproute "$app_name" "$SSL_HOSTNAME" "$service_name" "$service_port"
 
-    log_info "[ssl-hooks] Gateway and HTTPRoute applied for ${app_name}."
+    log_info "[ssl-hooks] Gateway and HTTPRoute applied for ${app_name} (issuer: ${issuer_name})."
+}
+
+# ── Issuer Selection ─────────────────────────────────────────────────────────
+
+# _ssl_get_active_issuer — Resolve initial issuer based on ACME_PROVIDER.
+_ssl_get_active_issuer() {
+    local provider="${ACME_PROVIDER:-$DEFAULT_ACME_PROVIDER}"
+    case "$provider" in
+        "$ACME_PROVIDER_ZEROSSL")
+            echo "zerossl"
+            ;;
+        *)
+            echo "letsencrypt"
+            ;;
+    esac
+}
+
+# ── Certificate Fallback ─────────────────────────────────────────────────────
+
+# _ssl_check_cert_ready <tls_secret_name> <namespace>
+# Returns 0 if the Certificate resource is Ready=True.
+_ssl_check_cert_ready() {
+    local tls_secret="$1"
+    local namespace="$2"
+
+    local ready
+    ready="$(kubectl get certificate "$tls_secret" -n "$namespace" \
+        -o jsonpath='{.status.conditions[?(@.type=="Ready")].status}' 2>/dev/null)"
+    [[ "$ready" == "True" ]]
+}
+
+# _ssl_detect_rate_limit <tls_secret_name> <namespace>
+# Returns 0 if the Certificate status message indicates a rate limit error.
+_ssl_detect_rate_limit() {
+    local tls_secret="$1"
+    local namespace="$2"
+
+    local message
+    message="$(kubectl get certificate "$tls_secret" -n "$namespace" \
+        -o jsonpath='{.status.conditions[?(@.type=="Ready")].message}' 2>/dev/null)"
+
+    # Also check Order status for rate limit indicators
+    if [[ -z "$message" ]]; then
+        message="$(kubectl get certificate "$tls_secret" -n "$namespace" \
+            -o jsonpath='{.status.conditions[*].message}' 2>/dev/null)"
+    fi
+
+    local lower_msg
+    lower_msg="$(echo "$message" | tr '[:upper:]' '[:lower:]')"
+
+    [[ "$lower_msg" == *"too many"* ]] || \
+    [[ "$lower_msg" == *"ratelimited"* ]] || \
+    [[ "$lower_msg" == *"rate limit"* ]] || \
+    [[ "$lower_msg" == *"rateLimited"* ]]
+}
+
+# _ssl_switch_issuer <app_name> <tls_secret_name> <new_issuer>
+# Deletes failed Certificate+Secret and re-annotates Gateway with the new issuer.
+_ssl_switch_issuer() {
+    local app_name="$1"
+    local tls_secret="$2"
+    local new_issuer="$3"
+    local namespace="${HELM_NAMESPACE_PREFIX}${app_name}"
+
+    log_info "[ssl-hooks] Switching issuer to '${new_issuer}'..."
+
+    # Delete the failed Certificate and its Secret so cert-manager re-creates them
+    kubectl delete certificate "$tls_secret" -n "$namespace" --ignore-not-found=true
+    kubectl delete secret "$tls_secret" -n "$namespace" --ignore-not-found=true
+
+    # Re-annotate the Gateway to use the new issuer
+    kubectl annotate gateway app-gateway -n "$namespace" \
+        cert-manager.io/cluster-issuer="$new_issuer" --overwrite
+
+    log_info "[ssl-hooks] Gateway re-annotated with issuer '${new_issuer}'."
+}
+
+# ssl_wait_for_cert_with_fallback <app_name> [tls_secret]
+# Polls Certificate readiness. If rate-limited, switches to ZeroSSL and retries.
+ssl_wait_for_cert_with_fallback() {
+    local app_name="$1"
+    local tls_secret="${2:-${app_name}-tls}"
+    local namespace="${HELM_NAMESPACE_PREFIX}${app_name}"
+    local provider="${ACME_PROVIDER:-$DEFAULT_ACME_PROVIDER}"
+    local timeout="$TIMEOUT_CERT_READY"
+    local interval="$CERT_CHECK_INTERVAL"
+
+    # Skip in CI
+    if [[ "${CI_SKIP_SSL:-false}" == "true" ]]; then
+        log_info "[ssl-hooks] CI_SKIP_SSL=true — skipping cert verification."
+        return 0
+    fi
+
+    log_info "[ssl-hooks] Waiting for certificate '${tls_secret}' (timeout: ${timeout}s)..."
+
+    local deadline
+    deadline=$((SECONDS + timeout))
+
+    # Phase 1: Wait for primary issuer
+    while [[ $SECONDS -lt $deadline ]]; do
+        if _ssl_check_cert_ready "$tls_secret" "$namespace"; then
+            log_info "[ssl-hooks] Certificate '${tls_secret}' is ready."
+            return 0
+        fi
+
+        # Check for rate limit — only fallback in auto mode
+        if [[ "$provider" == "$ACME_PROVIDER_AUTO" ]]; then
+            if _ssl_detect_rate_limit "$tls_secret" "$namespace"; then
+                # Verify ZeroSSL issuer exists before trying fallback
+                if kubectl get clusterissuer zerossl &>/dev/null; then
+                    log_warn "[ssl-hooks] Rate limit detected on primary issuer."
+                    _ssl_switch_issuer "$app_name" "$tls_secret" "zerossl"
+                    break
+                else
+                    log_warn "[ssl-hooks] Rate limit detected but ZeroSSL issuer not available."
+                fi
+            fi
+        fi
+
+        sleep "$interval"
+    done
+
+    # Phase 2: Wait for fallback issuer (if we switched)
+    while [[ $SECONDS -lt $deadline ]]; do
+        if _ssl_check_cert_ready "$tls_secret" "$namespace"; then
+            log_info "[ssl-hooks] Certificate '${tls_secret}' is ready (via ZeroSSL fallback)."
+            return 0
+        fi
+        sleep "$interval"
+    done
+
+    log_warn "[ssl-hooks] Certificate '${tls_secret}' not ready after ${timeout}s."
+    return 1
 }
 
 readonly _SSL_HOOKS_LOADED=1

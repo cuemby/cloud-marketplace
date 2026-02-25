@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# install-ssl.sh — Install cert-manager and create a Let's Encrypt ClusterIssuer.
+# install-ssl.sh — Install cert-manager and create ACME ClusterIssuers.
+# Supports Let's Encrypt (default), ZeroSSL (fallback), or both (auto mode).
 # Called from entrypoint.sh when an app declares ssl.enabled: true.
 set -euo pipefail
 
@@ -17,7 +18,31 @@ install_ssl() {
 
     _install_cert_manager
     _wait_for_cert_manager
-    _create_cluster_issuer
+
+    local provider="${ACME_PROVIDER:-$DEFAULT_ACME_PROVIDER}"
+    log_info "ACME provider mode: ${provider}"
+
+    case "$provider" in
+        "$ACME_PROVIDER_AUTO")
+            _create_letsencrypt_issuer
+            # ZeroSSL: best-effort in auto mode (failure = warning, fallback disabled)
+            if [[ "${ACME_USE_STAGING:-false}" == "true" ]]; then
+                log_info "Staging mode — skipping ZeroSSL issuer (not needed for testing)."
+            else
+                _create_zerossl_issuer || \
+                    log_warn "ZeroSSL issuer creation failed; fallback will not be available."
+            fi
+            ;;
+        "$ACME_PROVIDER_LETSENCRYPT")
+            _create_letsencrypt_issuer
+            ;;
+        "$ACME_PROVIDER_ZEROSSL")
+            _create_zerossl_issuer
+            ;;
+        *)
+            log_fatal "Unknown ACME_PROVIDER '${provider}'. Valid: auto, letsencrypt, zerossl."
+            ;;
+    esac
 
     log_info "SSL infrastructure ready."
 }
@@ -63,7 +88,7 @@ _cert_manager_webhook_ready() {
     [[ "$phase" == "Running" ]]
 }
 
-_create_cluster_issuer() {
+_create_letsencrypt_issuer() {
     local acme_server="$DEFAULT_ACME_SERVER"
     if [[ "${ACME_USE_STAGING:-false}" == "true" ]]; then
         acme_server="$ACME_SERVER_STAGING"
@@ -72,7 +97,7 @@ _create_cluster_issuer() {
 
     local acme_email="${ACME_EMAIL:-me@cuemby.com}"
     if [[ "$acme_email" == *"@example.com" ]]; then
-        log_fatal "ACME_EMAIL must not use example.com. Set ACME_EMAIL or PARAM_${APP_NAME^^}_ACME_EMAIL in your cloud-init."
+        log_fatal "ACME_EMAIL must not use example.com. Set ACME_EMAIL or PARAM_\${APP_NAME^^}_ACME_EMAIL in your cloud-init."
     fi
 
     local app_namespace="${HELM_NAMESPACE_PREFIX}${APP_NAME}"
@@ -100,6 +125,89 @@ spec:
 EOF
 
     log_info "ClusterIssuer 'letsencrypt' created."
+}
+
+# _fetch_zerossl_eab — Obtain EAB credentials from ZeroSSL API.
+# Uses a random email per VM (no user config required).
+# Outputs: sets ZEROSSL_EAB_KID and ZEROSSL_EAB_HMAC_KEY.
+_fetch_zerossl_eab() {
+    local zerossl_email
+    zerossl_email="$(head -c 8 /dev/urandom | od -An -tx1 | tr -d ' \n')@cuemby.com"
+    log_info "Fetching ZeroSSL EAB credentials (email: ${zerossl_email})..."
+
+    local response
+    response="$(curl -sf --max-time 30 -X POST "$ZEROSSL_EAB_API" \
+        -d "email=${zerossl_email}" 2>/dev/null)" || {
+        log_error "Failed to reach ZeroSSL EAB API."
+        return 1
+    }
+
+    local success
+    success="$(echo "$response" | jq -r '.success // false')"
+    if [[ "$success" != "true" ]]; then
+        log_error "ZeroSSL EAB API returned failure: ${response}"
+        return 1
+    fi
+
+    ZEROSSL_EAB_KID="$(echo "$response" | jq -r '.eab_kid')"
+    ZEROSSL_EAB_HMAC_KEY="$(echo "$response" | jq -r '.eab_hmac_key')"
+
+    if [[ -z "$ZEROSSL_EAB_KID" || -z "$ZEROSSL_EAB_HMAC_KEY" ]]; then
+        log_error "ZeroSSL EAB response missing kid or hmac_key."
+        return 1
+    fi
+
+    log_info "ZeroSSL EAB credentials obtained (kid: ${ZEROSSL_EAB_KID:0:8}...)."
+}
+
+_create_zerossl_issuer() {
+    _fetch_zerossl_eab || return 1
+
+    local acme_email="${ACME_EMAIL:-me@cuemby.com}"
+    local app_namespace="${HELM_NAMESPACE_PREFIX}${APP_NAME}"
+
+    log_info "Creating ZeroSSL EAB Secret and ClusterIssuer..."
+
+    # Create/update the EAB secret for ZeroSSL
+    kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: zerossl-eab
+  namespace: ${CERT_MANAGER_NAMESPACE}
+type: Opaque
+stringData:
+  kid: "${ZEROSSL_EAB_KID}"
+  hmacKey: "${ZEROSSL_EAB_HMAC_KEY}"
+EOF
+
+    kubectl apply -f - <<EOF
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: zerossl
+spec:
+  acme:
+    server: ${ZEROSSL_ACME_SERVER}
+    email: ${acme_email}
+    privateKeySecretRef:
+      name: zerossl-account-key
+    externalAccountBinding:
+      keyID: ${ZEROSSL_EAB_KID}
+      keySecretRef:
+        name: zerossl-eab
+        key: hmacKey
+      keyAlgorithm: HS256
+    solvers:
+      - http01:
+          gatewayHTTPRoute:
+            parentRefs:
+              - name: app-gateway
+                namespace: ${app_namespace}
+                kind: Gateway
+EOF
+
+    log_info "ClusterIssuer 'zerossl' created."
 }
 
 # Only run if executed directly (not sourced)
