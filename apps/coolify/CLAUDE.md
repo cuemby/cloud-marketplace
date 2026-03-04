@@ -7,7 +7,7 @@ Self-hosted PaaS (Platform as a Service) using the **manifest** deployment metho
 - **4-component stack**: Coolify app + PostgreSQL 15 + Redis 7 + Soketi (WebSocket)
 - **Deployment + Recreate**: Single-node K3s VM, all components as Deployments
 - **NodePort 30800**: External access to Coolify web UI
-- **hostPort 80/443**: Coolify's built-in Traefik serves deployed apps on standard HTTP/HTTPS ports
+- **HTTPS via Gateway API**: Traefik Gateway terminates TLS and routes to Coolify UI (port 8080)
 - **Docker daemon**: Installed alongside K3s via pre-install hook; Coolify manages user-deployed apps via Docker socket mount
 - **Images**: `ghcr.io/coollabsio/coolify` (Apache 2.0), `postgres:15-alpine`, `redis:7-alpine`, `quay.io/soketi/soketi:1.6-16-debian`
 
@@ -38,7 +38,7 @@ Coolify does NOT support automated admin account creation. The admin account is 
 20-postgres-deployment.yaml  -> PostgreSQL 15
 21-redis-deployment.yaml     -> Redis 7 (with password auth)
 22-soketi-deployment.yaml    -> Soketi WebSocket server
-30-coolify-deployment.yaml   -> Coolify app (with Docker socket + hostPort)
+30-coolify-deployment.yaml   -> Coolify app (with Docker socket mount)
 40-postgres-service.yaml     -> ClusterIP for PostgreSQL
 41-redis-service.yaml        -> ClusterIP for Redis
 42-soketi-service.yaml       -> ClusterIP for Soketi

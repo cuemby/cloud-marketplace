@@ -46,14 +46,6 @@ spec:
             - name: ui
               containerPort: 8080
               protocol: TCP
-            - name: http
-              containerPort: 80
-              hostPort: 80
-              protocol: TCP
-            - name: https
-              containerPort: 443
-              hostPort: 443
-              protocol: TCP
           envFrom:
             - secretRef:
                 name: coolify-app-secret
