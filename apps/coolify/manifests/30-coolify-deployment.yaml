@@ -7,6 +7,7 @@ metadata:
     app.kubernetes.io/component: app
 spec:
   replicas: 1
+  progressDeadlineSeconds: 900
   strategy:
     type: Recreate
   selector:

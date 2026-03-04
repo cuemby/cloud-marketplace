@@ -105,10 +105,21 @@ wait_for_rollout() {
 _dump_namespace_diagnostics() {
     local namespace="$1"
 
+    # Helper: log each line of command output via log_warn
+    _log_cmd() {
+        local output
+        output="$("$@" 2>&1)" || true
+        if [[ -n "$output" ]]; then
+            while IFS= read -r line; do
+                log_warn "$line"
+            done <<< "$output"
+        fi
+    }
+
     log_warn "=== Diagnostic dump for namespace ${namespace} ==="
 
     log_warn "--- Pod status ---"
-    kubectl get pods -n "$namespace" -o wide 2>/dev/null || true
+    _log_cmd kubectl get pods -n "$namespace" -o wide
 
     log_warn "--- Pod descriptions ---"
     local pod_names
@@ -117,20 +128,20 @@ _dump_namespace_diagnostics() {
     for pod in $pod_names; do
         [[ -z "$pod" ]] && continue
         log_warn "--- describe pod/${pod} ---"
-        kubectl describe pod "$pod" -n "$namespace" 2>/dev/null | tail -40 || true
+        _log_cmd kubectl describe pod "$pod" -n "$namespace"
     done
 
     log_warn "--- Container logs (last 50 lines per pod) ---"
     for pod in $pod_names; do
         [[ -z "$pod" ]] && continue
         log_warn "--- logs pod/${pod} ---"
-        kubectl logs "$pod" -n "$namespace" --tail=50 2>/dev/null || true
+        _log_cmd kubectl logs "$pod" -n "$namespace" --tail=50
         log_warn "--- previous logs pod/${pod} ---"
-        kubectl logs "$pod" -n "$namespace" --previous --tail=50 2>/dev/null || true
+        _log_cmd kubectl logs "$pod" -n "$namespace" --previous --tail=50
     done
 
     log_warn "--- Recent events ---"
-    kubectl get events -n "$namespace" --sort-by='.lastTimestamp' 2>/dev/null | tail -20 || true
+    _log_cmd kubectl get events -n "$namespace" --sort-by='.lastTimestamp'
 
     log_warn "=== End diagnostic dump ==="
 }
