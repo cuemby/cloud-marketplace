@@ -58,13 +58,12 @@ spec:
             - name: docker-socket
               mountPath: /var/run/docker.sock
           startupProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 8080
             initialDelaySeconds: 15
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 30
+            failureThreshold: 60
           livenessProbe:
             httpGet:
               path: /
