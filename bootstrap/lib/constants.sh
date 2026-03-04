@@ -18,7 +18,7 @@ readonly KUBECONFIG_PATH="${KUBECONFIG_PATH:-/etc/rancher/k3s/k3s.yaml}"
 
 # Timeouts (seconds)
 readonly TIMEOUT_K3S=300
-readonly TIMEOUT_HELM_DEPLOY=600
+readonly TIMEOUT_HELM_DEPLOY=900
 readonly TIMEOUT_HEALTH=300
 readonly TIMEOUT_NETWORK=120
 readonly TIMEOUT_DNS=60

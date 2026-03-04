@@ -33,6 +33,14 @@ envsubst_yaml_files() {
 wait_for_rollout() {
     local namespace="$1"
     local timeout="$2"
+    local deadline=$((SECONDS + timeout))
+
+    # Helper: compute remaining seconds until deadline (minimum 10s)
+    _remaining() {
+        local left=$((deadline - SECONDS))
+        (( left < 10 )) && left=10
+        echo "$left"
+    }
 
     # Wait for Deployments
     local deployments
@@ -41,9 +49,11 @@ wait_for_rollout() {
     if [[ -n "$deployments" ]]; then
         while IFS= read -r deploy; do
             [[ -z "$deploy" ]] && continue
-            log_info "Waiting for deployment/${deploy} rollout..."
+            local remaining
+            remaining="$(_remaining)"
+            log_info "Waiting for deployment/${deploy} rollout (${remaining}s remaining)..."
             if ! kubectl rollout status "deployment/${deploy}" \
-                -n "$namespace" --timeout="${timeout}s" 2>&1; then
+                -n "$namespace" --timeout="${remaining}s" 2>&1; then
                 log_error "Deployment ${deploy} failed to roll out."
                 return 1
             fi
@@ -57,9 +67,11 @@ wait_for_rollout() {
     if [[ -n "$statefulsets" ]]; then
         while IFS= read -r sts; do
             [[ -z "$sts" ]] && continue
-            log_info "Waiting for statefulset/${sts} rollout..."
+            local remaining
+            remaining="$(_remaining)"
+            log_info "Waiting for statefulset/${sts} rollout (${remaining}s remaining)..."
             if ! kubectl rollout status "statefulset/${sts}" \
-                -n "$namespace" --timeout="${timeout}s" 2>&1; then
+                -n "$namespace" --timeout="${remaining}s" 2>&1; then
                 log_error "StatefulSet ${sts} failed to roll out."
                 return 1
             fi
@@ -73,9 +85,11 @@ wait_for_rollout() {
     if [[ -n "$daemonsets" ]]; then
         while IFS= read -r ds; do
             [[ -z "$ds" ]] && continue
-            log_info "Waiting for daemonset/${ds} rollout..."
+            local remaining
+            remaining="$(_remaining)"
+            log_info "Waiting for daemonset/${ds} rollout (${remaining}s remaining)..."
             if ! kubectl rollout status "daemonset/${ds}" \
-                -n "$namespace" --timeout="${timeout}s" 2>&1; then
+                -n "$namespace" --timeout="${remaining}s" 2>&1; then
                 log_error "DaemonSet ${ds} failed to roll out."
                 return 1
             fi
