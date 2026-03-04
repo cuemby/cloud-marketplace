@@ -39,10 +39,16 @@ _generate_password() {
     openssl rand -base64 24 | tr -d '/+=' | head -c 32
 }
 
-# Check if a value is empty or an uninterpolated {{placeholder}}
+# Check if a value is empty, an uninterpolated {{placeholder}}, or too short for a password
 _needs_value() {
     local val="${1:-}"
     [[ -z "$val" || "$val" == \{\{*\}\} ]]
+}
+
+# Check if a password value needs regeneration (empty, placeholder, or too short)
+_needs_password() {
+    local val="${1:-}"
+    _needs_value "$val" || [[ ${#val} -lt 16 ]]
 }
 
 # Clear APP_VERSION if it's an uninterpolated placeholder (use default from app.yaml)
@@ -52,31 +58,33 @@ if _needs_value "${APP_VERSION:-}"; then
 fi
 
 # --- Credential generation ---
-if _needs_value "${PARAM_COOLIFY_DB_PASSWORD:-}"; then
+if _needs_password "${PARAM_COOLIFY_DB_PASSWORD:-}"; then
     PARAM_COOLIFY_DB_PASSWORD="$(_generate_password)"
     export PARAM_COOLIFY_DB_PASSWORD
     log_info "[coolify/pre-install] Generated PostgreSQL password."
 fi
 
-if _needs_value "${PARAM_COOLIFY_REDIS_PASSWORD:-}"; then
+if _needs_password "${PARAM_COOLIFY_REDIS_PASSWORD:-}"; then
     PARAM_COOLIFY_REDIS_PASSWORD="$(_generate_password)"
     export PARAM_COOLIFY_REDIS_PASSWORD
     log_info "[coolify/pre-install] Generated Redis password."
 fi
 
-if _needs_value "${PARAM_COOLIFY_APP_KEY:-}"; then
+# Laravel APP_KEY must be "base64:<44-char-string>" for AES-256-CBC.
+# Always regenerate if the value doesn't match the required format.
+if _needs_value "${PARAM_COOLIFY_APP_KEY:-}" || [[ "${PARAM_COOLIFY_APP_KEY:-}" != base64:* ]]; then
     PARAM_COOLIFY_APP_KEY="base64:$(openssl rand -base64 32)"
     export PARAM_COOLIFY_APP_KEY
     log_info "[coolify/pre-install] Generated Laravel APP_KEY."
 fi
 
-if _needs_value "${PARAM_COOLIFY_PUSHER_APP_KEY:-}"; then
+if _needs_password "${PARAM_COOLIFY_PUSHER_APP_KEY:-}"; then
     PARAM_COOLIFY_PUSHER_APP_KEY="$(_generate_password)"
     export PARAM_COOLIFY_PUSHER_APP_KEY
     log_info "[coolify/pre-install] Generated Pusher app key."
 fi
 
-if _needs_value "${PARAM_COOLIFY_PUSHER_APP_SECRET:-}"; then
+if _needs_password "${PARAM_COOLIFY_PUSHER_APP_SECRET:-}"; then
     PARAM_COOLIFY_PUSHER_APP_SECRET="$(_generate_password)"
     export PARAM_COOLIFY_PUSHER_APP_SECRET
     log_info "[coolify/pre-install] Generated Pusher app secret."
