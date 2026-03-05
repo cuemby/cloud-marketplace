@@ -71,6 +71,9 @@ spec:
             periodSeconds: 10
             timeoutSeconds: 5
             failureThreshold: 3
+          volumeMounts:
+            - name: nginx-extra
+              mountPath: /etc/nginx/extra-conf.d
           resources:
             requests:
               cpu: ${PARAM_DEVTRON_DASHBOARD_CPU_REQUEST}
@@ -78,3 +81,7 @@ spec:
             limits:
               cpu: ${PARAM_DEVTRON_DASHBOARD_CPU_LIMIT}
               memory: ${PARAM_DEVTRON_DASHBOARD_MEMORY_LIMIT}
+      volumes:
+        - name: nginx-extra
+          configMap:
+            name: devtron-dashboard-nginx

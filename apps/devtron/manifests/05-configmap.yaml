@@ -53,6 +53,20 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
+  name: devtron-dashboard-nginx
+  labels:
+    app.kubernetes.io/name: devtron
+    app.kubernetes.io/component: dashboard
+data:
+  dashboard.conf: |
+    location /dashboard/ {
+        alias /usr/share/nginx/html/;
+        try_files $uri $uri/ /index.html =404;
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
   name: devtron-nats-config
   labels:
     app.kubernetes.io/name: devtron
