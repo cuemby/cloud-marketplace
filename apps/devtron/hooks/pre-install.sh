@@ -140,6 +140,34 @@ spec:
         - name: devtron-orchestrator
           port: 80
 ORCHEOF
+
+    # Redirect / → /dashboard/ (Devtron dashboard expects /dashboard/ path prefix)
+    log_info "[devtron/pre-install] Applying HTTPRoute for root → /dashboard/ redirect..."
+    kubectl apply -f - <<REDIREOF
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: devtron-root-redirect
+  namespace: ${ns}
+spec:
+  parentRefs:
+    - name: app-gateway
+      sectionName: websecure
+  hostnames:
+    - "${SSL_HOSTNAME}"
+  rules:
+    - matches:
+        - path:
+            type: Exact
+            value: /
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            path:
+              type: ReplaceFullPath
+              replaceFullPath: /dashboard/
+            statusCode: 302
+REDIREOF
 else
     log_info "[devtron/pre-install] SSL disabled — access via NodePort only."
 fi
