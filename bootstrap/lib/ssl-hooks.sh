@@ -239,9 +239,10 @@ _ssl_check_cert_ready() {
     [[ "$ready" == "True" ]]
 }
 
-# _ssl_detect_rate_limit <tls_secret_name> <namespace>
-# Returns 0 if the Certificate status message indicates a rate limit error.
-_ssl_detect_rate_limit() {
+# _ssl_detect_acme_failure <tls_secret_name> <namespace>
+# Returns 0 if the Certificate status indicates a rate limit or ACME error
+# that warrants switching to the fallback issuer.
+_ssl_detect_acme_failure() {
     local tls_secret="$1"
     local namespace="$2"
 
@@ -249,20 +250,32 @@ _ssl_detect_rate_limit() {
     message="$(kubectl get certificate "$tls_secret" -n "$namespace" \
         -o jsonpath='{.status.conditions[?(@.type=="Ready")].message}' 2>/dev/null)"
 
-    # Also check Order status for rate limit indicators
-    if [[ -z "$message" ]]; then
-        message="$(kubectl get certificate "$tls_secret" -n "$namespace" \
-            -o jsonpath='{.status.conditions[*].message}' 2>/dev/null)"
+    # Also check Issuing condition for order errors
+    if [[ -z "$message" || "$message" != *"failed"* ]]; then
+        local issuing_msg
+        issuing_msg="$(kubectl get certificate "$tls_secret" -n "$namespace" \
+            -o jsonpath='{.status.conditions[?(@.type=="Issuing")].message}' 2>/dev/null)"
+        [[ -n "$issuing_msg" ]] && message="${message} ${issuing_msg}"
     fi
+
+    [[ -z "$message" ]] && return 1
 
     local lower_msg
     lower_msg="$(echo "$message" | tr '[:upper:]' '[:lower:]')"
 
+    # Rate limit patterns
     [[ "$lower_msg" == *"too many"* ]] || \
     [[ "$lower_msg" == *"ratelimited"* ]] || \
     [[ "$lower_msg" == *"rate limit"* ]] || \
-    [[ "$lower_msg" == *"rateLimited"* ]]
+    # ACME order failure patterns (e.g. "order is in errored state")
+    [[ "$lower_msg" == *"order is in \"errored\""* ]] || \
+    [[ "$lower_msg" == *"acme:error:malformed"* ]] || \
+    [[ "$lower_msg" == *"acme:error:unauthorized"* ]] || \
+    [[ "$lower_msg" == *"failed to fetch authorization"* ]]
 }
+
+# Backward-compatible alias
+_ssl_detect_rate_limit() { _ssl_detect_acme_failure "$@"; }
 
 # _ssl_switch_issuer <app_name> <tls_secret_name> <new_issuer>
 # Deletes failed Certificate+Secret and re-annotates Gateway with the new issuer.
@@ -313,12 +326,12 @@ ssl_wait_for_cert_with_fallback() {
             return 0
         fi
 
-        # Check for rate limit — only fallback in auto mode
+        # Check for ACME failure (rate limit, order error) — fallback in auto mode
         if [[ "$provider" == "$ACME_PROVIDER_AUTO" ]]; then
-            if _ssl_detect_rate_limit "$tls_secret" "$namespace"; then
+            if _ssl_detect_acme_failure "$tls_secret" "$namespace"; then
                 # Verify ZeroSSL issuer exists before trying fallback
                 if kubectl get clusterissuer zerossl &>/dev/null; then
-                    log_warn "[ssl-hooks] Rate limit detected on primary issuer."
+                    log_warn "[ssl-hooks] ACME failure detected on primary issuer."
                     _ssl_switch_issuer "$app_name" "$tls_secret" "zerossl"
                     break
                 else
