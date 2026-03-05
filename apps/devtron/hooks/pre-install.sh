@@ -29,6 +29,12 @@ _needs_value() {
     [[ -z "$val" || "$val" == \{\{*\}\} ]]
 }
 
+# Check if a password value needs regeneration (empty, placeholder, or too short)
+_needs_password() {
+    local val="${1:-}"
+    _needs_value "$val" || [[ ${#val} -lt 16 ]]
+}
+
 # Clear APP_VERSION if it's an uninterpolated placeholder (use default from app.yaml)
 if _needs_value "${APP_VERSION:-}"; then
     unset APP_VERSION
@@ -36,13 +42,13 @@ if _needs_value "${APP_VERSION:-}"; then
 fi
 
 # --- Credential generation ---
-if _needs_value "${PARAM_DEVTRON_DB_PASSWORD:-}"; then
+if _needs_password "${PARAM_DEVTRON_DB_PASSWORD:-}"; then
     PARAM_DEVTRON_DB_PASSWORD="$(_generate_password)"
     export PARAM_DEVTRON_DB_PASSWORD
     log_info "[devtron/pre-install] Generated PostgreSQL password."
 fi
 
-if _needs_value "${PARAM_DEVTRON_ADMIN_PASSWORD:-}"; then
+if _needs_password "${PARAM_DEVTRON_ADMIN_PASSWORD:-}"; then
     PARAM_DEVTRON_ADMIN_PASSWORD="$(_generate_password)"
     export PARAM_DEVTRON_ADMIN_PASSWORD
     log_info "[devtron/pre-install] Generated admin password."
@@ -109,6 +115,31 @@ if [[ "${PARAM_DEVTRON_SSL_ENABLED}" == "true" ]]; then
     PARAM_DEVTRON_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_DEVTRON_HOSTNAME
     log_info "[devtron/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
+
+    # Orchestrator API needs its own HTTPRoute (/orchestrator/* → devtron-orchestrator:80)
+    local ns="${HELM_NAMESPACE_PREFIX}devtron"
+    log_info "[devtron/pre-install] Applying HTTPRoute for orchestrator API..."
+    kubectl apply -f - <<ORCHEOF
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: devtron-orchestrator
+  namespace: ${ns}
+spec:
+  parentRefs:
+    - name: app-gateway
+      sectionName: websecure
+  hostnames:
+    - "${SSL_HOSTNAME}"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /orchestrator
+      backendRefs:
+        - name: devtron-orchestrator
+          port: 80
+ORCHEOF
 else
     log_info "[devtron/pre-install] SSL disabled — access via NodePort only."
 fi
