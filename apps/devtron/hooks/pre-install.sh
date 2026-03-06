@@ -54,6 +54,27 @@ if _needs_password "${PARAM_DEVTRON_ADMIN_PASSWORD:-}"; then
     log_info "[devtron/pre-install] Generated admin password."
 fi
 
+# --- Auth fields for ArgoCD session client (Devtron Hyperion uses this) ---
+# htpasswd (from apache2-utils) generates bcrypt hashes
+if ! command -v htpasswd &>/dev/null; then
+    log_info "[devtron/pre-install] Installing apache2-utils for bcrypt hash generation..."
+    apt-get update -qq && apt-get install -y -qq apache2-utils
+fi
+
+# Generate bcrypt hash of admin password ($2y$ format, accepted by Go's bcrypt)
+PARAM_DEVTRON_ADMIN_PASSWORD_HASH="$(htpasswd -bnBC 10 "" "$PARAM_DEVTRON_ADMIN_PASSWORD" | tr -d ':\n')"
+export PARAM_DEVTRON_ADMIN_PASSWORD_HASH
+
+# Password modification time (RFC3339)
+PARAM_DEVTRON_ADMIN_PASSWORD_MTIME="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+export PARAM_DEVTRON_ADMIN_PASSWORD_MTIME
+
+# Server signing key for JWT tokens (HMAC-SHA256)
+PARAM_DEVTRON_SERVER_SECRET="$(openssl rand -hex 32)"
+export PARAM_DEVTRON_SERVER_SECRET
+
+log_info "[devtron/pre-install] Generated auth fields (bcrypt hash, server secret)."
+
 # --- Non-secret parameter defaults ---
 _needs_value "${PARAM_DEVTRON_DB_DATA_SIZE:-}" && PARAM_DEVTRON_DB_DATA_SIZE="10Gi"
 export PARAM_DEVTRON_DB_DATA_SIZE
@@ -90,17 +111,49 @@ export PARAM_DEVTRON_DASHBOARD_MEMORY_LIMIT="${PARAM_DEVTRON_DASHBOARD_MEMORY_LI
 # --- Namespace for RBAC (ClusterRoleBinding needs explicit namespace) ---
 export PARAM_DEVTRON_NAMESPACE="${HELM_NAMESPACE_PREFIX}devtron"
 
-# --- Create devtroncd namespace + secret (Hyperion binary hardcodes this namespace) ---
-log_info "[devtron/pre-install] Creating devtroncd namespace and secret for Hyperion..."
+# --- Create devtroncd namespace + secrets (Hyperion binary hardcodes this namespace) ---
+log_info "[devtron/pre-install] Creating devtroncd namespace and secrets for Hyperion..."
 kubectl create namespace devtroncd --dry-run=client -o yaml | kubectl apply -f -
-kubectl create secret generic devtron-secret \
-    --namespace=devtroncd \
-    --from-literal=PG_PASSWORD="${PARAM_DEVTRON_DB_PASSWORD}" \
-    --from-literal=ADMIN_PASSWORD="${PARAM_DEVTRON_ADMIN_PASSWORD}" \
-    --from-literal=POSTGRES_PASSWORD="${PARAM_DEVTRON_DB_PASSWORD}" \
-    --from-literal=POSTGRES_USER=postgres \
-    --from-literal=POSTGRES_DB=orchestrator \
-    --dry-run=client -o yaml | kubectl apply -f -
+
+# devtron-secret: DB credentials + ArgoCD session auth fields
+kubectl apply -f - <<SECEOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: devtron-secret
+  namespace: devtroncd
+type: Opaque
+stringData:
+  PG_PASSWORD: "${PARAM_DEVTRON_DB_PASSWORD}"
+  ADMIN_PASSWORD: "${PARAM_DEVTRON_ADMIN_PASSWORD}"
+  POSTGRES_PASSWORD: "${PARAM_DEVTRON_DB_PASSWORD}"
+  POSTGRES_USER: "postgres"
+  POSTGRES_DB: "orchestrator"
+  admin.password: "${PARAM_DEVTRON_ADMIN_PASSWORD_HASH}"
+  admin.passwordMtime: "${PARAM_DEVTRON_ADMIN_PASSWORD_MTIME}"
+  server.secretkey: "${PARAM_DEVTRON_SERVER_SECRET}"
+SECEOF
+
+# argocd-secret + argocd-cm: Required by authenticator library (GetArgocdConfig fails without them)
+kubectl apply -f - <<ARGOEOF
+apiVersion: v1
+kind: Secret
+metadata:
+  name: argocd-secret
+  namespace: devtroncd
+type: Opaque
+data: {}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  namespace: devtroncd
+data:
+  admin.enabled: "true"
+ARGOEOF
+
+log_info "[devtron/pre-install] devtron-secret, argocd-secret, argocd-cm created in devtroncd."
 
 # --- SSL / HTTPS ---
 _needs_value "${PARAM_DEVTRON_SSL_ENABLED:-}" && PARAM_DEVTRON_SSL_ENABLED="true"
@@ -117,7 +170,7 @@ if [[ "${PARAM_DEVTRON_SSL_ENABLED}" == "true" ]]; then
     log_info "[devtron/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 
     # Orchestrator API needs its own HTTPRoute (/orchestrator/* → devtron-orchestrator:80)
-    local ns="${HELM_NAMESPACE_PREFIX}devtron"
+    ns="${HELM_NAMESPACE_PREFIX}devtron"
     log_info "[devtron/pre-install] Applying HTTPRoute for orchestrator API..."
     kubectl apply -f - <<ORCHEOF
 apiVersion: gateway.networking.k8s.io/v1
