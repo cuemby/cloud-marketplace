@@ -79,8 +79,12 @@ if [[ "${PARAM_GHOST_SSL_ENABLED}" == "true" ]]; then
     ssl_full_setup "ghost" "PARAM_HOSTNAME" "ghost-http" 80
     PARAM_GHOST_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_GHOST_HOSTNAME
+    PARAM_GHOST_URL="https://${PARAM_GHOST_HOSTNAME}"
+    export PARAM_GHOST_URL
     log_info "[ghost/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    PARAM_GHOST_URL="http://localhost:2368"
+    export PARAM_GHOST_URL
     log_info "[ghost/pre-install] SSL disabled — access via NodePort only."
 fi
 
