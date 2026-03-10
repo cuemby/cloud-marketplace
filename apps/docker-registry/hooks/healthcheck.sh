@@ -60,3 +60,18 @@ else
     log_warn "[docker-registry/healthcheck] Not all PVCs are Bound."
     exit 1
 fi
+
+# Check 4: Registry Browser is responding
+_browser_ready() {
+    local pod
+    pod="$(kubectl get pods -n "${local_namespace}" \
+        -l app.kubernetes.io/name=docker-registry,app.kubernetes.io/component=browser \
+        -o jsonpath='{.items[0].metadata.name}' 2>/dev/null)"
+    [[ -n "$pod" ]] || return 1
+    kubectl exec -n "${local_namespace}" "$pod" -- \
+        wget -q -O /dev/null --spider http://localhost:8080/ 2>/dev/null
+}
+
+log_info "[docker-registry/healthcheck] Checking registry browser..."
+retry_with_timeout 120 10 _browser_ready
+log_info "[docker-registry/healthcheck] Registry browser is responding."

@@ -28,3 +28,9 @@ parameters:
     description: Secret key used for registry HTTP session signing
     type: password
     required: false
+  - name: BROWSER_IMAGE_TAG
+    displayName: Browser Image Tag
+    description: Docker Registry Browser image tag
+    type: string
+    required: false
+    default: "latest"
