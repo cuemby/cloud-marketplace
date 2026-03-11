@@ -43,6 +43,8 @@ The following ports must be opened at the firewall or load balancer level:
 |----------|------|----------|
 | HTTP Frontend | 30080 (NodePort) | HTTP |
 | Stats Dashboard | 30936 (NodePort) | HTTP |
+| HTTPS Frontend | 443 (Gateway) | HTTPS |
+| HTTPS Stats | 443 /stats (Gateway) | HTTPS |
 
 ## Ports
 
@@ -56,9 +58,33 @@ The following ports must be opened at the firewall or load balancer level:
 3. Run `make validate && make lint && make catalog`
 4. Test with `make test-integration` if available
 
+## Manifest Ordering
+
+```
+00-secrets.yaml              -> Stats credentials (user/password)
+05-configmap.yaml            -> HAProxy config (frontends, backends, stats)
+20-deployment.yaml           -> HAProxy Deployment with probes
+40-service.yaml              -> NodePort 30080 (HTTP frontend)
+41-service-stats.yaml        -> NodePort 30936 (Stats dashboard)
+42-service-http.yaml         -> ClusterIP for HTTPS Gateway
+43-service-stats-internal.yaml -> ClusterIP for /stats via HTTPS Gateway
+44-httproute-stats.yaml      -> HTTPRoute for /stats and /healthz via HTTPS
+50-demo-backends.yaml        -> 3 nginx demo backends (round-robin demo)
+```
+
+## Demo Backends
+
+Three color-coded nginx servers (blue/green/red) are deployed as demo backends to
+showcase HAProxy round-robin load balancing. To remove them:
+
+```bash
+kubectl -n app-haproxy delete deploy,svc,configmap -l app.kubernetes.io/component=demo
+# Then edit ConfigMap 'haproxy-config' with your real backend servers.
+```
+
 ## Notes
 
-- HAProxy ships with a default configuration that includes stats and a placeholder HTTP frontend.
-- Users should customize the ConfigMap (`05-configmap.yaml`) with their backend servers after deployment.
-- The default frontend returns 503 until backends are configured.
+- Stats dashboard accessible via HTTPS at `/stats` (routed through Gateway).
+- Demo backends deployed by default for load-balancing demonstration.
+- Users should replace demo backends with real servers after evaluation.
 - License: GPLv2 (fully open-source).

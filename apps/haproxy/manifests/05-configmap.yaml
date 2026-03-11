@@ -31,9 +31,10 @@ data:
     backend http_back
         balance roundrobin
         option httpchk GET /
-        # Add backend servers here:
-        # server web1 192.168.1.10:80 check
-        # server web2 192.168.1.11:80 check
+        # Demo backends (replace with your real servers):
+        server web1 demo-web1.${PARAM_HAPROXY_NAMESPACE}.svc.cluster.local:80 check
+        server web2 demo-web2.${PARAM_HAPROXY_NAMESPACE}.svc.cluster.local:80 check
+        server web3 demo-web3.${PARAM_HAPROXY_NAMESPACE}.svc.cluster.local:80 check
 
     frontend stats_front
         bind *:8936

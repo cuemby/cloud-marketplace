@@ -1,0 +1,248 @@
+# Demo backend servers for HAProxy load-balancing demonstration.
+# These show round-robin in action with 3 color-coded pages.
+#
+# To remove after demo:
+#   kubectl -n app-haproxy delete deploy demo-web1 demo-web2 demo-web3
+#   kubectl -n app-haproxy delete svc demo-web1 demo-web2 demo-web3
+#   kubectl -n app-haproxy delete configmap demo-web1 demo-web2 demo-web3
+#   Then update haproxy-config ConfigMap to remove/replace backend servers.
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-web1
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head><title>Backend 1</title>
+    <style>
+      body { font-family: sans-serif; display: flex; justify-content: center;
+             align-items: center; height: 100vh; margin: 0;
+             background: #2563eb; color: white; }
+      .card { text-align: center; padding: 40px;
+              background: rgba(255,255,255,0.1); border-radius: 16px; }
+      h1 { font-size: 3em; margin-bottom: 10px; }
+      p  { font-size: 1.2em; opacity: 0.8; }
+      .badge { background: rgba(255,255,255,0.2); padding: 8px 16px;
+               border-radius: 8px; display: inline-block; margin-top: 15px; }
+    </style></head>
+    <body><div class="card">
+      <h1>Server 1</h1>
+      <p>HAProxy Backend Node</p>
+      <div class="badge">web-1 | round-robin demo</div>
+    </div></body></html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-web1
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-web1
+  template:
+    metadata:
+      labels:
+        app: demo-web1
+    spec:
+      containers:
+        - name: nginx
+          image: docker.io/library/nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+        - name: html
+          configMap:
+            name: demo-web1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-web1
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+spec:
+  selector:
+    app: demo-web1
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-web2
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head><title>Backend 2</title>
+    <style>
+      body { font-family: sans-serif; display: flex; justify-content: center;
+             align-items: center; height: 100vh; margin: 0;
+             background: #16a34a; color: white; }
+      .card { text-align: center; padding: 40px;
+              background: rgba(255,255,255,0.1); border-radius: 16px; }
+      h1 { font-size: 3em; margin-bottom: 10px; }
+      p  { font-size: 1.2em; opacity: 0.8; }
+      .badge { background: rgba(255,255,255,0.2); padding: 8px 16px;
+               border-radius: 8px; display: inline-block; margin-top: 15px; }
+    </style></head>
+    <body><div class="card">
+      <h1>Server 2</h1>
+      <p>HAProxy Backend Node</p>
+      <div class="badge">web-2 | round-robin demo</div>
+    </div></body></html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-web2
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-web2
+  template:
+    metadata:
+      labels:
+        app: demo-web2
+    spec:
+      containers:
+        - name: nginx
+          image: docker.io/library/nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+        - name: html
+          configMap:
+            name: demo-web2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-web2
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+spec:
+  selector:
+    app: demo-web2
+  ports:
+    - port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: demo-web3
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head><title>Backend 3</title>
+    <style>
+      body { font-family: sans-serif; display: flex; justify-content: center;
+             align-items: center; height: 100vh; margin: 0;
+             background: #dc2626; color: white; }
+      .card { text-align: center; padding: 40px;
+              background: rgba(255,255,255,0.1); border-radius: 16px; }
+      h1 { font-size: 3em; margin-bottom: 10px; }
+      p  { font-size: 1.2em; opacity: 0.8; }
+      .badge { background: rgba(255,255,255,0.2); padding: 8px 16px;
+               border-radius: 8px; display: inline-block; margin-top: 15px; }
+    </style></head>
+    <body><div class="card">
+      <h1>Server 3</h1>
+      <p>HAProxy Backend Node</p>
+      <div class="badge">web-3 | round-robin demo</div>
+    </div></body></html>
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: demo-web3
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: demo-web3
+  template:
+    metadata:
+      labels:
+        app: demo-web3
+    spec:
+      containers:
+        - name: nginx
+          image: docker.io/library/nginx:alpine
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html
+              mountPath: /usr/share/nginx/html
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              cpu: 100m
+              memory: 64Mi
+      volumes:
+        - name: html
+          configMap:
+            name: demo-web3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo-web3
+  labels:
+    app.kubernetes.io/name: haproxy
+    app.kubernetes.io/component: demo
+spec:
+  selector:
+    app: demo-web3
+  ports:
+    - port: 80
+      targetPort: 80

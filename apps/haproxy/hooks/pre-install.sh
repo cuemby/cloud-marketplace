@@ -53,6 +53,10 @@ export PARAM_HAPROXY_HTTP_NODEPORT
 _needs_value "${PARAM_HAPROXY_STATS_NODEPORT:-}" && PARAM_HAPROXY_STATS_NODEPORT="30936"
 export PARAM_HAPROXY_STATS_NODEPORT
 
+# --- Namespace (used by configmap for demo backend DNS) ---
+PARAM_HAPROXY_NAMESPACE="${HELM_NAMESPACE_PREFIX}haproxy"
+export PARAM_HAPROXY_NAMESPACE
+
 # --- Resource limits (defaults target a 2-CPU / 2GB VM) ---
 export PARAM_HAPROXY_CPU_REQUEST="${PARAM_HAPROXY_CPU_REQUEST:-250m}"
 export PARAM_HAPROXY_CPU_LIMIT="${PARAM_HAPROXY_CPU_LIMIT:-2000m}"
@@ -73,6 +77,9 @@ if [[ "${PARAM_HAPROXY_SSL_ENABLED}" == "true" ]]; then
     export PARAM_HAPROXY_HOSTNAME
     log_info "[haproxy/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    local_ip="$(ssl_detect_public_ip)"
+    PARAM_HAPROXY_HOSTNAME="${local_ip}"
+    export PARAM_HAPROXY_HOSTNAME
     log_info "[haproxy/pre-install] SSL disabled — access via NodePort only."
 fi
 
