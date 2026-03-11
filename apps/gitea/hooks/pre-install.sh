@@ -58,8 +58,15 @@ if [[ "${PARAM_GITEA_SSL_ENABLED}" == "true" ]]; then
     ssl_full_setup "gitea" "PARAM_HOSTNAME" "gitea-web" 80
     PARAM_GITEA_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_GITEA_HOSTNAME
+    PARAM_GITEA_DOMAIN="${PARAM_GITEA_HOSTNAME}"
+    PARAM_GITEA_ROOT_URL="https://${PARAM_GITEA_HOSTNAME}"
+    export PARAM_GITEA_DOMAIN PARAM_GITEA_ROOT_URL
     log_info "[gitea/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    local_ip="$(ssl_detect_public_ip)"
+    PARAM_GITEA_DOMAIN="${local_ip}"
+    PARAM_GITEA_ROOT_URL="http://${local_ip}:${PARAM_GITEA_HTTP_NODEPORT}"
+    export PARAM_GITEA_DOMAIN PARAM_GITEA_ROOT_URL
     log_info "[gitea/pre-install] SSL disabled — access via NodePort only."
 fi
 
