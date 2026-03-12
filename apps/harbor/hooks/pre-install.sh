@@ -19,13 +19,14 @@ source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 log_info "[harbor/pre-install] Setting defaults and generating credentials..."
 
 # --- Password generation (alphanumeric only to avoid YAML escaping issues) ---
+# Generate extra bytes so after stripping /+= we always have enough chars.
 _generate_password() {
-    openssl rand -base64 24 | tr -d '/+=' | head -c 32
+    openssl rand -base64 48 | tr -d '/+=' | head -c 32
 }
 
 # Generate a 16-character alphanumeric key
 _generate_secret_key() {
-    openssl rand -base64 24 | tr -d '/+=' | head -c 16
+    openssl rand -base64 48 | tr -d '/+=' | head -c 16
 }
 
 # Check if a value is empty or an uninterpolated {{placeholder}}
@@ -104,10 +105,6 @@ _needs_value "${PARAM_HARBOR_DB_DATA_SIZE:-}" && PARAM_HARBOR_DB_DATA_SIZE="10Gi
 export PARAM_HARBOR_REGISTRY_DATA_SIZE
 export PARAM_HARBOR_DB_DATA_SIZE
 
-# --- External URL (defaults to VM IP + NodePort) ---
-_needs_value "${PARAM_HARBOR_EXTERNAL_URL:-}" && PARAM_HARBOR_EXTERNAL_URL="localhost:${DEFAULT_HTTPS_NODEPORT}"
-export PARAM_HARBOR_EXTERNAL_URL
-
 # --- NodePort ---
 export PARAM_HTTPS_NODEPORT="${PARAM_HTTPS_NODEPORT:-${DEFAULT_HTTPS_NODEPORT}}"
 
@@ -166,8 +163,14 @@ if [[ "${PARAM_HARBOR_SSL_ENABLED}" == "true" ]]; then
     ssl_full_setup "harbor" "PARAM_HOSTNAME" "harbor-portal-http" 80
     PARAM_HARBOR_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_HARBOR_HOSTNAME
+    PARAM_HARBOR_EXTERNAL_URL="${PARAM_HARBOR_HOSTNAME}"
+    export PARAM_HARBOR_EXTERNAL_URL
     log_info "[harbor/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    local_ip="$(ssl_detect_public_ip)"
+    PARAM_HARBOR_HOSTNAME="${local_ip}"
+    PARAM_HARBOR_EXTERNAL_URL="${local_ip}:${PARAM_HTTPS_NODEPORT}"
+    export PARAM_HARBOR_HOSTNAME PARAM_HARBOR_EXTERNAL_URL
     log_info "[harbor/pre-install] SSL disabled — access via NodePort only."
 fi
 
