@@ -17,6 +17,11 @@ versions:
     imageTag: "2.541.2-lts-jdk21"
     default: true
 parameters:
+  - name: JENKINS_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: Jenkins admin password (auto-generated if not set)
+    type: password
+    required: false
   - name: JENKINS_DATA_SIZE
     displayName: Data Storage Size
     description: Size of persistent volume for Jenkins home directory

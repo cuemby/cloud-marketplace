@@ -16,20 +16,29 @@ Three LTS versions supported: 2.541.2, 2.541.1, 2.528.3 (all JDK 21).
 
 ## Parameters
 
-All parameters use `PARAM_*` prefix at runtime. No passwords to auto-generate — Jenkins creates an initial admin password at first boot.
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| JENKINS_ADMIN_PASSWORD | auto-generated | Admin password |
+| JENKINS_DATA_SIZE | 20Gi | Jenkins home storage |
+| JENKINS_JAVA_OPTS | -Xms512m -Xmx1g | JVM heap settings |
 
 ## Admin Account
 
-Jenkins creates an initial admin password at `/var/jenkins_home/secrets/initialAdminPassword` on first startup. The post-install hook reads and logs this password. The admin completes setup via the first-visit wizard at `http://<VM-IP>:30080`.
+Admin user (`admin`) is created automatically via Groovy init script.
+Password is auto-generated and stored in Secret `jenkins-admin-secret`.
+Setup wizard is skipped (`-Djenkins.install.runSetupWizard=false`).
 
 ## Manifest Ordering
 
 ```
+00-secrets.yaml                -> Admin password (auto-generated)
 05-configmap.yaml              -> JVM options (JAVA_OPTS)
+06-init-groovy.yaml            -> Groovy init scripts (admin user + URL config)
 10-jenkins-pvc.yaml            -> Jenkins home storage
-20-jenkins-deployment.yaml     -> Jenkins Deployment with probes
+20-jenkins-deployment.yaml     -> Jenkins Deployment with probes + init groovy mount
 40-jenkins-http-service.yaml   -> NodePort 30080 (HTTP)
 41-jenkins-agent-service.yaml  -> NodePort 30500 (JNLP agents)
+42-jenkins-web.yaml            -> ClusterIP for HTTPS Gateway
 ```
 
 ## Health Checks

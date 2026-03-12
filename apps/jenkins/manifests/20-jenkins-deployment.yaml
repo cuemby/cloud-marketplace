@@ -19,6 +19,28 @@ spec:
         app.kubernetes.io/name: jenkins
         app.kubernetes.io/component: app
     spec:
+      initContainers:
+        - name: install-plugins
+          image: docker.io/jenkins/jenkins:${PARAM_APP_IMAGE_TAG}
+          command:
+            - jenkins-plugin-cli
+            - --plugin-file
+            - /plugins/plugins.txt
+            - --plugin-download-directory
+            - /var/jenkins_home/plugins
+          volumeMounts:
+            - name: jenkins-data
+              mountPath: /var/jenkins_home
+            - name: plugins-list
+              mountPath: /plugins
+              readOnly: true
+          resources:
+            requests:
+              cpu: 250m
+              memory: 256Mi
+            limits:
+              cpu: 1000m
+              memory: 1Gi
       containers:
         - name: jenkins
           image: docker.io/jenkins/jenkins:${PARAM_APP_IMAGE_TAG}
@@ -32,9 +54,20 @@ spec:
           envFrom:
             - configMapRef:
                 name: jenkins-config
+          env:
+            - name: JENKINS_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: jenkins-admin-secret
+                  key: JENKINS_ADMIN_PASSWORD
+            - name: JENKINS_URL_EXTERNAL
+              value: "${PARAM_JENKINS_URL}"
           volumeMounts:
             - name: jenkins-data
               mountPath: /var/jenkins_home
+            - name: init-groovy
+              mountPath: /var/jenkins_home/init.groovy.d
+              readOnly: true
           startupProbe:
             httpGet:
               path: /login
@@ -68,3 +101,9 @@ spec:
         - name: jenkins-data
           persistentVolumeClaim:
             claimName: jenkins-data
+        - name: init-groovy
+          configMap:
+            name: jenkins-init-groovy
+        - name: plugins-list
+          configMap:
+            name: jenkins-plugins

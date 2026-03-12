@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: jenkins-plugins
+  labels:
+    app.kubernetes.io/name: jenkins
+    app.kubernetes.io/component: app
+data:
+  plugins.txt: |
+    cloudbees-folder
+    antisamy-markup-formatter
+    build-timeout
+    credentials-binding
+    timestamper
+    ws-cleanup
+    workflow-aggregator
+    github-branch-source
+    pipeline-github-lib
+    pipeline-stage-view
+    git
+    ssh-slaves
+    matrix-auth
+    email-ext
+    mailer
+    dark-theme
+    locale
