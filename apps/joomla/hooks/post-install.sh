@@ -48,7 +48,7 @@ if [[ -n "${final_password}" ]]; then
 
     # Wait for auto-install to finish (configuration.php signals completion)
     for _i in $(seq 1 60); do
-        if kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
+        if kubectl exec -n "${local_namespace}" -c joomla "${joomla_pod}" -- \
             test -f /var/www/html/configuration.php 2>/dev/null; then
             break
         fi
@@ -57,7 +57,7 @@ if [[ -n "${final_password}" ]]; then
 
     # Write a temp PHP script to the container (avoids shell escaping issues)
     # The script reads password and db credentials from environment variables
-    kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
+    kubectl exec -n "${local_namespace}" -c joomla "${joomla_pod}" -- \
         bash -c 'cat > /tmp/update_admin_password.php' <<'PHPSCRIPT'
 <?php
 $password = getenv('_ADMIN_PASS');
@@ -86,13 +86,13 @@ try {
 PHPSCRIPT
 
     # Execute the script with the password passed as an env var
-    pw_update_result=$(kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
+    pw_update_result=$(kubectl exec -n "${local_namespace}" -c joomla "${joomla_pod}" -- \
         env "_ADMIN_PASS=${final_password}" php /tmp/update_admin_password.php 2>&1) || true
 
     # Clean up
-    kubectl exec -n "${local_namespace}" "${joomla_pod}" -- rm -f /tmp/update_admin_password.php 2>/dev/null || true
+    kubectl exec -n "${local_namespace}" -c joomla "${joomla_pod}" -- rm -f /tmp/update_admin_password.php 2>/dev/null || true
 
-    if [[ "${pw_update_result}" == "OK" ]]; then
+    if [[ "${pw_update_result}" == *"OK"* ]]; then
         log_info "[joomla/post-install] Admin password updated successfully."
     else
         log_warn "[joomla/post-install] Could not update admin password: ${pw_update_result}"
