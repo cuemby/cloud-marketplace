@@ -9,21 +9,35 @@ data:
   01-create-admin.groovy: |
     import jenkins.model.*
     import hudson.security.*
+    import hudson.security.csrf.DefaultCrumbIssuer
 
     def instance = Jenkins.getInstance()
     def password = System.getenv("JENKINS_ADMIN_PASSWORD")
 
     if (password && !password.isEmpty()) {
-        def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-        hudsonRealm.createAccount("admin", password)
-        instance.setSecurityRealm(hudsonRealm)
+        // Only create admin and security realm on first boot
+        def realm = instance.getSecurityRealm()
+        boolean needsSetup = !(realm instanceof HudsonPrivateSecurityRealm)
 
-        def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
-        strategy.setAllowAnonymousRead(false)
-        instance.setAuthorizationStrategy(strategy)
+        if (needsSetup) {
+            def hudsonRealm = new HudsonPrivateSecurityRealm(false)
+            hudsonRealm.createAccount("admin", password)
+            instance.setSecurityRealm(hudsonRealm)
+
+            def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+            strategy.setAllowAnonymousRead(false)
+            instance.setAuthorizationStrategy(strategy)
+
+            println("[init] Admin user created successfully.")
+        } else {
+            println("[init] Security realm already configured — skipping admin creation.")
+        }
+
+        // Always ensure CSRF crumb issuer is proxy-compatible (Traefik)
+        def crumbIssuer = new DefaultCrumbIssuer(true)
+        instance.setCrumbIssuer(crumbIssuer)
 
         instance.save()
-        println("[init] Admin user created successfully.")
     } else {
         println("[init] JENKINS_ADMIN_PASSWORD not set — skipping admin creation.")
     }
