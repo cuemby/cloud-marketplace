@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # post-install.sh — Joomla post-install hook.
-# Waits for the Joomla pod to be ready and logs access information.
+# Waits for Joomla to be ready, updates admin password, and logs access info.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -39,12 +39,13 @@ retry_with_timeout 300 10 _joomla_pod_ready
 joomla_pod="$(_get_joomla_pod)"
 log_info "[joomla/post-install] Joomla pod ready: ${joomla_pod}"
 
-# --- Set the user's desired admin password via PHP/DB ---
-# The Docker entrypoint requires >= 12 chars, so we always use a long generated
-# password for auto-install. Now we update the DB to the user's actual password.
+# --- Set the user's desired admin password ---
+# The Docker entrypoint requires >= 12 chars, so we use a long generated
+# password for auto-install, then update the DB to the user's actual password.
 final_password="${PARAM_JOOMLA_ADMIN_PASSWORD_FINAL:-${PARAM_JOOMLA_ADMIN_PASSWORD:-}}"
 if [[ -n "${final_password}" ]]; then
     log_info "[joomla/post-install] Setting admin password in database..."
+
     # Wait for auto-install to finish (configuration.php signals completion)
     for _i in $(seq 1 60); do
         if kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
@@ -53,24 +54,49 @@ if [[ -n "${final_password}" ]]; then
         fi
         sleep 5
     done
-    # Extract table prefix from configuration.php and update password via PHP
+
+    # Write a temp PHP script to the container (avoids shell escaping issues)
+    # The script reads password and db credentials from environment variables
     kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
-        php -r "
-            \$cfg = file_get_contents('/var/www/html/configuration.php');
-            preg_match('/dbprefix\s*=\s*['\''\"](.*?)['\''\"]/', \$cfg, \$m);
-            \$prefix = \$m[1] ?? 'joomla_';
-            \$hash = password_hash(base64_decode('$(printf '%s' "${final_password}" | base64)'), PASSWORD_BCRYPT);
-            \$pdo = new PDO('mysql:host=joomla-mariadb;dbname=joomla', 'joomla', base64_decode('$(printf '%s' "${PARAM_JOOMLA_DB_PASSWORD}" | base64)'));
-            \$stmt = \$pdo->prepare('UPDATE ' . \$prefix . 'users SET password = ? WHERE username = ?');
-            \$stmt->execute([\$hash, 'admin']);
-            echo \$stmt->rowCount() > 0 ? 'OK' : 'NO_MATCH';
-        " 2>/dev/null
-    # shellcheck disable=SC2181
-    if [[ $? -eq 0 ]]; then
+        bash -c 'cat > /tmp/update_admin_password.php' <<'PHPSCRIPT'
+<?php
+$password = getenv('_ADMIN_PASS');
+$dbpass   = getenv('JOOMLA_DB_PASSWORD');
+$dbhost   = getenv('JOOMLA_DB_HOST') ?: 'joomla-mariadb';
+$dbname   = getenv('JOOMLA_DB_NAME') ?: 'joomla';
+$dbuser   = getenv('JOOMLA_DB_USER') ?: 'joomla';
+
+// Read table prefix from configuration.php
+$cfg = file_get_contents('/var/www/html/configuration.php');
+preg_match('/dbprefix\s*=\s*[\x27\x22](.*?)[\x27\x22]/', $cfg, $m);
+$prefix = $m[1] ?? 'joomla_';
+
+$hash = password_hash($password, PASSWORD_BCRYPT);
+
+try {
+    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $stmt = $pdo->prepare("UPDATE {$prefix}users SET password = ? WHERE username = ?");
+    $stmt->execute([$hash, 'admin']);
+    echo $stmt->rowCount() > 0 ? 'OK' : 'NO_MATCH';
+} catch (Exception $e) {
+    fwrite(STDERR, $e->getMessage() . "\n");
+    exit(1);
+}
+PHPSCRIPT
+
+    # Execute the script with the password passed as an env var
+    pw_update_result=$(kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
+        env "_ADMIN_PASS=${final_password}" php /tmp/update_admin_password.php 2>&1) || true
+
+    # Clean up
+    kubectl exec -n "${local_namespace}" "${joomla_pod}" -- rm -f /tmp/update_admin_password.php 2>/dev/null || true
+
+    if [[ "${pw_update_result}" == "OK" ]]; then
         log_info "[joomla/post-install] Admin password updated successfully."
     else
-        log_warn "[joomla/post-install] Could not update admin password — using auto-generated."
-        final_password="${PARAM_JOOMLA_ADMIN_PASSWORD}"
+        log_warn "[joomla/post-install] Could not update admin password: ${pw_update_result}"
+        final_password="<check secret for auto-generated password>"
     fi
 fi
 
