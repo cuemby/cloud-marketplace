@@ -55,42 +55,37 @@ if [[ -n "${final_password}" ]]; then
         sleep 5
     done
 
-    # Write a temp PHP script to the container (avoids shell escaping issues)
-    # The script reads password and db credentials from environment variables
-    kubectl exec -n "${local_namespace}" -c joomla "${joomla_pod}" -- \
-        bash -c 'cat > /tmp/update_admin_password.php' <<'PHPSCRIPT'
+    # Pass password via base64 to avoid any shell escaping issues
+    pw_b64=$(printf '%s' "${final_password}" | base64)
+
+    # Pipe PHP script directly via stdin (no temp file needed)
+    pw_update_result=$(kubectl exec -i -n "${local_namespace}" -c joomla "${joomla_pod}" \
+        -- php <<PHPSCRIPT
 <?php
-$password = getenv('_ADMIN_PASS');
-$dbpass   = getenv('JOOMLA_DB_PASSWORD');
-$dbhost   = getenv('JOOMLA_DB_HOST') ?: 'joomla-mariadb';
-$dbname   = getenv('JOOMLA_DB_NAME') ?: 'joomla';
-$dbuser   = getenv('JOOMLA_DB_USER') ?: 'joomla';
+\$password = base64_decode('${pw_b64}');
+\$dbpass   = getenv('JOOMLA_DB_PASSWORD');
+\$dbhost   = getenv('JOOMLA_DB_HOST') ?: 'joomla-mariadb';
+\$dbname   = getenv('JOOMLA_DB_NAME') ?: 'joomla';
+\$dbuser   = getenv('JOOMLA_DB_USER') ?: 'joomla';
 
-// Read table prefix from configuration.php
-$cfg = file_get_contents('/var/www/html/configuration.php');
-preg_match('/dbprefix\s*=\s*[\x27\x22](.*?)[\x27\x22]/', $cfg, $m);
-$prefix = $m[1] ?? 'joomla_';
+\$cfg = file_get_contents('/var/www/html/configuration.php');
+preg_match('/dbprefix\s*=\s*[\x27\x22](.*?)[\x27\x22]/', \$cfg, \$m);
+\$prefix = \$m[1] ?? 'joomla_';
 
-$hash = password_hash($password, PASSWORD_BCRYPT);
+\$hash = password_hash(\$password, PASSWORD_BCRYPT);
 
 try {
-    $pdo = new PDO("mysql:host=$dbhost;dbname=$dbname", $dbuser, $dbpass);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $stmt = $pdo->prepare("UPDATE {$prefix}users SET password = ? WHERE username = ?");
-    $stmt->execute([$hash, 'admin']);
-    echo $stmt->rowCount() > 0 ? 'OK' : 'NO_MATCH';
-} catch (Exception $e) {
-    fwrite(STDERR, $e->getMessage() . "\n");
+    \$pdo = new PDO("mysql:host=\$dbhost;dbname=\$dbname", \$dbuser, \$dbpass);
+    \$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    \$stmt = \$pdo->prepare("UPDATE {\$prefix}users SET password = ? WHERE username = ?");
+    \$stmt->execute([\$hash, 'admin']);
+    echo \$stmt->rowCount() > 0 ? 'OK' : 'NO_MATCH';
+} catch (Exception \$e) {
+    fwrite(STDERR, \$e->getMessage() . "\n");
     exit(1);
 }
 PHPSCRIPT
-
-    # Execute the script with the password passed as an env var
-    pw_update_result=$(kubectl exec -n "${local_namespace}" -c joomla "${joomla_pod}" -- \
-        env "_ADMIN_PASS=${final_password}" php /tmp/update_admin_password.php 2>&1) || true
-
-    # Clean up
-    kubectl exec -n "${local_namespace}" -c joomla "${joomla_pod}" -- rm -f /tmp/update_admin_password.php 2>/dev/null || true
+    ) || true
 
     if [[ "${pw_update_result}" == *"OK"* ]]; then
         log_info "[joomla/post-install] Admin password updated successfully."
