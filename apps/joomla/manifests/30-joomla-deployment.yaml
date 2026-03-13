@@ -67,7 +67,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: joomla-db-secret
-                  key: JOOMLA_ADMIN_PASSWORD
+                  key: JOOMLA_ADMIN_PASSWORD_INSTALL
             - name: JOOMLA_ADMIN_EMAIL
               value: "${PARAM_JOOMLA_ADMIN_EMAIL}"
           volumeMounts:
