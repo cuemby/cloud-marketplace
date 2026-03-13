@@ -13,6 +13,8 @@ BOOTSTRAP_DIR="${SCRIPT_DIR}/../../../bootstrap"
 source "${BOOTSTRAP_DIR}/lib/logging.sh"
 # shellcheck source=../../../bootstrap/lib/constants.sh
 source "${BOOTSTRAP_DIR}/lib/constants.sh"
+# shellcheck source=../../../bootstrap/lib/ssl-hooks.sh
+source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[kafka/pre-install] Setting defaults and generating cluster ID..."
 
@@ -50,6 +52,15 @@ export PARAM_KAFKA_CPU_REQUEST="${PARAM_KAFKA_CPU_REQUEST:-1000m}"
 export PARAM_KAFKA_CPU_LIMIT="${PARAM_KAFKA_CPU_LIMIT:-4000m}"
 export PARAM_KAFKA_MEMORY_REQUEST="${PARAM_KAFKA_MEMORY_REQUEST:-2Gi}"
 export PARAM_KAFKA_MEMORY_LIMIT="${PARAM_KAFKA_MEMORY_LIMIT:-6Gi}"
+
+# --- External hostname for advertised.listeners ---
+# Kafka clients reconnect using the advertised address, so it MUST be the
+# VM's public IP (not localhost) for external access to work.
+if _needs_value "${PARAM_KAFKA_EXTERNAL_HOST:-}"; then
+    PARAM_KAFKA_EXTERNAL_HOST="$(ssl_detect_public_ip)"
+    export PARAM_KAFKA_EXTERNAL_HOST
+    log_info "[kafka/pre-install] Detected external IP: ${PARAM_KAFKA_EXTERNAL_HOST}"
+fi
 
 log_info "[kafka/pre-install] Pre-install complete."
 readonly _KAFKA_PRE_INSTALL_DONE=1

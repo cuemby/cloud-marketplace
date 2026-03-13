@@ -34,3 +34,8 @@ parameters:
     type: string
     required: false
     default: "-Xms2g -Xmx2g"
+  - name: KAFKA_EXTERNAL_HOST
+    displayName: External Host / IP
+    description: "Public IP or hostname for client connections (auto-detected if not set)"
+    type: string
+    required: false
