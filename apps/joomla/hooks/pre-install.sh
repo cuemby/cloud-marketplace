@@ -48,15 +48,19 @@ if _needs_value "${PARAM_JOOMLA_DB_PASSWORD:-}"; then
 fi
 
 # --- Admin credentials (auto-install, skip wizard) ---
-# Joomla 5/6 requires admin password to be at least 12 characters
-if _needs_value "${PARAM_JOOMLA_ADMIN_PASSWORD:-}" || [[ "${#PARAM_JOOMLA_ADMIN_PASSWORD}" -lt 12 ]]; then
-    if [[ -n "${PARAM_JOOMLA_ADMIN_PASSWORD:-}" ]] && [[ "${#PARAM_JOOMLA_ADMIN_PASSWORD}" -lt 12 ]]; then
-        log_warn "[joomla/pre-install] Provided admin password is too short (<12 chars) — generating a secure one."
-    fi
+# Save the user's desired password (any length) for post-install override.
+# Joomla Docker image requires >= 12 chars, so we always use a long generated
+# password for the auto-install entrypoint and update it afterwards.
+if _needs_value "${PARAM_JOOMLA_ADMIN_PASSWORD:-}"; then
     PARAM_JOOMLA_ADMIN_PASSWORD="$(_generate_password)"
     export PARAM_JOOMLA_ADMIN_PASSWORD
     log_info "[joomla/pre-install] Generated Joomla admin password."
 fi
+PARAM_JOOMLA_ADMIN_PASSWORD_FINAL="${PARAM_JOOMLA_ADMIN_PASSWORD}"
+export PARAM_JOOMLA_ADMIN_PASSWORD_FINAL
+# Always use a long password for Docker entrypoint auto-install
+PARAM_JOOMLA_ADMIN_PASSWORD="$(_generate_password)"
+export PARAM_JOOMLA_ADMIN_PASSWORD
 PARAM_JOOMLA_ADMIN_USER="${PARAM_JOOMLA_ADMIN_USER:-Joomla Admin}"
 PARAM_JOOMLA_ADMIN_EMAIL="${PARAM_JOOMLA_ADMIN_EMAIL:-admin@example.com}"
 export PARAM_JOOMLA_ADMIN_USER PARAM_JOOMLA_ADMIN_EMAIL

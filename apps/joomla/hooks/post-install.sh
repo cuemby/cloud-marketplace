@@ -39,6 +39,41 @@ retry_with_timeout 300 10 _joomla_pod_ready
 joomla_pod="$(_get_joomla_pod)"
 log_info "[joomla/post-install] Joomla pod ready: ${joomla_pod}"
 
+# --- Set the user's desired admin password via PHP/DB ---
+# The Docker entrypoint requires >= 12 chars, so we always use a long generated
+# password for auto-install. Now we update the DB to the user's actual password.
+final_password="${PARAM_JOOMLA_ADMIN_PASSWORD_FINAL:-${PARAM_JOOMLA_ADMIN_PASSWORD:-}}"
+if [[ -n "${final_password}" ]]; then
+    log_info "[joomla/post-install] Setting admin password in database..."
+    # Wait for auto-install to finish (configuration.php signals completion)
+    for _i in $(seq 1 60); do
+        if kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
+            test -f /var/www/html/configuration.php 2>/dev/null; then
+            break
+        fi
+        sleep 5
+    done
+    # Extract table prefix from configuration.php and update password via PHP
+    kubectl exec -n "${local_namespace}" "${joomla_pod}" -- \
+        php -r "
+            \$cfg = file_get_contents('/var/www/html/configuration.php');
+            preg_match('/dbprefix\s*=\s*['\''\"](.*?)['\''\"]/', \$cfg, \$m);
+            \$prefix = \$m[1] ?? 'joomla_';
+            \$hash = password_hash(base64_decode('$(printf '%s' "${final_password}" | base64)'), PASSWORD_BCRYPT);
+            \$pdo = new PDO('mysql:host=joomla-mariadb;dbname=joomla', 'joomla', base64_decode('$(printf '%s' "${PARAM_JOOMLA_DB_PASSWORD}" | base64)'));
+            \$stmt = \$pdo->prepare('UPDATE ' . \$prefix . 'users SET password = ? WHERE username = ?');
+            \$stmt->execute([\$hash, 'admin']);
+            echo \$stmt->rowCount() > 0 ? 'OK' : 'NO_MATCH';
+        " 2>/dev/null
+    # shellcheck disable=SC2181
+    if [[ $? -eq 0 ]]; then
+        log_info "[joomla/post-install] Admin password updated successfully."
+    else
+        log_warn "[joomla/post-install] Could not update admin password — using auto-generated."
+        final_password="${PARAM_JOOMLA_ADMIN_PASSWORD}"
+    fi
+fi
+
 # --- Log access info ---
 local_port="${PARAM_HTTP_NODEPORT:-${DEFAULT_HTTP_NODEPORT}}"
 if [[ "${PARAM_JOOMLA_SSL_ENABLED:-}" == "true" ]]; then
@@ -49,5 +84,5 @@ else
     log_info "[joomla/post-install] Admin: http://<VM-IP>:${local_port}/administrator/"
 fi
 log_info "[joomla/post-install] Admin user: admin"
-log_info "[joomla/post-install] Admin password: ${PARAM_JOOMLA_ADMIN_PASSWORD:-<check secret>}"
+log_info "[joomla/post-install] Admin password: ${final_password:-<check secret>}"
 log_info "[joomla/post-install] Joomla auto-installs on first boot (no wizard)."
