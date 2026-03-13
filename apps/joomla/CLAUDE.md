@@ -15,12 +15,16 @@ Three versions supported: 6.0.3 (default), 5.4.3, 5.3.2.
 
 ## Parameters
 
-All parameters use `PARAM_*` prefix at runtime. DB passwords are auto-generated in `hooks/pre-install.sh`.
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| JOOMLA_ADMIN_PASSWORD | auto-generated | Admin password (12+ chars) |
+| JOOMLA_DB_PASSWORD | auto-generated | MariaDB user password |
+| JOOMLA_DB_ROOT_PASSWORD | auto-generated | MariaDB root password |
 
 ## Manifest Ordering
 
 ```
-00-secrets.yaml              -> DB credentials (root + user)
+00-secrets.yaml              -> DB + admin credentials
 10-mariadb-pvc.yaml          -> MariaDB data storage
 11-joomla-pvc.yaml           -> Joomla data storage
 20-mariadb-deployment.yaml   -> MariaDB 11.4
@@ -45,7 +49,9 @@ http://<VM-IP>:30080
 http://<VM-IP>:30080/administrator/
 ```
 
-Admin account is created on first visit (installation wizard).
+Admin account (`admin`) is created automatically via Joomla auto-install env vars.
+Password is auto-generated and stored in Secret `joomla-db-secret`.
+Installation wizard is skipped automatically.
 
 ## Networking / Firewall
 

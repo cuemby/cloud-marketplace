@@ -57,6 +57,19 @@ spec:
                   key: MYSQL_PASSWORD
             - name: JOOMLA_DB_NAME
               value: "joomla"
+            - name: JOOMLA_SITE_NAME
+              value: "Joomla Site"
+            - name: JOOMLA_ADMIN_USER
+              value: "${PARAM_JOOMLA_ADMIN_USER}"
+            - name: JOOMLA_ADMIN_USERNAME
+              value: "admin"
+            - name: JOOMLA_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: joomla-db-secret
+                  key: JOOMLA_ADMIN_PASSWORD
+            - name: JOOMLA_ADMIN_EMAIL
+              value: "${PARAM_JOOMLA_ADMIN_EMAIL}"
           volumeMounts:
             - name: joomla-data
               mountPath: /var/www/html

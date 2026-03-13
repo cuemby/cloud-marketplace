@@ -17,6 +17,11 @@ versions:
     imageTag: "6.0.3-apache"
     default: true
 parameters:
+  - name: JOOMLA_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: Joomla administrator password (auto-generated if not set, minimum 12 characters)
+    type: password
+    required: false
   - name: JOOMLA_DB_PASSWORD
     displayName: Database Password
     description: MariaDB password for Joomla (auto-generated if not set)

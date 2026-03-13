@@ -18,6 +18,7 @@ export APP_NAME="joomla"
 export APP_VERSION="{{app-version}}"
 
 # Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+export PARAM_JOOMLA_ADMIN_PASSWORD="{{param-joomla-admin-password}}"
 export PARAM_JOOMLA_DB_PASSWORD="{{param-joomla-db-password}}"
 export PARAM_JOOMLA_DB_ROOT_PASSWORD="{{param-joomla-db-root-password}}"
 

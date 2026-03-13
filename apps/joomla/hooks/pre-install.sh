@@ -20,7 +20,7 @@ log_info "[joomla/pre-install] Setting defaults and generating credentials..."
 
 # --- Password generation (alphanumeric only to avoid YAML escaping issues) ---
 _generate_password() {
-    openssl rand -base64 24 | tr -d '/+=' | head -c 32
+    openssl rand -base64 48 | tr -d '/+=' | head -c 32
 }
 
 # Check if a value is empty or an uninterpolated {{placeholder}}
@@ -46,6 +46,16 @@ if _needs_value "${PARAM_JOOMLA_DB_PASSWORD:-}"; then
     export PARAM_JOOMLA_DB_PASSWORD
     log_info "[joomla/pre-install] Generated MariaDB user password."
 fi
+
+# --- Admin credentials (auto-install, skip wizard) ---
+if _needs_value "${PARAM_JOOMLA_ADMIN_PASSWORD:-}"; then
+    PARAM_JOOMLA_ADMIN_PASSWORD="$(_generate_password)"
+    export PARAM_JOOMLA_ADMIN_PASSWORD
+    log_info "[joomla/pre-install] Generated Joomla admin password."
+fi
+PARAM_JOOMLA_ADMIN_USER="${PARAM_JOOMLA_ADMIN_USER:-Joomla Admin}"
+PARAM_JOOMLA_ADMIN_EMAIL="${PARAM_JOOMLA_ADMIN_EMAIL:-admin@example.com}"
+export PARAM_JOOMLA_ADMIN_USER PARAM_JOOMLA_ADMIN_EMAIL
 
 # --- Non-secret parameter defaults ---
 _needs_value "${PARAM_JOOMLA_DB_DATA_SIZE:-}" && PARAM_JOOMLA_DB_DATA_SIZE="5Gi"

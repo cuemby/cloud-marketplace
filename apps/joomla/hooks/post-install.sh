@@ -41,6 +41,13 @@ log_info "[joomla/post-install] Joomla pod ready: ${joomla_pod}"
 
 # --- Log access info ---
 local_port="${PARAM_HTTP_NODEPORT:-${DEFAULT_HTTP_NODEPORT}}"
-log_info "[joomla/post-install] Site: http://<VM-IP>:${local_port}"
-log_info "[joomla/post-install] Admin: http://<VM-IP>:${local_port}/administrator/"
-log_info "[joomla/post-install] Complete the installation wizard on first visit."
+if [[ "${PARAM_JOOMLA_SSL_ENABLED:-}" == "true" ]]; then
+    log_info "[joomla/post-install] Site: https://${PARAM_JOOMLA_HOSTNAME:-<VM-IP>}"
+    log_info "[joomla/post-install] Admin: https://${PARAM_JOOMLA_HOSTNAME:-<VM-IP>}/administrator/"
+else
+    log_info "[joomla/post-install] Site: http://<VM-IP>:${local_port}"
+    log_info "[joomla/post-install] Admin: http://<VM-IP>:${local_port}/administrator/"
+fi
+log_info "[joomla/post-install] Admin user: admin"
+log_info "[joomla/post-install] Admin password: ${PARAM_JOOMLA_ADMIN_PASSWORD:-<check secret>}"
+log_info "[joomla/post-install] Joomla auto-installs on first boot (no wizard)."
