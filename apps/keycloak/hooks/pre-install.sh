@@ -85,8 +85,12 @@ if [[ "${PARAM_KEYCLOAK_SSL_ENABLED}" == "true" ]]; then
     ssl_full_setup "keycloak" "PARAM_HOSTNAME" "keycloak-http" 80
     PARAM_KEYCLOAK_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_KEYCLOAK_HOSTNAME
+    PARAM_KEYCLOAK_HOSTNAME_URL="https://${SSL_HOSTNAME}"
+    export PARAM_KEYCLOAK_HOSTNAME_URL
     log_info "[keycloak/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    PARAM_KEYCLOAK_HOSTNAME_URL=""
+    export PARAM_KEYCLOAK_HOSTNAME_URL
     log_info "[keycloak/pre-install] SSL disabled — access via NodePort only."
 fi
 
