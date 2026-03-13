@@ -48,7 +48,11 @@ if _needs_value "${PARAM_JOOMLA_DB_PASSWORD:-}"; then
 fi
 
 # --- Admin credentials (auto-install, skip wizard) ---
-if _needs_value "${PARAM_JOOMLA_ADMIN_PASSWORD:-}"; then
+# Joomla 5/6 requires admin password to be at least 12 characters
+if _needs_value "${PARAM_JOOMLA_ADMIN_PASSWORD:-}" || [[ "${#PARAM_JOOMLA_ADMIN_PASSWORD}" -lt 12 ]]; then
+    if [[ -n "${PARAM_JOOMLA_ADMIN_PASSWORD:-}" ]] && [[ "${#PARAM_JOOMLA_ADMIN_PASSWORD}" -lt 12 ]]; then
+        log_warn "[joomla/pre-install] Provided admin password is too short (<12 chars) — generating a secure one."
+    fi
     PARAM_JOOMLA_ADMIN_PASSWORD="$(_generate_password)"
     export PARAM_JOOMLA_ADMIN_PASSWORD
     log_info "[joomla/pre-install] Generated Joomla admin password."
