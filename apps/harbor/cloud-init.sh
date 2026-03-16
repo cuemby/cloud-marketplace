@@ -20,7 +20,7 @@ apt-get install -y curl git jq
 export APP_NAME="harbor"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_HARBOR_ADMIN_PASSWORD="{{param-harbor-admin-password}}"
 export PARAM_HARBOR_DB_PASSWORD="{{param-harbor-db-password}}"
 export PARAM_HARBOR_SECRET_KEY="{{param-harbor-secret-key}}"

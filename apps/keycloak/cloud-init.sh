@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="keycloak"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_KEYCLOAK_ADMIN_PASSWORD="{{param-keycloak-admin-password}}"
 export PARAM_KEYCLOAK_DB_PASSWORD="{{param-keycloak-db-password}}"
 

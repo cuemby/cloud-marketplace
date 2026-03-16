@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="devtron"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_DEVTRON_DB_PASSWORD="{{param-devtron-db-password}}"
 export PARAM_DEVTRON_ADMIN_PASSWORD="{{param-devtron-admin-password}}"
 

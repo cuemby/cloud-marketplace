@@ -20,7 +20,7 @@ write_files:
       #!/usr/bin/env bash
       export APP_NAME="rabbitmq"
       export APP_VERSION="{{app-version}}"
-      # Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+      # Credentials (auto-generated if not provided by Cuemby Cloud)
       export PARAM_RABBITMQ_DEFAULT_PASS="{{param-rabbitmq-default-pass}}"
       # Optional parameters (defaults applied in pre-install hook)
       export PARAM_RABBITMQ_DEFAULT_USER="{{param-rabbitmq-default-user}}"

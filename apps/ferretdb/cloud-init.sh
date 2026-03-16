@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="ferretdb"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_FERRETDB_DB_PASSWORD="{{param-ferretdb-db-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="mysql"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_MYSQL_ROOT_PASSWORD="{{param-mysql-root-password}}"
 export PARAM_MYSQL_PASSWORD="{{param-mysql-password}}"
 

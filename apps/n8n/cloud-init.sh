@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="n8n"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_N8N_DB_PASSWORD="{{param-n8n-db-password}}"
 export PARAM_N8N_ENCRYPTION_KEY="{{param-n8n-encryption-key}}"
 

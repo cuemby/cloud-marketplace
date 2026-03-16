@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="wordpress"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_MARIADB_ROOT_PASSWORD="{{param-mariadb-root-password}}"
 export PARAM_MARIADB_PASSWORD="{{param-mariadb-password}}"
 export PARAM_WORDPRESS_ADMIN_PASSWORD="{{param-wordpress-admin-password}}"

@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="ghost"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_GHOST_DB_PASSWORD="{{param-ghost-db-password}}"
 export PARAM_GHOST_DB_ROOT_PASSWORD="{{param-ghost-db-root-password}}"
 

@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="twenty"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_TWENTY_APP_SECRET="{{param-twenty-app-secret}}"
 export PARAM_TWENTY_DB_PASSWORD="{{param-twenty-db-password}}"
 

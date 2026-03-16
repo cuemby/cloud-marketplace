@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="coolify"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_COOLIFY_DB_PASSWORD="{{param-coolify-db-password}}"
 export PARAM_COOLIFY_REDIS_PASSWORD="{{param-coolify-redis-password}}"
 export PARAM_COOLIFY_APP_KEY="{{param-coolify-app-key}}"

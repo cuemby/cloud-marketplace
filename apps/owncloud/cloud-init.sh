@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="owncloud"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_OWNCLOUD_ADMIN_PASSWORD="{{param-owncloud-admin-password}}"
 export PARAM_OWNCLOUD_DB_PASSWORD="{{param-owncloud-db-password}}"
 export PARAM_OWNCLOUD_DB_ROOT_PASSWORD="{{param-owncloud-db-root-password}}"

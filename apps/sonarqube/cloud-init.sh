@@ -25,7 +25,7 @@ sysctl --system
 export APP_NAME="sonarqube"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_SONARQUBE_DB_PASSWORD="{{param-sonarqube-db-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

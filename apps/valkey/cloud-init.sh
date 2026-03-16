@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="valkey"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_VALKEY_PASSWORD="{{param-valkey-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

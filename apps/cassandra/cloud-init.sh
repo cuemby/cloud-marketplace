@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="cassandra"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_CASSANDRA_PASSWORD="{{param-cassandra-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

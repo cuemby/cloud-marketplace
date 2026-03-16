@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="mongodb"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_MONGO_INITDB_ROOT_PASSWORD="{{param-mongo-initdb-root-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

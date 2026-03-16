@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="couchdb"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_COUCHDB_PASSWORD="{{param-couchdb-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

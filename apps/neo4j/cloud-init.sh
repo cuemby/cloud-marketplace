@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="neo4j"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_NEO4J_AUTH_PASSWORD="{{param-neo4j-auth-password}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

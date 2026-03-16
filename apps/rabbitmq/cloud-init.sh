@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="rabbitmq"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_RABBITMQ_DEFAULT_PASS="{{param-rabbitmq-default-pass}}"
 
 # Optional parameters (Cuemby Cloud interpolates; defaults applied in pre-install hook)

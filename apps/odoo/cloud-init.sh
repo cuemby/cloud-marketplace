@@ -17,7 +17,7 @@ apt-get install -y curl git jq
 export APP_NAME="odoo"
 export APP_VERSION="{{app-version}}"
 
-# Credentials (Cuemby Cloud interpolates {{...}}; auto-generated otherwise)
+# Credentials (auto-generated if not provided by Cuemby Cloud)
 export PARAM_ODOO_DB_PASSWORD="{{param-odoo-db-password}}"
 export PARAM_ODOO_ADMIN_PASSWORD="{{param-odoo-admin-password}}"
 
