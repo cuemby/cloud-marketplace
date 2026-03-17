@@ -47,9 +47,26 @@ spec:
               value: "256m"
             - name: NEO4J_server_config_strict__validation_enabled
               value: "false"
+            - name: NEO4J_server_bolt_advertised__address
+              value: "${PARAM_NEO4J_HOSTNAME}:${PARAM_NEO4J_BOLT_NODEPORT}"
+            - name: NEO4J_server_bolt_tls__level
+              value: "OPTIONAL"
+            - name: NEO4J_dbms_ssl_policy_bolt_enabled
+              value: "true"
+            - name: NEO4J_dbms_ssl_policy_bolt_base__directory
+              value: "/ssl/bolt"
+            - name: NEO4J_dbms_ssl_policy_bolt_private__key
+              value: "tls.key"
+            - name: NEO4J_dbms_ssl_policy_bolt_public__certificate
+              value: "tls.crt"
+            - name: NEO4J_dbms_ssl_policy_bolt_client__auth
+              value: "NONE"
           volumeMounts:
             - name: neo4j-data
               mountPath: /data
+            - name: bolt-tls
+              mountPath: /ssl/bolt
+              readOnly: true
           startupProbe:
             httpGet:
               path: /
@@ -83,3 +100,6 @@ spec:
         - name: neo4j-data
           persistentVolumeClaim:
             claimName: neo4j-data
+        - name: bolt-tls
+          secret:
+            secretName: neo4j-tls
