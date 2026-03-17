@@ -80,6 +80,8 @@ if [[ "${PARAM_MLFLOW_SSL_ENABLED}" == "true" ]]; then
     export PARAM_MLFLOW_HOSTNAME
     log_info "[mlflow/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    PARAM_MLFLOW_HOSTNAME="*"
+    export PARAM_MLFLOW_HOSTNAME
     log_info "[mlflow/pre-install] SSL disabled — access via NodePort only."
 fi
 

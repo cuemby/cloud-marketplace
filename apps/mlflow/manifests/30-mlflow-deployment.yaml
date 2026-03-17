@@ -54,7 +54,8 @@ spec:
                 --host=0.0.0.0 \
                 --port=5000 \
                 --backend-store-uri=postgresql://mlflow:${PARAM_MLFLOW_DB_PASSWORD}@mlflow-postgres:5432/mlflow \
-                --default-artifact-root=/artifacts
+                --default-artifact-root=/artifacts \
+                --allowed-hosts="${PARAM_MLFLOW_HOSTNAME}"
           volumeMounts:
             - name: mlflow-artifacts
               mountPath: /artifacts
