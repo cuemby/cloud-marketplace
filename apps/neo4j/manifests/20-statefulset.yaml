@@ -103,3 +103,4 @@ spec:
         - name: bolt-tls
           secret:
             secretName: neo4j-tls
+            optional: true
