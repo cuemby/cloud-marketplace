@@ -101,8 +101,15 @@ main() {
     if [[ "${ssl_enabled}" == "true" ]]; then
         log_section "Phase 5.5: Verifying SSL certificate"
         source "${bootstrap_dir}/lib/ssl-hooks.sh"
-        ssl_wait_for_cert_with_fallback "$APP_NAME" || \
+        if ssl_wait_for_cert_with_fallback "$APP_NAME"; then
+            # Restart deployment so pods pick up the now-available TLS secret
+            local app_ns="${HELM_NAMESPACE_PREFIX}${APP_NAME}"
+            log_info "Restarting deployment to activate TLS..."
+            kubectl rollout restart deployment -n "$app_ns" 2>/dev/null || true
+            kubectl rollout status deployment -n "$app_ns" --timeout=120s 2>/dev/null || true
+        else
             log_warn "SSL certificate not ready; HTTPS may not work yet."
+        fi
     fi
 
     # Phase 6: Health check
