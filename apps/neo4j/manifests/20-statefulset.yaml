@@ -26,6 +26,18 @@ spec:
       containers:
         - name: neo4j
           image: docker.io/library/neo4j:${PARAM_APP_IMAGE_TAG}
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+              if [ ! -f /ssl/bolt/tls.key ]; then
+                export NEO4J_dbms_ssl_policy_bolt_enabled=false
+                export NEO4J_server_bolt_tls__level=DISABLED
+                unset NEO4J_dbms_ssl_policy_bolt_base__directory
+                unset NEO4J_dbms_ssl_policy_bolt_private__key
+                unset NEO4J_dbms_ssl_policy_bolt_public__certificate
+                unset NEO4J_dbms_ssl_policy_bolt_client__auth
+              fi
+              exec /startup/docker-entrypoint.sh neo4j
           ports:
             - name: http
               containerPort: 7474
