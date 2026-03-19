@@ -39,6 +39,25 @@ retry_with_timeout 600 10 _nc_pod_ready
 nc_pod="$(_get_nc_pod)"
 log_info "[nextcloud/post-install] Nextcloud pod ready: ${nc_pod}"
 
+# --- Configure reverse proxy settings (required for HTTPS via Traefik Gateway) ---
+if [[ "${PARAM_NEXTCLOUD_SSL_ENABLED:-false}" == "true" ]]; then
+    local_hostname="${PARAM_NEXTCLOUD_HOSTNAME:-localhost}"
+    log_info "[nextcloud/post-install] Configuring reverse proxy settings for HTTPS..."
+
+    _occ() {
+        kubectl exec -n "${local_namespace}" "${nc_pod}" -c nextcloud -- \
+            su -s /bin/bash www-data -c "php /var/www/html/occ $*" 2>/dev/null
+    }
+
+    _occ "config:system:set overwriteprotocol --value=https"
+    _occ "config:system:set overwrite.cli.url --value=https://${local_hostname}"
+    _occ "config:system:set trusted_proxies 0 --value=10.42.0.0/16"
+    _occ "config:system:set trusted_proxies 1 --value=10.43.0.0/16"
+    _occ "config:system:set forwarded_for_headers 0 --value=HTTP_X_FORWARDED_FOR"
+
+    log_info "[nextcloud/post-install] Reverse proxy settings applied."
+fi
+
 # --- Log access info ---
 local_port="${PARAM_HTTP_NODEPORT:-${DEFAULT_HTTP_NODEPORT}}"
 log_info "[nextcloud/post-install] Web UI: http://<VM-IP>:${local_port}"
