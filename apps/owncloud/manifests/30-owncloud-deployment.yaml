@@ -66,9 +66,13 @@ spec:
               protocol: TCP
           env:
             - name: OWNCLOUD_DOMAIN
-              value: "*"
+              value: "${PARAM_OWNCLOUD_HOSTNAME}"
             - name: OWNCLOUD_TRUSTED_DOMAINS
-              value: "*"
+              value: "${PARAM_OWNCLOUD_HOSTNAME},localhost"
+            - name: OWNCLOUD_OVERWRITE_CLI_URL
+              value: "https://${PARAM_OWNCLOUD_HOSTNAME}"
+            - name: OWNCLOUD_OVERWRITE_PROTOCOL
+              value: "https"
             - name: OWNCLOUD_DB_TYPE
               value: "mysql"
             - name: OWNCLOUD_DB_HOST

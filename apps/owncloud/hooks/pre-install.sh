@@ -100,6 +100,8 @@ if [[ "${PARAM_OWNCLOUD_SSL_ENABLED}" == "true" ]]; then
     export PARAM_OWNCLOUD_HOSTNAME
     log_info "[owncloud/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    _needs_value "${PARAM_OWNCLOUD_HOSTNAME:-}" && PARAM_OWNCLOUD_HOSTNAME="localhost"
+    export PARAM_OWNCLOUD_HOSTNAME
     log_info "[owncloud/pre-install] SSL disabled — access via NodePort only."
 fi
 
