@@ -18,6 +18,10 @@ source "${BOOTSTRAP_DIR}/lib/ssl-hooks.sh"
 
 log_info "[portainer/pre-install] Setting defaults..."
 
+_generate_password() {
+    openssl rand -base64 24 | tr -d '/+=' | head -c 32
+}
+
 # Check if a value is empty or an uninterpolated {{placeholder}}
 _needs_value() {
     local val="${1:-}"
@@ -28,6 +32,18 @@ _needs_value() {
 if _needs_value "${APP_VERSION:-}"; then
     unset APP_VERSION
     log_info "[portainer/pre-install] APP_VERSION not set — will use default from app.yaml."
+fi
+
+# --- Admin password (minimum 12 characters required by Portainer) ---
+if _needs_value "${PARAM_PORTAINER_ADMIN_PASSWORD:-}"; then
+    PARAM_PORTAINER_ADMIN_PASSWORD="$(_generate_password)"
+    export PARAM_PORTAINER_ADMIN_PASSWORD
+    log_info "[portainer/pre-install] Generated Portainer admin password."
+fi
+if [[ ${#PARAM_PORTAINER_ADMIN_PASSWORD} -lt 12 ]]; then
+    log_warn "[portainer/pre-install] Password too short (<12 chars), generating a new one."
+    PARAM_PORTAINER_ADMIN_PASSWORD="$(_generate_password)"
+    export PARAM_PORTAINER_ADMIN_PASSWORD
 fi
 
 # --- Non-secret parameter defaults ---

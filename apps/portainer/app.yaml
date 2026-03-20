@@ -17,6 +17,11 @@ versions:
     imageTag: "2.33.7"
     default: true
 parameters:
+  - name: PORTAINER_ADMIN_PASSWORD
+    displayName: Admin Password
+    description: Password for the Portainer admin user (minimum 12 characters, auto-generated if not set)
+    type: password
+    required: false
   - name: PORTAINER_DATA_SIZE
     displayName: Data Storage Size
     description: Size of persistent volume for Portainer data
