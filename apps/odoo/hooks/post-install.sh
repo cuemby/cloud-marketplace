@@ -39,7 +39,34 @@ retry_with_timeout 300 10 _odoo_pod_ready
 odoo_pod="$(_get_odoo_pod)"
 log_info "[odoo/post-install] Odoo pod ready: ${odoo_pod}"
 
+# --- Initialize database (first deploy only) ---
+_odoo_db_initialized() {
+    kubectl exec -n "${local_namespace}" "${odoo_pod}" -c odoo -- \
+        python3 -c "
+import psycopg2
+conn = psycopg2.connect(host='odoo-postgres', port=5432, user='odoo', password='${PARAM_ODOO_DB_PASSWORD}', dbname='odoo')
+cur = conn.cursor()
+cur.execute(\"SELECT 1 FROM information_schema.tables WHERE table_name='ir_module_module'\")
+print('yes' if cur.fetchone() else 'no')
+conn.close()
+" 2>/dev/null
+}
+
+db_status="$(_odoo_db_initialized || echo "no")"
+if [[ "$db_status" != *"yes"* ]]; then
+    log_info "[odoo/post-install] Database not initialized — running 'odoo --init base'..."
+    kubectl exec -n "${local_namespace}" "${odoo_pod}" -c odoo -- \
+        odoo --init base --database odoo \
+        --db_host odoo-postgres --db_port 5432 \
+        --db_user odoo --db_password "${PARAM_ODOO_DB_PASSWORD}" \
+        --stop-after-init --no-http 2>&1 | tail -5
+    log_info "[odoo/post-install] Database initialized. Restarting deployment..."
+    kubectl rollout restart deployment/odoo -n "${local_namespace}"
+    kubectl rollout status deployment/odoo -n "${local_namespace}" --timeout=120s
+else
+    log_info "[odoo/post-install] Database already initialized, skipping."
+fi
+
 # --- Log access info ---
 local_port="${PARAM_ODOO_NODEPORT:-30069}"
 log_info "[odoo/post-install] Odoo web UI: http://<VM-IP>:${local_port}"
-log_info "[odoo/post-install] Use the admin master password to create your first database."
