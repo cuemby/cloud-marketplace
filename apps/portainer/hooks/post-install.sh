@@ -50,11 +50,15 @@ if _admin_not_exists; then
     curl -s -X POST "http://${local_svc_ip}:9000/api/users/admin/init" \
         -H "Content-Type: application/json" \
         -d "{\"Username\":\"admin\",\"Password\":\"${local_admin_pass}\"}" >/dev/null 2>&1
-    log_info "[portainer/post-install] Admin user created."
+    # Save password to a Kubernetes Secret for retrieval
+    kubectl create secret generic portainer-admin -n "${local_namespace}" \
+        --from-literal=ADMIN_USERNAME="admin" \
+        --from-literal=ADMIN_PASSWORD="${local_admin_pass}" \
+        --dry-run=client -o yaml | kubectl apply -f - >/dev/null 2>&1
+    log_info "[portainer/post-install] Admin user created (password stored in secret/portainer-admin)."
 else
     log_info "[portainer/post-install] Admin user already exists, skipping."
 fi
 
 local_port="${PARAM_PORTAINER_NODEPORT:-30900}"
 log_info "[portainer/post-install] Web UI: http://<VM-IP>:${local_port}"
-log_info "[portainer/post-install] Login: admin / <PARAM_PORTAINER_ADMIN_PASSWORD>"
