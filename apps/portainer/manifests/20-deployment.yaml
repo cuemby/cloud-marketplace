@@ -19,6 +19,7 @@ spec:
         app.kubernetes.io/name: portainer
         app.kubernetes.io/component: portainer
     spec:
+      serviceAccountName: portainer
       containers:
         - name: portainer
           image: docker.io/portainer/portainer-ce:${PARAM_APP_IMAGE_TAG}
