@@ -34,7 +34,6 @@ portainer_pod="$(_get_portainer_pod)"
 log_info "[portainer/post-install] Portainer CE pod ready: ${portainer_pod}"
 
 # --- Create admin user via API (prevents timeout lockout) ---
-local_svc_ip
 local_svc_ip="$(kubectl get svc portainer -n "${local_namespace}" \
     -o jsonpath='{.spec.clusterIP}' 2>/dev/null)"
 
