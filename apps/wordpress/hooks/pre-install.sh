@@ -92,10 +92,15 @@ if [[ "${PARAM_WORDPRESS_SSL_ENABLED}" == "true" ]]; then
     ssl_full_setup "wordpress" "PARAM_HOSTNAME" "wordpress-http" 80
     PARAM_WORDPRESS_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_WORDPRESS_HOSTNAME
+    PARAM_WORDPRESS_SITE_URL="https://${PARAM_WORDPRESS_HOSTNAME}"
     log_info "[wordpress/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    local_ip="$(ssl_detect_public_ip)"
+    PARAM_WORDPRESS_SITE_URL="http://${local_ip}:${PARAM_HTTP_NODEPORT}"
     log_info "[wordpress/pre-install] SSL disabled — access via NodePort only."
 fi
+export PARAM_WORDPRESS_SITE_URL
+log_info "[wordpress/pre-install] Site URL: ${PARAM_WORDPRESS_SITE_URL}"
 
 log_info "[wordpress/pre-install] Pre-install complete."
 readonly _WP_PRE_INSTALL_DONE=1

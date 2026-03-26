@@ -12,3 +12,5 @@ data:
     define('WP_MAX_MEMORY_LIMIT', '512M');
     define('DISALLOW_FILE_EDIT', true);
     define('WP_AUTO_UPDATE_CORE', false);
+    define('WP_HOME', '${PARAM_WORDPRESS_SITE_URL}');
+    define('WP_SITEURL', '${PARAM_WORDPRESS_SITE_URL}');

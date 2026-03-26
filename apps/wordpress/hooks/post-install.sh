@@ -51,6 +51,9 @@ _complete_wp_install() {
     local admin_email="${PARAM_WORDPRESS_ADMIN_EMAIL:-admin@example.com}"
     local site_title="${PARAM_WORDPRESS_SITE_TITLE:-My WordPress Site}"
 
+    local site_host
+    site_host="$(echo "${PARAM_WORDPRESS_SITE_URL}" | sed -E 's|https?://||; s|/.*||')"
+
     kubectl exec -n "${local_namespace}" "${wp_pod}" -- \
         curl -sS -o /dev/null -w '%{http_code}' \
         --max-time 30 \
@@ -61,7 +64,7 @@ _complete_wp_install() {
         --data-urlencode "admin_password2=${admin_pass}" \
         --data-urlencode "admin_email=${admin_email}" \
         --data-urlencode "blog_public=0" \
-        -H "Host: localhost"
+        -H "Host: ${site_host}"
 }
 
 log_info "[wordpress/post-install] Running WordPress install wizard..."
