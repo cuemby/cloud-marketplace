@@ -85,10 +85,15 @@ if [[ "${PARAM_TWENTY_SSL_ENABLED}" == "true" ]]; then
     ssl_full_setup "twenty" "PARAM_HOSTNAME" "twenty-http" 80
     PARAM_TWENTY_HOSTNAME="${SSL_HOSTNAME}"
     export PARAM_TWENTY_HOSTNAME
+    PARAM_TWENTY_SERVER_URL="https://${PARAM_TWENTY_HOSTNAME}"
     log_info "[twenty/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
+    local_ip="$(ssl_detect_public_ip)"
+    PARAM_TWENTY_SERVER_URL="http://${local_ip}:${PARAM_HTTP_NODEPORT}"
     log_info "[twenty/pre-install] SSL disabled — access via NodePort only."
 fi
+export PARAM_TWENTY_SERVER_URL
+log_info "[twenty/pre-install] SERVER_URL=${PARAM_TWENTY_SERVER_URL}"
 
 log_info "[twenty/pre-install] Pre-install complete."
 readonly _TWENTY_PRE_INSTALL_DONE=1

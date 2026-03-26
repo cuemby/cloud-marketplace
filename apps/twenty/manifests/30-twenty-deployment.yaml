@@ -70,7 +70,7 @@ spec:
             - name: REDIS_URL
               value: "redis://twenty-redis:6379"
             - name: SERVER_URL
-              value: "http://localhost:3000"
+              value: "${PARAM_TWENTY_SERVER_URL}"
             - name: APP_SECRET
               valueFrom:
                 secretKeyRef:
