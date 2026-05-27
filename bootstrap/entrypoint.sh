@@ -43,6 +43,7 @@ main() {
     # Phase 1: System preparation (network + dependencies first, yq needed for validation)
     write_state "$STATE_PREPARING"
     log_section "Phase 1: Preparing system"
+    prefer_ipv4_outbound
     wait_for_network
     ensure_dependencies
     log_info "System preparation complete."

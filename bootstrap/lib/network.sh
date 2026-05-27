@@ -2,6 +2,19 @@
 # network.sh — Network readiness checks and dependency installation.
 # Source this file; do not execute directly.
 
+# prefer_ipv4_outbound — Configure the system to prefer IPv4 over IPv6 for outbound
+# connections. On dual-stack VMs where the IPv6 path traverses a tunnel with MTU
+# issues, large downloads (Helm, cert-manager) can hang during TLS handshake.
+# This does NOT affect IPv6 detection or inbound access via sslip.io.
+prefer_ipv4_outbound() {
+    if grep -q "^precedence ::ffff:0:0/96" /etc/gai.conf 2>/dev/null; then
+        return 0
+    fi
+    log_info "Configuring system to prefer IPv4 for outbound connections..."
+    # RFC 3484/6724: raise precedence of IPv4-mapped addresses above IPv6
+    echo "precedence ::ffff:0:0/96  100" >> /etc/gai.conf
+}
+
 # Wait until the network is reachable (can resolve and reach an external host).
 # Usage: wait_for_network [timeout_secs]
 wait_for_network() {
