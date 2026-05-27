@@ -63,9 +63,9 @@ if [[ "${PARAM_GITEA_SSL_ENABLED}" == "true" ]]; then
     export PARAM_GITEA_DOMAIN PARAM_GITEA_ROOT_URL
     log_info "[gitea/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
-    local_ip="$(ssl_detect_public_ip)"
+    local_ip="$(ssl_detect_best_ip)"
     PARAM_GITEA_DOMAIN="${local_ip}"
-    PARAM_GITEA_ROOT_URL="http://${local_ip}:${PARAM_GITEA_HTTP_NODEPORT}"
+    PARAM_GITEA_ROOT_URL="http://$(ssl_format_url_host "$local_ip"):${PARAM_GITEA_HTTP_NODEPORT}"
     export PARAM_GITEA_DOMAIN PARAM_GITEA_ROOT_URL
     log_info "[gitea/pre-install] SSL disabled — access via NodePort only."
 fi

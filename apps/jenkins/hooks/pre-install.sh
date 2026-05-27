@@ -78,9 +78,9 @@ if [[ "${PARAM_JENKINS_SSL_ENABLED}" == "true" ]]; then
     export PARAM_JENKINS_URL
     log_info "[jenkins/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
-    local_ip="$(ssl_detect_public_ip)"
+    local_ip="$(ssl_detect_best_ip)"
     PARAM_JENKINS_HOSTNAME="${local_ip}"
-    PARAM_JENKINS_URL="http://${local_ip}:${PARAM_JENKINS_HTTP_NODEPORT}/"
+    PARAM_JENKINS_URL="http://$(ssl_format_url_host "$local_ip"):${PARAM_JENKINS_HTTP_NODEPORT}/"
     export PARAM_JENKINS_HOSTNAME PARAM_JENKINS_URL
     log_info "[jenkins/pre-install] SSL disabled — access via NodePort only."
 fi

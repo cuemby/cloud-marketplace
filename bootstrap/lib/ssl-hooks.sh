@@ -54,9 +54,88 @@ _ssl_valid_ipv4() {
     [[ "$ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]
 }
 
+_ssl_valid_ipv6() {
+    local ip="$1"
+    [[ "$ip" =~ ^[0-9a-fA-F]{0,4}(:[0-9a-fA-F]{0,4}){2,7}$ ]] && [[ "$ip" == *:* ]]
+}
+
 ssl_ip_to_sslip_domain() {
     local ip="$1"
-    echo "${ip//./-}.sslip.io"
+    if _ssl_valid_ipv4 "$ip"; then
+        echo "${ip//./-}.sslip.io"
+    elif _ssl_valid_ipv6 "$ip"; then
+        # Replace colons with dashes; :: naturally becomes --
+        echo "${ip//:/-}.sslip.io" | tr '[:upper:]' '[:lower:]'
+    else
+        log_error "[ssl-hooks] Cannot format sslip.io domain: invalid IP '${ip}'"
+        return 1
+    fi
+}
+
+# ssl_format_url_host — Format an IP for use inside a URL or host:port string.
+# IPv4 is returned as-is; IPv6 is wrapped in brackets (RFC 2732).
+# Example: 2001:470::1 → [2001:470::1]
+ssl_format_url_host() {
+    local ip="$1"
+    if _ssl_valid_ipv6 "$ip"; then
+        echo "[${ip}]"
+    else
+        echo "$ip"
+    fi
+}
+
+# ssl_detect_public_ipv6 — Detect the VM's outbound public IPv6 address.
+ssl_detect_public_ipv6() {
+    local ip=""
+    local services=(
+        "https://api6.ipify.org"
+        "https://ipv6.icanhazip.com"
+        "https://ifconfig.me"
+    )
+
+    for svc in "${services[@]}"; do
+        ip="$(curl -6 -sf --max-time 10 "$svc" 2>/dev/null | tr -d '[:space:]' || true)"
+        if _ssl_valid_ipv6 "$ip"; then
+            echo "$ip"
+            return 0
+        fi
+    done
+
+    # Local fallback: first global-scope IPv6 from ip addr (excludes link-local fe80::)
+    ip="$(ip -6 addr show scope global 2>/dev/null \
+          | grep -oP '(?<=inet6 )[0-9a-fA-F:]+(?=/)' \
+          | grep -iv '^fe80' | head -1 || true)"
+    if _ssl_valid_ipv6 "$ip"; then
+        log_warn "[ssl-hooks] Using local IPv6 ${ip} — may not be globally routable."
+        echo "$ip"
+        return 0
+    fi
+
+    return 1
+}
+
+# ssl_detect_best_ip — Try public IPv4 first; fall back to IPv6.
+# Exports SSL_IP_VERSION=4 or SSL_IP_VERSION=6 on success.
+ssl_detect_best_ip() {
+    local ip=""
+
+    ip="$(ssl_detect_public_ip 2>/dev/null || true)"
+    if _ssl_valid_ipv4 "$ip"; then
+        export SSL_IP_VERSION="4"
+        echo "$ip"
+        return 0
+    fi
+
+    log_info "[ssl-hooks] No public IPv4 found — trying IPv6..."
+    ip="$(ssl_detect_public_ipv6 2>/dev/null || true)"
+    if _ssl_valid_ipv6 "$ip"; then
+        export SSL_IP_VERSION="6"
+        echo "$ip"
+        return 0
+    fi
+
+    log_error "[ssl-hooks] Could not detect any public IP address (IPv4 or IPv6)."
+    return 1
 }
 
 # ── Hostname Setup ───────────────────────────────────────────────────────────
@@ -72,13 +151,13 @@ ssl_setup_hostname() {
         log_info "[ssl-hooks] Using provided hostname: ${current_value}"
         export SSL_HOSTNAME="$current_value"
     else
-        log_info "[ssl-hooks] Detecting public IP for sslip.io hostname..."
+        log_info "[ssl-hooks] Detecting best public IP for sslip.io hostname..."
         local public_ip
-        public_ip="$(ssl_detect_public_ip)"
+        public_ip="$(ssl_detect_best_ip)"
         SSL_HOSTNAME="$(ssl_ip_to_sslip_domain "$public_ip")"
         export SSL_HOSTNAME
         export "$var_name=$SSL_HOSTNAME"
-        log_info "[ssl-hooks] Hostname: ${SSL_HOSTNAME}"
+        log_info "[ssl-hooks] Hostname: ${SSL_HOSTNAME} (IPv${SSL_IP_VERSION:-?})"
     fi
 }
 

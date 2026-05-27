@@ -57,7 +57,7 @@ export PARAM_KAFKA_MEMORY_LIMIT="${PARAM_KAFKA_MEMORY_LIMIT:-6Gi}"
 # Kafka clients reconnect using the advertised address, so it MUST be the
 # VM's public IP (not localhost) for external access to work.
 if _needs_value "${PARAM_KAFKA_EXTERNAL_HOST:-}"; then
-    PARAM_KAFKA_EXTERNAL_HOST="$(ssl_detect_public_ip)"
+    PARAM_KAFKA_EXTERNAL_HOST="$(ssl_detect_best_ip)"
     export PARAM_KAFKA_EXTERNAL_HOST
     log_info "[kafka/pre-install] Detected external IP: ${PARAM_KAFKA_EXTERNAL_HOST}"
 fi

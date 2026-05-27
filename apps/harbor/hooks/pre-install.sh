@@ -167,9 +167,9 @@ if [[ "${PARAM_HARBOR_SSL_ENABLED}" == "true" ]]; then
     export PARAM_HARBOR_EXTERNAL_URL
     log_info "[harbor/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
-    local_ip="$(ssl_detect_public_ip)"
+    local_ip="$(ssl_detect_best_ip)"
     PARAM_HARBOR_HOSTNAME="${local_ip}"
-    PARAM_HARBOR_EXTERNAL_URL="${local_ip}:${PARAM_HTTPS_NODEPORT}"
+    PARAM_HARBOR_EXTERNAL_URL="$(ssl_format_url_host "$local_ip"):${PARAM_HTTPS_NODEPORT}"
     export PARAM_HARBOR_HOSTNAME PARAM_HARBOR_EXTERNAL_URL
     log_info "[harbor/pre-install] SSL disabled — access via NodePort only."
 fi

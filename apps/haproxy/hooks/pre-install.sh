@@ -77,7 +77,7 @@ if [[ "${PARAM_HAPROXY_SSL_ENABLED}" == "true" ]]; then
     export PARAM_HAPROXY_HOSTNAME
     log_info "[haproxy/pre-install] SSL enabled — HTTPS hostname: ${SSL_HOSTNAME}"
 else
-    local_ip="$(ssl_detect_public_ip)"
+    local_ip="$(ssl_detect_best_ip)"
     PARAM_HAPROXY_HOSTNAME="${local_ip}"
     export PARAM_HAPROXY_HOSTNAME
     log_info "[haproxy/pre-install] SSL disabled — access via NodePort only."
