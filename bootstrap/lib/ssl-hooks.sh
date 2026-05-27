@@ -114,19 +114,29 @@ ssl_detect_public_ipv6() {
     return 1
 }
 
-# ssl_detect_best_ip — Try public IPv4 first; fall back to IPv6.
+# ssl_detect_best_ip — Detect the best IP for sslip.io hostname generation.
+# Prefers a public IPv4 that is directly on the VM (not behind NAT).
+# Falls back to IPv6 when IPv4 is a shared NAT address — IPv6 is unique per VM
+# even on CloudStack isolated networks where all VMs share one outbound IPv4.
 # Exports SSL_IP_VERSION=4 or SSL_IP_VERSION=6 on success.
 ssl_detect_best_ip() {
     local ip=""
 
     ip="$(ssl_detect_public_ip 2>/dev/null || true)"
     if _ssl_valid_ipv4 "$ip"; then
-        export SSL_IP_VERSION="4"
-        echo "$ip"
-        return 0
+        # Verify the IP is actually on a local interface (not a shared NAT gateway)
+        local local_ips
+        local_ips="$(hostname -I 2>/dev/null || true)"
+        if echo "$local_ips" | grep -qw "$ip"; then
+            export SSL_IP_VERSION="4"
+            echo "$ip"
+            return 0
+        fi
+        log_info "[ssl-hooks] IPv4 ${ip} is a NAT gateway (not on local interface) — trying IPv6..."
+    else
+        log_info "[ssl-hooks] No public IPv4 found — trying IPv6..."
     fi
 
-    log_info "[ssl-hooks] No public IPv4 found — trying IPv6..."
     ip="$(ssl_detect_public_ipv6 2>/dev/null || true)"
     if _ssl_valid_ipv6 "$ip"; then
         export SSL_IP_VERSION="6"
@@ -134,7 +144,16 @@ ssl_detect_best_ip() {
         return 0
     fi
 
-    log_error "[ssl-hooks] Could not detect any public IP address (IPv4 or IPv6)."
+    # Last resort: use the NAT IPv4 (sslip.io domain will be shared across VMs)
+    ip="$(ssl_detect_public_ip 2>/dev/null || true)"
+    if _ssl_valid_ipv4 "$ip"; then
+        log_warn "[ssl-hooks] Falling back to NAT IPv4 ${ip} — HTTPS cert may not work."
+        export SSL_IP_VERSION="4"
+        echo "$ip"
+        return 0
+    fi
+
+    log_error "[ssl-hooks] Could not detect any usable public IP address."
     return 1
 }
 
